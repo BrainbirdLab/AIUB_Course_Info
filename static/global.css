@@ -1,0 +1,50 @@
+@import "./fontawesome/css/all.min.css";
+@font-face {
+  font-family: "Now";
+  src: url("./fonts/now-web.woff2") format("woff2");
+}
+* {
+  font-family: "Now", sans-serif;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scrollbar-width: 0;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+}
+
+:root {
+  --primary: #041e2f;
+  --light-dark: #0e2a47;
+  --hover-light-dark: #123050;
+  --accent: #22bdae;
+  --label-color: #5b7289;
+}
+
+body {
+  background-color: var(--primary);
+  color: white;
+  display: flex;
+  min-height: 100svh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Change Autocomplete styles in Chrome*/
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  border: 1px solid var(--label-color);
+  -webkit-text-fill-color: ghostwhite;
+  -webkit-box-shadow: 0 0 0px 1000px var(--primary) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}

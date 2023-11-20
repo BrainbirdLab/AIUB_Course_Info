@@ -1,0 +1,34 @@
+{
+	"name": "aiub-course-visualizer",
+	"version": "0.0.1",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
+	},
+	"devDependencies": {
+		"@fontsource/fira-mono": "^4.5.10",
+		"@neoconfetti/svelte": "^1.0.0",
+		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/kit": "^1.27.4",
+		"@types/cookie": "^0.5.1",
+		"@types/jsdom": "^21.1.5",
+		"@types/superagent": "^4.1.22",
+		"sass": "^1.69.5",
+		"svelte": "^4.0.5",
+		"svelte-check": "^3.6.0",
+		"tslib": "^2.4.1",
+		"typescript": "^5.2.2",
+		"vite": "^4.4.2"
+	},
+	"type": "module",
+	"dependencies": {
+		"cheerio": "^1.0.0-rc.12",
+		"cookie-parser": "^1.4.6",
+		"express": "^4.18.2",
+		"jsdom": "^22.1.0",
+		"superagent": "^8.1.2"
+	}
+}
