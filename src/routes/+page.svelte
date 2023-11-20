@@ -95,6 +95,10 @@
 
 </script>
 
+<svelte:head>
+	<title>AIUB Course Visualizer</title>
+</svelte:head>
+
 <div class="container">
 	{#if loaded}
 	{#if !$showLogin && showSelectionPanel}
