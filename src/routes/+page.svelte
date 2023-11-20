@@ -95,56 +95,57 @@
 
 </script>
 
-
-{#if loaded}
-{#if !$showLogin && showSelectionPanel}
-<div class="selectionPanel" transition:fly={{y: 20, duration: 200}} use:handleSelection>
-	<div class="dropdownlist">
-		<div class="name">
-			<i class="fa-solid fa-user"></i> {$User}
-		</div>
-		<select bind:value={$semester} on:change={()=>{
-			localStorage.setItem('semester', $semester);
-			showSelectionPanel = false;
-		}}>
-			<option value="" selected disabled>Select Semester</option>
-			{#each Object.keys($semesterData) as sem, i}
-				<option value={sem}>{sem}</option>
-			{/each}
-		</select>
-		<div class="btn-grp">
-			<button on:click={clearData} class="clear-data">Clear</button>
-		</div>
-	</div>
-</div>
-{/if}
-{#if $showLogin}
-<Login />
-{:else}
-<div class="charts">
-	{#if $semester}
-	<div class="header">
-		<div class="sem">
-		  <i class="fa-solid fa-tree"></i> {$semester} <button on:click={()=>{
-			showSelectionPanel = true;
-		  }}><i class="fa-solid fa-caret-down"></i></button>
-		</div>
-		<div class="user">
-		  <i class="fa-solid fa-user"></i> {$User}
+<div class="container">
+	{#if loaded}
+	{#if !$showLogin && showSelectionPanel}
+	<div class="selectionPanel" transition:fly={{y: 20, duration: 200}} use:handleSelection>
+		<div class="dropdownlist">
+			<div class="name">
+				<i class="fa-solid fa-user"></i> {$User}
+			</div>
+			<select bind:value={$semester} on:change={()=>{
+				localStorage.setItem('semester', $semester);
+				showSelectionPanel = false;
+			}}>
+				<option value="" selected disabled>Select Semester</option>
+				{#each Object.keys($semesterData) as sem, i}
+					<option value={sem}>{sem}</option>
+				{/each}
+			</select>
+			<div class="btn-grp">
+				<button on:click={clearData} class="clear-data">Clear</button>
+			</div>
 		</div>
 	</div>
-	{#key $semester}
-	{#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo]}
-	  {#if classInfo != null}
-		<Chart {classInfo} {day} />
-	  {/if}
-	{/each}
-	{/key}
 	{/if}
-  </div>
-{/if}
-
-{/if}
+	{#if $showLogin}
+	<Login />
+	{:else}
+	<div class="charts">
+		{#if $semester}
+		<div class="header">
+			<div class="sem">
+			  <i class="fa-solid fa-tree"></i> {$semester} <button on:click={()=>{
+				showSelectionPanel = true;
+			  }}><i class="fa-solid fa-caret-down"></i></button>
+			</div>
+			<div class="user">
+			  <i class="fa-solid fa-user"></i> {$User}
+			</div>
+		</div>
+		{#key $semester}
+		{#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo]}
+		  {#if classInfo != null}
+			<Chart {classInfo} {day} />
+		  {/if}
+		{/each}
+		{/key}
+		{/if}
+	  </div>
+	{/if}
+	
+	{/if}
+</div>
 
 <style>
 	.charts {
