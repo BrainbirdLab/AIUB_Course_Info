@@ -32,7 +32,7 @@ function parseTime(timeString: string): ClassData{
         let start_time_obj = new Date('1/1/2020 ' + start_time).toLocaleTimeString('en-US', { hour12: true, hour: 'numeric', minute: 'numeric' });
         let end_time_obj = new Date('1/1/2020 ' + end_time).toLocaleTimeString('en-US', { hour12: true, hour: 'numeric', minute: 'numeric' });
 
-        const final_time = `${start_time} - ${end_time}`;
+        const final_time = `${start_time_obj} - ${end_time_obj}`;
         const data: ClassData = {
             type: class_type ?? '',
             time: final_time,
@@ -59,6 +59,44 @@ function getCourseDetails(course: string){
         console.log('Course not found in the string:', course);
         return {course_id: '', course_name: '', section: ''};
     }
+}
+
+
+function makeCourseObj(rawCourseElements: NodeListOf<Element>): {[dayOfWeek: string]: {[timeSlot: string]: Class}}{
+    
+    const coursesObj: {[dayOfWeek: string]: {[timeSlot: string]: Class}} = {};
+    
+    for (const rawCourse of rawCourseElements){
+        if (rawCourse.textContent){
+            //The course name from the DOM
+            const courseName = rawCourse.querySelector('a')?.textContent ?? '';
+            const parsedCourse = getCourseDetails(courseName);
+            //The time from the DOM 
+            const courseTimes = rawCourse.querySelectorAll('div > span');
+
+            for (const time of courseTimes){
+                //if time.text doesn't contain 'Time' then skip
+                if (!time.textContent?.includes('Time')){
+                    continue;
+                }
+
+                const parsedTime = parseTime(time.textContent);
+                if (!coursesObj[parsedTime.day]){
+                    coursesObj[parsedTime.day] = {};
+                }
+
+                coursesObj[parsedTime.day][parsedTime.time] = {
+                    course_name: parsedCourse.course_name,
+                    course_id: parsedCourse.course_id,
+                    section: parsedCourse.section,
+                    type: parsedTime.type,
+                    room: parsedTime.room
+                }
+            }
+        }
+    }
+
+    return coursesObj;
 }
 
 
@@ -103,6 +141,7 @@ export async function POST({request}){
 
         const semesters: SemesterDataType = {};
 
+        /*
         for (const target of targets) {
             // value of the option tag is the query string like /Student/Home/CourseList?q=iBpjLWVwA0VIY%2F8fTi0cBg%3D%3D
             const value = target.getAttribute('value')?.split('?')[1];
@@ -116,54 +155,49 @@ export async function POST({request}){
             if (table){
 
                 const rawCourseElements = table.querySelectorAll('td:first-child');
-                const coursesObj: {[dayOfWeek: string]: {[timeSlot: string]: Class}} = {};
-                
-                for (const rawCourse of rawCourseElements){
-                    if (rawCourse.textContent){
-                        //The course name from the DOM
-                        const courseName = rawCourse.querySelector('a')?.textContent ?? '';
-                        const parsedCourse = getCourseDetails(courseName);
-                        //The time from the DOM 
-                        const courseTimes = rawCourse.querySelectorAll('div > span');
-
-                        for (const time of courseTimes){
-                            //if time.text doesn't contain 'Time' then skip
-                            if (!time.textContent?.includes('Time')){
-                                continue;
-                            }
-
-                            const parsedTime = parseTime(time.textContent);
-                            if (!coursesObj[parsedTime.day]){
-                                coursesObj[parsedTime.day] = {};
-                            }
-
-                            coursesObj[parsedTime.day][parsedTime.time] = {
-                                course_name: parsedCourse.course_name,
-                                course_id: parsedCourse.course_id,
-                                section: parsedCourse.section,
-                                type: parsedTime.type,
-                                room: parsedTime.room
-                            }
-                        }
-                    }
-                }
+            
+                const coursesObj = makeCourseObj(rawCourseElements);
 
                 if (target.textContent){
-                   // console.log('Adding on Semester: ', target.textContent, ' => ', coursesObj);
+                    semesters[target.textContent] = coursesObj;
+                }
+            }
+        }
+        */
+
+        //use Promise.all to fetch all the semesters at once
+        const promises = [];
+        for (const target of targets) {
+            // value of the option tag is the query string like /Student/Home/CourseList?q=iBpjLWVwA0VIY%2F8fTi0cBg%3D%3D
+            const value = target.getAttribute('value')?.split('?')[1];
+            //console.log('Fetching data for semester: ', target.textContent, ' with query string: ', value);
+
+            const promise = agent.get(`https://portal.aiub.edu/Student/Registration?${value}`);
+            promises.push(promise);
+        }
+
+        const responses = await Promise.all(promises);
+
+        for (const response of responses){
+            const DOM_TABLE = new JSDOM(response.text);
+            //console.log('Response: ', response.text);
+            const table = DOM_TABLE.window.document.querySelector('.table-details');
+            if (table){
+
+                const rawCourseElements = table.querySelectorAll('td:first-child');
+            
+                const coursesObj = makeCourseObj(rawCourseElements);
+
+                const target = targets[responses.indexOf(response)];
+                if (target.textContent){
                     semesters[target.textContent] = coursesObj;
                 }
             }
         }
 
-        //console.log('Semesters: ', semesters);
-
         console.log('Returning response');
 
-
         return new Response(JSON.stringify({message: {semesters: semesters, username: User}}), {status: 200});
-        
-
-        //return new Response(JSON.stringify({message: 'Login Successful'}), {status: 200});
 
     } catch (e) {
         return new Response(JSON.stringify({message: 'Proxy Server Error'}), {status: 500});
