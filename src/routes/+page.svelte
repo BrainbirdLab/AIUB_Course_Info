@@ -175,13 +175,14 @@
 
 	.dropdownlist{
 		background: var(--light-dark);
-		border-radius: 5px;
+		border-radius: 10px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		gap: 30px;
-		padding: 20px 60px;
+		width: 350px;
+		padding: 30px 60px;
 	}
 
 	.btn-grp{
@@ -207,7 +208,7 @@ select{
     padding: 10px 15px;
     font-size: 0.7rem;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     background: rgb(26, 121, 209);
     color: aliceblue;
     cursor: pointer;
