@@ -70,14 +70,14 @@ export async function POST({request}){
         const formData = await request.formData();
     
         if (!formData) {
-            return new Response('Invalid form data', {status: 400});
+            return new Response(JSON.stringify({message:'Invalid form data'}), {status: 400});
         }
     
         const UserName = formData.get('UserName');
         const Password = formData.get('Password');
     
         if (!UserName || !Password) {
-            return new Response('Invalid form data', {status: 400});
+            return new Response(JSON.stringify({message:'Invalid form data'}), {status: 400});
         }
     
         await agent.post(url).send({UserName, Password}).set('Content-Type', 'application/x-www-form-urlencoded');
