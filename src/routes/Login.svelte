@@ -1,8 +1,8 @@
 <script lang="ts">
-        import { onMount } from "svelte";
+	import { onMount } from "svelte";
     import Logo from "./Logo.svelte";
     import { fly } from "svelte/transition";
-	import {showLogin, semesterData, type SemesterDataType, User} from "$lib/store";
+	import {showLogin, semesterData, User} from "$lib/store";
 
 	let usernameLabel = "AIUB ID";
 	let passwordLabel = "Password";
@@ -86,15 +86,19 @@
 			errlog = true;
 			logText = "Something went wrong";
 		}
-
-
 	}
+
+	let loaded = false;
+
+	onMount(() => {
+		loaded = true;
+	});
 </script>
 
 
-
+{#if loaded}
 <form on:submit|preventDefault={handleForm} class="form" in:fly={{y: 20, delay: 200}}>
-	<div class="title" in:fly|global={{x: 10, delay: 200}}>
+	<div class="title" in:fly|global={{x: -10, delay: 200}}>
 		<Logo />
 		Login with your AIUB ID
 	</div>
@@ -113,7 +117,7 @@
 	<div class="log" class:submitting={submitting} class:error={errlog}>{logText}</div>
 	{/if}
 </form>
-
+{/if}
 
 
 <style lang="scss">
