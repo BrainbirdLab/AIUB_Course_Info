@@ -47,6 +47,7 @@
 
 		submitting = true;
 
+		errlog = false;
 		logText = "Communicating with server...";
 
 		try{
