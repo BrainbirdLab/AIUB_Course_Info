@@ -66,7 +66,8 @@
 
 	function handleSelection(node: HTMLElement){
 		node.onclick = (e) => {
-			if (e.target == node){
+			console.log($semester);
+			if (e.target == node && $semester != ''){
 				showSelectionPanel = false;
 			}
 		}
