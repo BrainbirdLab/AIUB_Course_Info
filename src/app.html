@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="stylesheet" href="%sveltekit.assets%/global.css">
 		<!--manifest-->
-		<link rel="manifest" href="/manifest.json">
+		<link rel="manifest" href="%sveltekit.assets%/manifest.json">
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">
@@ -17,7 +17,7 @@
 		if ('serviceWorker' in navigator) {
 			window.addEventListener('load', () => {
 				navigator.serviceWorker
-				.register('/sw-class-chart.js')
+				.register('%sveltekit.assets%/sw-class-chart.js')
 				.then(reg => console.log('Service Worker: Registered'))
 				.catch(err => console.log(`Service Worker: Error: ${err}`))
 			})
