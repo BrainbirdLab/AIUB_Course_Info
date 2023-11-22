@@ -14,7 +14,7 @@
             <div class="metadata">
                 <div class="credit">Credit: {courseInfo.credit}</div>
                 <div class="prerequisites">
-                    {#if courseInfo.prerequisites.length > 0}
+                    {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
                     Prerequisite: &#91;
                     {#each courseInfo.prerequisites as prerequisite, i}
                         <div class="prerequisite">{prerequisite} {i < courseInfo.prerequisites.length - 1 ? ',' : ''}</div>
