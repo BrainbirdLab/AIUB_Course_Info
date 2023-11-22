@@ -16,8 +16,8 @@
                 <div class="prerequisites">
                     {#if courseInfo.prerequisites.length > 0}
                     Prerequisite: &#91;
-                    {#each courseInfo.prerequisites as prerequisite}
-                        <div class="prerequisite">{prerequisite}</div>
+                    {#each courseInfo.prerequisites as prerequisite, i}
+                        <div class="prerequisite">{prerequisite} {i < courseInfo.prerequisites.length - 1 ? ',' : ''}</div>
                     {/each}
                     &#93;
                     {:else}
