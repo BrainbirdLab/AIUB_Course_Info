@@ -34,7 +34,6 @@
 
     function handleSelection(node: HTMLElement){
 		node.onclick = (e) => {
-			console.log($semesterName);
 			if (e.target == node && $semesterName != ''){
 				showSelectionPanel = false;
 			}
@@ -60,9 +59,11 @@
             showSelectionPanel = false;
         }}>
             <option value="" selected disabled>Select Semester</option>
-            {#each Object.keys($semesterClassRoutine) as sem, i}
-                <option value={sem}>Semester: {i+1} - {sem}</option>
-            {/each}
+            {#if $semesterClassRoutine}
+                {#each Object.keys($semesterClassRoutine) as sem, i}
+                    <option value={sem}>Semester: {i+1} - {sem}</option>
+                {/each}
+            {/if}
         </select>
     </div>
 </div>
@@ -80,13 +81,15 @@
 </div>
 
 <div class="wrapper">
-    {#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo], i}
-    {#if classInfo != null}
-    <div class="container" in:fly|global={{y: 10, delay: 50*(i+1)}}>
-        <Chart {classInfo} {day} bind:AvailableColors={AvailableColors} bind:ColorsMap={ColorsMap}/>
-    </div>
+    {#if classData}
+        {#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo], i}
+        {#if classInfo != null}
+        <div class="container" in:fly|global={{y: 10, delay: 50*(i+1)}}>
+            <Chart {classInfo} {day} bind:AvailableColors={AvailableColors} bind:ColorsMap={ColorsMap}/>
+        </div>
+        {/if}
+        {/each}
     {/if}
-    {/each}
 </div>
 
 <style>

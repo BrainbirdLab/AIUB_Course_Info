@@ -63,7 +63,7 @@ export function parseCourseId(courseId: string) {
 }
 
 export function clearData(){
-  localStorage.removeItem('classData');
+  localStorage.removeItem('semesterClassRoutine');
   localStorage.removeItem('semester');
   localStorage.removeItem('user');
   localStorage.removeItem('completedCourses');

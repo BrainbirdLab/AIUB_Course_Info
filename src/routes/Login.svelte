@@ -66,8 +66,6 @@
 			
 			const data = await res.json();
 
-			console.log(data);
-
 			if (res.ok){
 				errlog = false;
 				//console.log(data);

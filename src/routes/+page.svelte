@@ -42,19 +42,11 @@
 			completedCourses.set(parsedCompletedCourses);
 			unlockedCourses.set(parsedUnlockedCourses);
 
-			//console.log("Completed Courses: " + parsedCompletedCourses);
-			//console.log("Unlocked Courses: " + parsedUnlockedCourses);
-
 			tabs.set(localStorage.getItem('tabs') as TABS || 'Routine');
 			localStorage.setItem('tabs', $tabs);
 	
 			if (data satisfies SemesterDataType) {
 				console.log("Data loaded from local storage");
-				//console.log(data);
-				//console.log("Semester: " + $semesterName);
-				//console.log("User: " + $User);
-				//console.log("Completed Courses: " + $completedCourses);
-				//console.log("Unlocked Courses: " + $unlockedCourses);
 				semesterClassRoutine.set(data);
 				showLogin.set(false);
 			} else {
@@ -130,16 +122,16 @@
 				<li class="navBtn" id="nav-Completed" class:shown="{$tabs == 'Completed'}">Completed Course</li>
 				<li class="navBtn" id="nav-Unlocked" class:shown="{$tabs == 'Unlocked'}">Unlocked Course</li>
 			</ul>
-			{#if $semesterName}
-				{#if $tabs == 'Routine'}
+			{#if $tabs == 'Routine'}
+				{#if $semesterName}
 					{#key $semesterName}
 						<ClassRoutine />
 					{/key}
-				{:else if $tabs == 'Completed'}
-					<CourseCompleted />
-				{:else if $tabs == 'Unlocked'}
-					<UnlockedCourses />
 				{/if}
+			{:else if $tabs == 'Completed'}
+				<CourseCompleted />
+			{:else if $tabs == 'Unlocked'}
+				<UnlockedCourses />
 			{/if}
 		{/if}
 	{/if}
