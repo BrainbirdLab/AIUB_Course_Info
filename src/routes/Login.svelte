@@ -92,6 +92,7 @@
 		} catch(e){
 			console.log(e);
 			errlog = true;
+			submitting = false;
 			logText = "Something went wrong";
 		}
 	}
