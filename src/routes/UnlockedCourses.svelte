@@ -14,10 +14,15 @@
             <div class="metadata">
                 <div class="credit">Credit: {courseInfo.credit}</div>
                 <div class="prerequisites">
-                    Prerequisite: 
+                    {#if courseInfo.prerequisites.length > 0}
+                    Prerequisite: [
                     {#each courseInfo.prerequisites as prerequisite}
                         <div class="prerequisite">{prerequisite}</div>
                     {/each}
+                    ]
+                    {:else}
+                    Prerequisite: None
+                    {/if}
                 </div>
             </div>
         </div>

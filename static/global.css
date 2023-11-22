@@ -107,4 +107,5 @@ select:-webkit-autofill:focus {
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  gap: 4px;
 }
