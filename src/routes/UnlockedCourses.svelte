@@ -15,11 +15,11 @@
                 <div class="credit">Credit: {courseInfo.credit}</div>
                 <div class="prerequisites">
                     {#if courseInfo.prerequisites.length > 0}
-                    Prerequisite: [
+                    Prerequisite: &#91;
                     {#each courseInfo.prerequisites as prerequisite}
                         <div class="prerequisite">{prerequisite}</div>
                     {/each}
-                    ]
+                    &#93;
                     {:else}
                     Prerequisite: None
                     {/if}
