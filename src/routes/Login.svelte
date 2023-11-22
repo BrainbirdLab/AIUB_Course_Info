@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
     import Logo from "./Logo.svelte";
     import { fly } from "svelte/transition";
-	import {showLogin, semesterData, User} from "$lib/store";
+	import {showLogin, semesterClassRoutine, User, unlockedCourses, completedCourses, semesterName } from "$lib/store";
 
 	let usernameLabel = "AIUB ID";
 	let passwordLabel = "Password";
@@ -51,29 +51,37 @@
 		logText = "Communicating with server...";
 
 		try{
-			const res = await fetch('/api', {
-				method: 'POST',
-				body: new URLSearchParams({
-					'UserName': username.value,
-					'Password': password.value
-				}),
-				headers: {
-					'Content-Type': 'application/x-www-form-urlencoded'
-				}
-			});
+			const res = await fetch('http://localhost:5000', {
+					method: 'POST',
+					body: new URLSearchParams({
+						'UserName': username.value,
+						'Password': password.value
+					}),
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				});
+				
 			submitting = false;
 			
 			const data = await res.json();
 
+			console.log(data);
 
 			if (res.ok){
 				errlog = false;
 				//console.log(data);
 				//logText = data.message;
-				semesterData.set(data.message.semesters);
-				User.set(data.message.username);
-				localStorage.setItem('classData', JSON.stringify(data.message.semesters));
-				localStorage.setItem('user', data.message.username);
+				User.set(data.result.user);
+				semesterClassRoutine.set(data.result.semesterClassRoutine);
+				unlockedCourses.set(data.result.unlockedCourses);
+				completedCourses.set(data.result.completedCourses);
+				semesterName.set(data.result.currentSemester);
+				localStorage.setItem('user', data.result.user);
+				localStorage.setItem('semesterClassRoutine', JSON.stringify(data.result.semesterClassRoutine));
+				localStorage.setItem('unlockedCourses', JSON.stringify(data.result.unlockedCourses));
+				localStorage.setItem('completedCourses', JSON.stringify(data.result.completedCourses));
+				localStorage.setItem('semester', data.result.currentSemester);
 				showLogin.set(false);
 			} else {
 				errlog = true;

@@ -33,6 +33,13 @@ body {
   justify-content: center;
 }
 
+button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  outline: none;
+}
+
 /* Change Autocomplete styles in Chrome*/
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -47,4 +54,54 @@ select:-webkit-autofill:focus {
   -webkit-text-fill-color: ghostwhite;
   -webkit-box-shadow: 0 0 0px 1000px var(--primary) inset;
   transition: background-color 5000s ease-in-out 0s;
+}
+
+.title {
+  font-weight: bold;
+  margin: 1.2rem;
+}
+
+.courses {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  padding: 20px;
+}
+
+.course {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background-color: rgb(21, 49, 68);
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  height: 200px;
+  width: 300px;
+}
+
+.name {
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.metadata {
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1rem;
+  color: var(--accent);
+}
+
+.prerequisites {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
 }

@@ -17,31 +17,61 @@ export type SemesterDataType = {
     };
 };
 
-const AvailableColors =  [
-  "#405b91",
-  "#1d8ad3",
-  "#123472",
-  "#d3251d",
-  "#009169",
-  "#008a91",
-  "#064491",
-  "#7d12df",
-  "#df1241",
-  "#4d6a59",
-];
+export type UnlockedCoursesType = {
+  [courseId: string]: {
+    course_name: string;
+    credit: number;
+    prerequisites: string[];
+    retake: boolean;
+  };
+};
 
-export const Colors = writable(AvailableColors);
+export type CompletedCoursesType = {
+  [courseId: string]: {
+    course_name: string;
+    grade: string;
+  };
+};
 
-export const ColorsMap = writable(new Map<string, string>());
-//ColorsMap.set('Free', '#000800aa');
-//ColorsMap.set('Break', '#077518');
-ColorsMap.update((map) => {
-  map.set('Free', '#000800aa');
-  map.set('Break', '#077518');
-  return map;
-});
+export type TABS = 'Completed' | 'Unlocked' | 'Routine';
+
+export const tabs: Writable<TABS> = writable('Routine');
 
 export const User = writable('');
-export const semester = writable('');
-export const semesterData: Writable<SemesterDataType> = writable({});
+export const semesterName = writable('');
+export const semesterClassRoutine: Writable<SemesterDataType> = writable({});
+export const completedCourses: Writable<CompletedCoursesType> = writable({});
+export const unlockedCourses: Writable<UnlockedCoursesType> = writable({});
 export const showLogin = writable(false);
+
+export const ICONS = {
+  'CSC' : '<i class="fa-solid fa-laptop-code"></i>',
+  'MAT' : '<i class="fa-solid fa-calculator"></i>',
+  'ENG' : '<i class="fa-solid fa-book"></i>',
+  'PHY' : '<i class="fa-solid fa-atom"></i>',
+  'CHEM' : '<i class="fa-solid fa-flask"></i>',
+  'BIO' : '<i class="fa-solid fa-microscope"></i>',
+  'ECO' : '<i class="fa-solid fa-money-bill"></i>',
+  'EEE' : '<i class="fa-solid fa-bolt"></i>',
+  'BBA' : '<i class="fa-solid fa-chart-bar"></i>',
+  'BAE' : '<i class="fa-solid fa-gears"></i>',
+  'BAS' : '<i class="fa-solid fa-earth-asia"></i>'
+}
+
+export function parseCourseId(courseId: string) {
+  return courseId.match(/[A-Z]+/)![0] as keyof typeof ICONS;
+}
+
+export function clearData(){
+  localStorage.removeItem('classData');
+  localStorage.removeItem('semester');
+  localStorage.removeItem('user');
+  localStorage.removeItem('completedCourses');
+  localStorage.removeItem('unlockedCourses');
+  completedCourses.set({});
+  unlockedCourses.set({});
+  semesterClassRoutine.set({});
+  semesterName.set('');
+  User.set('');
+  showLogin.set(true);
+}

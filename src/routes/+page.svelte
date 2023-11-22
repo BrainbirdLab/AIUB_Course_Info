@@ -2,50 +2,61 @@
 
 <script lang="ts">
 	import Login from "./Login.svelte";
-	import { showLogin, User, semesterData, semester, type SemesterDataType } from "$lib/store";
+	import { clearData, showLogin, User, semesterClassRoutine, semesterName, completedCourses, type SemesterDataType, unlockedCourses, tabs, type TABS } from "$lib/store";
     import { onMount } from "svelte";
 	import { fly } from "svelte/transition";
-    import Chart from "./Chart.svelte";
+    import ClassRoutine from "./ClassRoutine.svelte";
+    import CourseCompleted from "./CourseCompleted.svelte";
+	import UnlockedCourses from "./UnlockedCourses.svelte";
+	//localStorage.setItem('semesterClassRoutine', JSON.stringify(data));
 
-	$: classData = $semesterData[$semester];
-	//localStorage.setItem('classData', JSON.stringify(data));
-
-	let showSelectionPanel = true;
 	let loaded = false;
 
 	onMount(() => {
 
 		try{
-			const raw = localStorage.getItem('classData');
+			const raw = localStorage.getItem('semesterClassRoutine');
 
 			if (raw == null || raw == undefined || raw == '' || raw == '{}'){
-				localStorage.removeItem('classData');
+				localStorage.removeItem('semesterClassRoutine');
 				console.log("No data");
 				showLogin.set(true);
 				loaded = true;
 				return;
 			}
 
-			const sem = localStorage.getItem('semester');
-			if (sem == null || sem == undefined || sem == '' || sem == '{}'){
-				localStorage.removeItem('semester');
-				console.log("No semester");
-				showLogin.set(true);
-				loaded = true;
-				return;
-			}
+			const sem = localStorage.getItem('semester') as string;
 
-			semester.set(sem);
+			semesterName.set(sem);
 			
 			User.set(localStorage.getItem('user') || '');
 	
 			const data = JSON.parse(raw);
+
+			const rawCompletedCourses = localStorage.getItem('completedCourses');
+			const rawUnlockedCourses = localStorage.getItem('unlockedCourses');
+
+			const parsedCompletedCourses = rawCompletedCourses ? JSON.parse(rawCompletedCourses) : {};
+			const parsedUnlockedCourses = rawUnlockedCourses ? JSON.parse(rawUnlockedCourses) : {};
+
+			completedCourses.set(parsedCompletedCourses);
+			unlockedCourses.set(parsedUnlockedCourses);
+
+			//console.log("Completed Courses: " + parsedCompletedCourses);
+			//console.log("Unlocked Courses: " + parsedUnlockedCourses);
+
+			tabs.set(localStorage.getItem('tabs') as TABS || 'Routine');
+			localStorage.setItem('tabs', $tabs);
 	
 			if (data satisfies SemesterDataType) {
 				console.log("Data loaded from local storage");
-				semesterData.set(data);
+				//console.log(data);
+				//console.log("Semester: " + $semesterName);
+				//console.log("User: " + $User);
+				//console.log("Completed Courses: " + $completedCourses);
+				//console.log("Unlocked Courses: " + $unlockedCourses);
+				semesterClassRoutine.set(data);
 				showLogin.set(false);
-				showClasses();
 			} else {
 				console.log("Invalid data");
 				clearData();
@@ -58,17 +69,14 @@
 		}
 	});
 
-	function getDayNumber(day: string) {
-		const daysOfWeek = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-		return daysOfWeek.indexOf(day);
-	}
 
-
-	function handleSelection(node: HTMLElement){
-		node.onclick = (e) => {
-			console.log($semester);
-			if (e.target == node && $semester != ''){
-				showSelectionPanel = false;
+	function handleNav(node: HTMLElement){
+		node.onclick = (e: Event) => {
+			const target = e.target as HTMLElement;
+			if (target.classList.contains('navBtn')){
+				const id = target.id;
+				tabs.set(id.split('-')[1] as TABS);
+				localStorage.setItem('tabs', $tabs);
 			}
 		}
 
@@ -79,18 +87,28 @@
 		}
 	}
 
-	function clearData(){
-		localStorage.removeItem('classData');
-		localStorage.removeItem('semester');
-		localStorage.removeItem('user');
-		semesterData.set({});
-		semester.set('');
-		User.set('');
-		showLogin.set(true);
-	}
+	let showSettings = false;
 
-	function showClasses(){
-		showSelectionPanel = false;
+	function handleSettings(node: HTMLElement){
+		node.onclick = (e: Event) => {
+			const target = e.target as HTMLElement;
+			if (node == target){
+				showSettings = !showSettings;
+				return;
+			}
+
+			else if (target.classList.contains('clear')){
+				clearData();
+				showSettings = false;
+			}
+		}
+
+		return {
+			destroy(){
+				node.onclick = null;
+			}
+		}
+	
 	}
 
 </script>
@@ -101,189 +119,154 @@
 
 <div class="container">
 	{#if loaded}
-	{#if !$showLogin && showSelectionPanel}
-	<div class="selectionPanel" transition:fly={{y: 20, duration: 200}} use:handleSelection>
-		<div class="dropdownlist">
-			<div class="name">
-				<i class="fa-solid fa-user"></i> {$User}
-			</div>
-			<select bind:value={$semester} on:change={()=>{
-				localStorage.setItem('semester', $semester);
-				showSelectionPanel = false;
-			}}>
-				<option value="" selected disabled>Select Semester</option>
-				{#each Object.keys($semesterData) as sem, i}
-					<option value={sem}>{sem}</option>
-				{/each}
-			</select>
+		{#if $showLogin}
+		<Login />
+		{:else}
+			<button class="settings" on:click={()=>{showSettings = true;}}>
+				<i class="fa-solid fa-gear"></i>
+			</button>
+			<ul class="menu" use:handleNav>
+				<li class="navBtn" id="nav-Routine" class:shown="{$tabs == 'Routine'}">Class Routine</li>
+				<li class="navBtn" id="nav-Completed" class:shown="{$tabs == 'Completed'}">Completed Course</li>
+				<li class="navBtn" id="nav-Unlocked" class:shown="{$tabs == 'Unlocked'}">Unlocked Course</li>
+			</ul>
+			{#if $semesterName}
+				{#if $tabs == 'Routine'}
+					{#key $semesterName}
+						<ClassRoutine />
+					{/key}
+				{:else if $tabs == 'Completed'}
+					<CourseCompleted />
+				{:else if $tabs == 'Unlocked'}
+					<UnlockedCourses />
+				{/if}
+			{/if}
+		{/if}
+	{/if}
+
+	{#if showSettings}
+	<div class="wrapper" use:handleSettings transition:fly={{y:10, duration: 200}}>
+		<div class="settings-options">
+			<div class="title">Want to clear your data?</div>
 			<div class="btn-grp">
-				<button on:click={clearData} class="clear-data">Clear</button>
+				<button class="clear">Yes</button>
 			</div>
 		</div>
 	</div>
 	{/if}
-	{#if $showLogin}
-	<Login />
-	{:else}
-	<div class="charts">
-		{#if $semester}
-		<div class="header">
-			<div class="sem">
-			  <i class="fa-solid fa-tree"></i> {$semester} <button on:click={()=>{
-				showSelectionPanel = true;
-			  }}><i class="fa-solid fa-caret-down"></i></button>
-			</div>
-			<div class="user">
-			  <i class="fa-solid fa-user"></i> {$User}
-			</div>
-		</div>
-		{#key $semester}
-		{#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo]}
-		  {#if classInfo != null}
-			<Chart {classInfo} {day} />
-		  {/if}
-		{/each}
-		{/key}
-		{/if}
-	  </div>
-	{/if}
-	
-	{/if}
+
 </div>
 
-<style>
-	.charts {
+
+
+<style lang="scss">
+
+	.settings{
+		position: fixed;
+		top: 0;
+		right: 0;
+		padding: 10px;
+		height: 50px;
+		width: 50px;
 		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
 		align-items: center;
 		justify-content: center;
-		padding: 30px;
-		padding-top: 0;
-		gap: 40px;
+		z-index: 1;
+		font-size: 1.3rem;
+		color: var(--accent);
+		transition: 200ms ease-in-out;
+		cursor: pointer;
+		&:hover{
+			transform: rotate(90deg);
+			opacity: 0.8;
+		}
 	}
 
-	.selectionPanel{
+	.wrapper{
+		height: 100%;
+		width: 100%;
 		position: fixed;
 		top: 0;
 		left: 0;
-		width: 100%;
-		height: 100%;
-		z-index: 100;
+		z-index: 10;
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		backdrop-filter: blur(2px) brightness(0.8);
-		filter: drop-shadow(5px 5px 10px rgba(0, 0, 0, 0.492));
 	}
 
-	.dropdownlist{
+	.settings-options{
 		background: var(--light-dark);
+		padding: 10px;
 		border-radius: 10px;
+		height: 200px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		gap: 30px;
-		width: 350px;
-		padding: 30px 60px;
+		gap: 15px;
+
+		.btn-grp{
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			gap: 15px;
+		}
+
+		button{
+			border: none;
+			outline: none;
+			border-radius: 10px;
+			padding: 10px 15px;
+			color: ghostwhite;
+			background: var(--accent);
+			cursor: pointer;
+			&:hover{
+				filter: brightness(0.9);
+			}
+
+			&.clear{
+				background: red;
+			}
+		}
 	}
 
-	.btn-grp{
+	.menu{
 		display: flex;
-		flex-direction: row;
-		gap: 20px;
+		gap: 15px;
+		list-style: none;
+		color: var(--accent);
+		padding: 10px;
+		position: sticky;
+		top: 0;
+		background: var(--primary);
+		justify-content: center;
+		width: 100%;
+
+		li{
+			cursor: pointer;
+			&::after{
+				content: '';
+				display: block;
+				width: 100%;
+				height: 2px;
+				background: var(--accent);
+				transition: 200ms ease-in-out;
+				transform: scaleX(0);
+				filter: brightness(1);
+				transform-origin: center;
+			}
+
+			&:hover{
+				filter: brightness(1.2);
+			}
+		}
+
+		li.shown{
+			&::after{
+				transform: scaleX(1);
+			}
+		}
 	}
-
-	
-select{
-    width: 100%;
-    height: 35px;
-    background: rgb(26, 121, 209);
-    outline: none;
-    border: none;
-    border-radius: 5px;
-    color: aliceblue;
-    text-align: center;
-	cursor: pointer;
-  }
-
-  button{
-    padding: 10px 15px;
-    font-size: 0.7rem;
-    border: none;
-    border-radius: 10px;
-    background: rgb(26, 121, 209);
-    color: aliceblue;
-    cursor: pointer;
-  }
-  button:hover{
-      filter: brightness(0.95);
-  }
-
-  .clear-data{
-    background: rgb(226, 6, 6);
-  }
-
-  .dropdown-list {
-    width: 100%;
-    padding: 5px;
-    background: rgb(26, 121, 209);
-    color: white;
-    outline: none;
-    border: none;
-    border-radius: 5px;
-    text-align: center;
-  }
-
-  .button-group{
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-  }
-
-  .header{
-    position: sticky;
-    top: 0;
-    width: 100%;
-    padding: 10px;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-	background: var(--primary);
-    align-items: center;
-    justify-content: center;
-	font-size: 0.9rem;
-  }
-
-  .sem{
-    color: #10ffbd;
-  }
-
-  .sem button{
-    margin: 0;
-    padding: 2px 5px;
-    background: rgb(33 75 104);
-  }
-
-  .selection-container{
-    position: fixed;
-    top: 0;
-    left: 0;
-    background: #0d283ac7;
-    width: 100%;
-    height: 100%;
-    z-index: 100;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(2px);
-  }
-
-  .title.after-login{
-    color: #bdcddf;
-    font-size: 0.9rem;
-  }
 </style>

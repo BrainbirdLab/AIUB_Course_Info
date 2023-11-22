@@ -1,8 +1,11 @@
 <script lang="ts">
-    import { type Class, Colors, ColorsMap } from "$lib/store";
+    import type { Class } from "$lib/store";
     import { onMount } from "svelte";
 
     export let classInfo: Record<string, Class>;
+
+    export let AvailableColors: string[];
+    export let ColorsMap: Map<string, string>;
 
     export let day: string;
 
@@ -16,6 +19,7 @@
     let size = 0;
 
     onMount(() => {
+
         canvas.height = canvas.offsetHeight * 2;
         canvas.width = canvas.offsetWidth * 2;
 
@@ -61,13 +65,9 @@
     }
 
     function chooseColor() {
-        const index = Math.floor(Math.random() * ($Colors.length - 1));
-        const color = $Colors[index];
+        const index = Math.floor(Math.random() * (AvailableColors.length - 1));
+        const color = AvailableColors[index];
         //AvailableColors.splice(index, 1);
-        Colors.update((colors) => {
-            colors.splice(index, 1);
-            return colors;
-        });
         return color;
     }
 
@@ -78,15 +78,11 @@
 
         //console.log(classInfo.course_name);
 
-        if (!$ColorsMap.has(classInfo.course_name)) {
-            //ColorsMap.set(classInfo.course_name, chooseColor());
-            ColorsMap.update((colors) => {
-                colors.set(classInfo.course_name, chooseColor());
-                return colors;
-            });
+        if (!ColorsMap.has(classInfo.course_name)) {
+            ColorsMap.set(classInfo.course_name, chooseColor());
         }
 
-        const color = $ColorsMap.get(classInfo.course_name) as string;
+        const color = ColorsMap.get(classInfo.course_name) as string;
 
         //draw an arc from 0deg to 90deg from the center of the circle to make a slice of the pie
         const startAngle = ((start / 2) * Math.PI) / 180 - Math.PI / 2;
