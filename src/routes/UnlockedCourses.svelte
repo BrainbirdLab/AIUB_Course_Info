@@ -5,7 +5,7 @@
 </script>
 
 
-<div class="title" in:fly={{x: 10}}>Courses you can take next Semester ({Object.keys($unlockedCourses).length})</div>
+<div class="title" in:fly={{x: 10}}>{Object.keys($unlockedCourses).length} Courses are ready to take</div>
 <div class="courses">
     {#if $unlockedCourses}
     {#each Object.entries($unlockedCourses) as [courseId, courseInfo], i}

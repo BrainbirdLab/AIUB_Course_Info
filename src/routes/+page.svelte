@@ -112,7 +112,29 @@
 <div class="container">
 	{#if loaded}
 		{#if $showLogin}
+
+		<div class="moto">
+			AIUB Solution
+			<div class="sub">
+				- A simple solution for your AIUB portal
+			</div>
+		</div>
+
 		<Login />
+
+		<!-- Say concent before loging in with their password -->
+		<div class="concent">
+			<div class="t">
+				Please read the following carefully!
+			</div>
+			<ul>
+				<li>We use your User Id and Password only for getting your data from the portal.</li>
+				<li>We do not store your User Id and Password anywhere.</li>
+				<li>After completing the session all data is stored on your device.</li>
+				<li>Use this site with your concent</li>
+			</ul>
+		</div>
+
 		{:else}
 			<ul class="menu" use:handleNav>
 				<li class="navBtn" id="nav-Routine" class:shown="{$tabs == 'Routine'}">Class Routine</li>
@@ -134,24 +156,87 @@
 				<UnlockedCourses />
 			{/if}
 		{/if}
-	{/if}
-
-	{#if showSettings}
-	<div class="wrapper" use:handleSettings transition:fly={{y:10, duration: 200}}>
-		<div class="settings-options">
-			<div class="title">Want to clear your data?</div>
-			<div class="btn-grp">
-				<button class="clear">Yes</button>
+		
+		{#if showSettings}
+		<div class="wrapper" use:handleSettings transition:fly={{y:10, duration: 200}}>
+			<div class="settings-options">
+				<div class="title">Want to clear your data?</div>
+				<div class="btn-grp">
+					<button class="clear">Yes</button>
+				</div>
 			</div>
 		</div>
-	</div>
-	{/if}
+		{/if}
 
+		<footer class="footer">
+			<div class="dev">Developed by <a href="https://itsfuad.vercel.app">Fuad</a></div>
+			<div> - </div>
+			<div class="source"><a href="https://github.com/itsfuad/AIUB_Solution">Source code <i class="fa-solid fa-code"></i></a></div>
+		</footer>
+	{/if}
 </div>
 
 
-
 <style lang="scss">
+
+	.container{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 30px;
+
+		.moto{
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.2rem;
+			.sub{
+				font-size: 0.7rem;
+				color: var(--label-color)
+			}
+		}
+	}
+
+	.footer{
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		padding: 10px;
+		gap: 5px;
+		font-size: 0.6rem;
+		*{
+			padding: 0;
+			color: ghostwhite;
+		}
+
+		a{
+			text-decoration: underline;
+		}
+	}
+
+	.concent{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		color: var(--label-color);
+		padding: 20px;
+
+		.t{
+			color: ghostwhite;
+		}
+		ul{
+			li{
+				margin: 5px 0;
+				font-size: 0.7rem;
+			}
+		
+		}
+	}
 
 	.settings{
 		padding: 20px;

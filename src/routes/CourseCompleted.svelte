@@ -3,7 +3,7 @@
     import { fly } from 'svelte/transition';
 </script>
 
-<div class="title" in:fly={{x: 10}}>Courses you have completed ({Object.keys($completedCourses).length})</div>
+<div class="title" in:fly={{x: 10}}>{Object.keys($completedCourses).length} Courses complete</div>
 <div class="courses">
     {#if $completedCourses}
     {#each Object.entries($completedCourses) as [courseId, courseInfo], i}

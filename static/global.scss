@@ -63,7 +63,6 @@ select:-webkit-autofill:focus {
 }
 
 .title{
-    font-weight: bold;
     margin: 1.2rem;
     text-align: center;
     font-size: 1.3rem;
@@ -94,6 +93,14 @@ select:-webkit-autofill:focus {
 .name {
     font-size: 0.9rem;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    i{
+        font-size: 1.5rem;
+    }
 }
 
 .metadata {

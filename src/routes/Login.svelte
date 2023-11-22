@@ -152,26 +152,28 @@
 
 
 {#if loaded}
-<form on:submit|preventDefault={handleForm} class="form" in:fly={{y: 20, delay: 200}}>
-	<div class="title" in:fly|global={{x: -10, delay: 200}}>
-		<Logo />
-		Login with your AIUB ID
-	</div>
-	{#if !submitting}
-	<div class="formfield" in:fly|global={{y: 10, delay: 250}}>
-		<input on:input={()=> {usernameLabel = 'AIUB ID'}}  placeholder="dd" type="text" bind:this={username} id="userid" name="UserName" />
-		<label for="UserName">{@html usernameLabel}</label>
-	</div>
-	<div class="formfield" in:fly|global={{y: 10, delay: 300}}>
-		<input on:input={() => {passwordLabel = 'Password'}} placeholder="99" type="password" bind:this={password} id="password" name="Password" />
-		<label for="Password">{@html passwordLabel}</label>
-	</div>
-	<button type="submit" in:fly|global={{y: 10, delay: 350}}>Login <i class="fa-solid fa-sign-in"></i></button>
-	{/if}
-	{#if logText}
-	<div class="log" class:submitting={submitting} class:error={errlog}>{logText}</div>
-	{/if}
-</form>
+<div class="formWrapper">
+	<form on:submit|preventDefault={handleForm} class="form" in:fly={{y: 20, delay: 200}}>
+		<div class="title" in:fly|global={{x: -10, delay: 200}}>
+			<Logo />
+			Login with your AIUB ID
+		</div>
+		{#if !submitting}
+		<div class="formfield" in:fly|global={{y: 10, delay: 250}}>
+			<input on:input={()=> {usernameLabel = 'AIUB ID'}}  placeholder="dd" type="text" bind:this={username} id="userid" name="UserName" />
+			<label for="UserName">{@html usernameLabel}</label>
+		</div>
+		<div class="formfield" in:fly|global={{y: 10, delay: 300}}>
+			<input on:input={() => {passwordLabel = 'Password'}} placeholder="99" type="password" bind:this={password} id="password" name="Password" />
+			<label for="Password">{@html passwordLabel}</label>
+		</div>
+		<button type="submit" in:fly|global={{y: 10, delay: 350}}>Login <i class="fa-solid fa-sign-in"></i></button>
+		{/if}
+		{#if logText}
+		<div class="log" class:submitting={submitting} class:error={errlog}>{logText}</div>
+		{/if}
+	</form>
+</div>
 {/if}
 
 
@@ -185,7 +187,19 @@
 		}
 	}
 
+	.formWrapper{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		max-width: 90vw;
+		width: 350px;
+		height: 400px;
+		position: relative;
+	}
+
 	.form{
+		position: relative;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -194,10 +208,9 @@
 		border: 2px solid var(--light-dark);
 		border-radius: 10px;
 		padding: 40px 20px;
-		max-width: 90vw;
-		width: 400px;
-		height: 400px;
-		transition: 200ms ease-in-out;
+		width: 100%;
+		height: 100%;
+		transition: 150ms ease-in-out;
 
 		&:has(.submitting){
 			height: 200px;
