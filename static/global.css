@@ -59,6 +59,8 @@ select:-webkit-autofill:focus {
 .title {
   font-weight: bold;
   margin: 1.2rem;
+  text-align: center;
+  font-size: 1.3rem;
 }
 
 .courses {
