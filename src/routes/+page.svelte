@@ -114,13 +114,13 @@
 		{#if $showLogin}
 		<Login />
 		{:else}
-			<button class="settings" on:click={()=>{showSettings = true;}}>
-				<i class="fa-solid fa-gear"></i>
-			</button>
 			<ul class="menu" use:handleNav>
 				<li class="navBtn" id="nav-Routine" class:shown="{$tabs == 'Routine'}">Class Routine</li>
 				<li class="navBtn" id="nav-Completed" class:shown="{$tabs == 'Completed'}">Completed Course</li>
 				<li class="navBtn" id="nav-Unlocked" class:shown="{$tabs == 'Unlocked'}">Unlocked Course</li>
+				<button class="settings" on:click={()=>{showSettings = true;}}>
+					<i class="fa-solid fa-gear"></i>
+				</button>
 			</ul>
 			{#if $tabs == 'Routine'}
 				{#if $semesterName}
@@ -154,16 +154,10 @@
 <style lang="scss">
 
 	.settings{
-		position: fixed;
-		top: 0;
-		right: 0;
-		padding: 10px;
-		height: 50px;
-		width: 50px;
+		padding: 20px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		z-index: 1;
 		font-size: 1.3rem;
 		color: var(--accent);
 		transition: 200ms ease-in-out;
@@ -234,6 +228,7 @@
 		top: 0;
 		background: var(--primary);
 		justify-content: center;
+		align-items: center;
 		width: 100%;
 
 		li{
