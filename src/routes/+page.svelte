@@ -191,6 +191,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 15px;
+		filter: drop-shadow(2px 5px 10px black);
 
 		.btn-grp{
 			display: flex;
