@@ -51,7 +51,7 @@
 		logText = "Communicating with server...";
 
 		try{
-			const res = await fetch('http://localhost:5000', {
+			const res = await fetch('https://aiubproxyserver.onrender.com', {
 					method: 'POST',
 					body: new URLSearchParams({
 						'UserName': username.value,
