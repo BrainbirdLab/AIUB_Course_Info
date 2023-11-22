@@ -106,7 +106,7 @@
 </script>
 
 <svelte:head>
-	<title>AIUB Course Solution</title>
+	<title>AIUB Solution</title>
 </svelte:head>
 
 <div class="container">

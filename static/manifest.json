@@ -1,12 +1,12 @@
 {
-  "name": "Class Scheudle Diagram",
-  "short_name": "Class Scheudle",
+  "name": "AIUB Solution",
+  "short_name": "AIUB Solution",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#111d2a",
   "theme_color": "#111d2a",
   "scope": "./",
-  "description": "This app allows users to easily keep track of their class schedule and visualize it as a pie chart.",
+  "description": "This app allows users to easily keep track of their class schedule, Completed courses, Available courses for next semester and visualize it.",
   "icons": [
       {
         "src": "icons/manifest-icon-192.maskable.png",
