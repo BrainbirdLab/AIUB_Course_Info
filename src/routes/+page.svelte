@@ -225,11 +225,14 @@
 		justify-content: center;
 		color: var(--label-color);
 		padding: 20px;
-
 		.t{
 			color: ghostwhite;
+                        font-size: 0.8rem;
 		}
 		ul{
+                        
+                        padding: 15px;
+                        font-size: 0.7rem;
 			li{
 				margin: 5px 0;
 				font-size: 0.7rem;
