@@ -233,6 +233,7 @@
 
 		li{
 			cursor: pointer;
+			text-align: center;
 			&::after{
 				content: '';
 				display: block;
