@@ -48,7 +48,42 @@
 		submitting = true;
 
 		errlog = false;
-		logText = "Communicating with server...";
+
+		logText = "Fire up...";
+
+		function* loadingText(): Generator<string>{
+			while (submitting) {
+				yield "Communicating with server.";
+				yield "Communicating with server..";
+				yield "Communicating with server...";
+				yield "Communicating with server";
+				yield "Communicating with server.";
+				yield "Communicating with server..";
+				yield "Communicating with server...";
+				yield "Scrapping takes time";
+				yield "Scrapping takes time.";
+				yield "Scrapping takes time..";
+				yield "Scrapping takes time...";
+				yield "Have patience";
+				yield "Have patience.";
+				yield "Have patience..";
+				yield "Have patience...";
+				yield "We are almost there";
+				yield "We are almost there.";
+				yield "We are almost there..";
+				yield "We are almost there...";
+				yield "It's worth the wait";
+				yield "It's worth the wait.";
+				yield "It's worth the wait..";
+				yield "It's worth the wait...";
+			}
+		}
+
+		let intervalId = null;
+        const val = loadingText();
+		intervalId = setInterval(() => {
+			logText = val.next().value;
+		}, 1000);
 
 		try{
 			const res = await fetch('https://aiubproxyserver.onrender.com', {
@@ -65,6 +100,12 @@
 			submitting = false;
 			
 			const data = await res.json();
+
+			//clear timeout
+			if (intervalId !== null) {
+				clearInterval(intervalId);
+				intervalId = null;
+			}
 
 			if (res.ok){
 				errlog = false;
@@ -85,13 +126,20 @@
 				errlog = true;
 				//console.log(data);
 				logText = data.message;
+
 			}
 
 		} catch(e){
 			console.log(e);
 			errlog = true;
 			submitting = false;
-			logText = "Something went wrong";
+			logText = "Something went wrong. Resolve issues on you portal.";
+
+			//clear timeout
+			if (intervalId !== null) {
+				clearInterval(intervalId);
+				intervalId = null;
+			}
 		}
 	}
 
