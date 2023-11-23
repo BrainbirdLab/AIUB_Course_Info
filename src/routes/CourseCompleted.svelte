@@ -10,7 +10,9 @@
         <div class="course" in:fly|global={{y: 10, delay: 50 * (i+1)}}>
             <div class="name"> {@html ICONS[parseCourseId(courseId)] || ''} {courseInfo.course_name}</div>
             <div class="metadata">
-                <div class="credit">Course ID: {courseId}</div>
+                <div class="credit">Credit: {courseInfo.credit || '-'}</div>
+                <div class="grade">Grade: {courseInfo.grade}</div>
+                <div class="courseid">Course ID: {courseId}</div>
             </div>
         </div>
     {/each}

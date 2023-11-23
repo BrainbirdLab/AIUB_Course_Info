@@ -142,9 +142,9 @@
 			</div>
 
 			<ul class="menu" use:handleNav>
-				<li class="navBtn" id="nav-Routine" class:shown="{$tabs == 'Routine'}">Class Routine</li>
-				<li class="navBtn" id="nav-Completed" class:shown="{$tabs == 'Completed'}">Completed Course</li>
-				<li class="navBtn" id="nav-Unlocked" class:shown="{$tabs == 'Unlocked'}">Unlocked Course</li>
+				<li class="navBtn" id="nav-Routine" class:shown="{$tabs == 'Routine'}"><i class="fa-regular fa-calendar-days"></i></li>
+				<li class="navBtn" id="nav-Completed" class:shown="{$tabs == 'Completed'}"><i class="fa-solid fa-circle-check"></i></li>
+				<li class="navBtn" id="nav-Unlocked" class:shown="{$tabs == 'Unlocked'}"><i class="fa-solid fa-unlock"></i></li>
 				<button class="settings" on:click={()=>{showSettings = true;}}>
 					<i class="fa-solid fa-trash"></i>
 				</button>
@@ -215,6 +215,11 @@
 		}
 	}
 
+	i{
+		font-size: 1.5rem;
+		pointer-events: none;
+	}
+
 	.footer{
 		display: flex;
 		flex-direction: row;
@@ -232,6 +237,9 @@
 		a{
 			text-decoration: underline;
 		}
+		i{
+			font-size: 0.7rem;
+		}
 	}
 
 	.concent{
@@ -243,12 +251,11 @@
 		padding: 20px;
 		.t{
 			color: ghostwhite;
-                        font-size: 0.8rem;
+            font-size: 0.8rem;
 		}
-		ul{
-                        
-                        padding: 15px;
-                        font-size: 0.7rem;
+		ul{  
+			padding: 15px;
+			font-size: 0.7rem;
 			li{
 				margin: 5px 0;
 				font-size: 0.7rem;
@@ -258,18 +265,15 @@
 	}
 
 	.settings{
-		padding: 10px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		font-size: 1.3rem;
 		color: var(--accent);
 		transition: 200ms ease-in-out;
 		cursor: pointer;
 		&:hover{
 			opacity: 0.8;
 		}
-
 		.fa-trash{
 			color: red;
 		}
@@ -333,6 +337,7 @@
 		color: var(--accent);
 		position: sticky;
 		top: 0;
+		padding: 10px;
 		background: var(--primary);
 		justify-content: center;
 		align-items: center;
@@ -341,6 +346,7 @@
 		li{
 			cursor: pointer;
 			text-align: center;
+			padding: 5px;
 			&::after{
 				content: '';
 				display: block;

@@ -76,8 +76,12 @@
 </div>
 {/if}
 
+
 {#if mounted}
-<div class="header" in:fly={{x: 10}}>
+
+<div class="title" in:fly={{x: 10}}>Clock diagram of your class</div>
+
+<div class="header" in:fly={{x: -10}}>
     <div class="sem">
     <i class="fa-solid fa-tree"></i> Semester: {$semesterName} <button on:click={()=>{
         showSelectionPanel = true;

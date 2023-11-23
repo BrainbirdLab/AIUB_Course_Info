@@ -30,6 +30,7 @@ export type CompletedCoursesType = {
   [courseId: string]: {
     course_name: string;
     grade: string;
+    credit: number;
   };
 };
 
