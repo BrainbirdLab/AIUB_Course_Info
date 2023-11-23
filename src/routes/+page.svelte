@@ -136,12 +136,17 @@
 		</div>
 
 		{:else}
+
+			<div class="user">
+				<i class="fa-solid fa-user"></i> Hello, {$User}!
+			</div>
+
 			<ul class="menu" use:handleNav>
 				<li class="navBtn" id="nav-Routine" class:shown="{$tabs == 'Routine'}">Class Routine</li>
 				<li class="navBtn" id="nav-Completed" class:shown="{$tabs == 'Completed'}">Completed Course</li>
 				<li class="navBtn" id="nav-Unlocked" class:shown="{$tabs == 'Unlocked'}">Unlocked Course</li>
 				<button class="settings" on:click={()=>{showSettings = true;}}>
-					<i class="fa-solid fa-gear"></i>
+					<i class="fa-solid fa-trash"></i>
 				</button>
 			</ul>
 			{#if $tabs == 'Routine'}
@@ -178,6 +183,16 @@
 
 
 <style lang="scss">
+
+	.user{
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		font-size: 1.2rem;
+		padding: 50px 0 0 0;
+		gap: 10px;
+	}
 
 	.container{
 		display: flex;
@@ -239,7 +254,7 @@
 	}
 
 	.settings{
-		padding: 20px;
+		padding: 10px;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -248,8 +263,11 @@
 		transition: 200ms ease-in-out;
 		cursor: pointer;
 		&:hover{
-			transform: rotate(90deg);
 			opacity: 0.8;
+		}
+
+		.fa-trash{
+			color: red;
 		}
 	}
 
@@ -309,7 +327,6 @@
 		gap: 15px;
 		list-style: none;
 		color: var(--accent);
-		padding: 10px;
 		position: sticky;
 		top: 0;
 		background: var(--primary);

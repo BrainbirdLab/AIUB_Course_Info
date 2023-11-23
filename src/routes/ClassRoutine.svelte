@@ -1,9 +1,10 @@
 <script lang="ts">
 
-    import { clearData, showLogin, semesterClassRoutine, semesterName, User} from '$lib/store';
+    import { showLogin, semesterClassRoutine, semesterName } from '$lib/store';
     import { fly } from 'svelte/transition';
 
     import Chart from './Chart.svelte';
+    import { onMount } from 'svelte';
 
     $: classData = $semesterClassRoutine[$semesterName];
 
@@ -16,7 +17,7 @@
         "#008a91",
         "#064491",
         "#7d12df",
-        "#df1241",
+        "#4caf50",
         "#4d6a59",
     ];
 
@@ -46,6 +47,12 @@
 		}
 	}
 
+    let mounted = false;
+
+    onMount(() => {
+        mounted = true;
+    });
+
 </script>
 
 {#if !$showLogin && showSelectionPanel}
@@ -69,16 +76,15 @@
 </div>
 {/if}
 
-<div class="header">
+{#if mounted}
+<div class="header" in:fly={{x: 10}}>
     <div class="sem">
-    <i class="fa-solid fa-tree"></i> {$semesterName} <button on:click={()=>{
+    <i class="fa-solid fa-tree"></i> Semester: {$semesterName} <button on:click={()=>{
         showSelectionPanel = true;
     }}><i class="fa-solid fa-caret-down"></i></button>
     </div>
-    <div class="user">
-    <i class="fa-solid fa-user"></i> {$User}
-    </div>
 </div>
+{/if}
 
 <div class="wrapper">
     {#if classData}

@@ -23,7 +23,7 @@
         canvas.height = canvas.offsetHeight * 2;
         canvas.width = canvas.offsetWidth * 2;
 
-        size = canvas.height * 0.35;
+        size = canvas.height * 0.30;
 
         if (today == day) {
             canvas.style.border = "3px solid var(--accent)";
@@ -39,7 +39,7 @@
         ctx.fill();
         ctx.closePath();
 
-        fillCircleText(day + ' ' + day + ' ' + day + ' ' + day + ' ' + day + ' ' + day + ' ', canvas.width / 2, canvas.height / 2, size + size*0.2, 0);
+        fillCircleText(day + ' ' + day + ' ' + day + ' ' + day + ' ' + day + ' ' + day + ' ', canvas.width / 2, canvas.height / 2, size + size*0.25, 0);
         
         Object.entries(classInfo).forEach(([time, cls]) => {
             drawPart(time, cls);
@@ -67,7 +67,7 @@
     function chooseColor() {
         const index = Math.floor(Math.random() * (AvailableColors.length - 1));
         const color = AvailableColors[index];
-        //AvailableColors.splice(index, 1);
+        AvailableColors.splice(index, 1);
         return color;
     }
 
@@ -110,7 +110,7 @@
         const textY = yCord + (radius*RANGE * Math.sin((startAngle + endAngle) * 0.5));
 
         drawText(`${course} [${section}]`, textX, textY - size/10, "white");
-        drawText(type, textX, textY, "white");
+        drawText(`${type} - ${classInfo.room}`, textX, textY, "white");
         drawText(time, textX, textY + size/10, "white");
     }
 
@@ -166,6 +166,6 @@
         box-shadow: 3px 3px 5px #00000030;
         max-width: 90vw;
         width: 500px;
-        aspect-ratio: 1/0.7;
+        aspect-ratio: 1/0.9;
     }
 </style>

@@ -53,6 +53,7 @@ export const ICONS = {
   'BIO' : '<i class="fa-solid fa-microscope"></i>',
   'ECO' : '<i class="fa-solid fa-money-bill"></i>',
   'EEE' : '<i class="fa-solid fa-bolt"></i>',
+  'COE' : '<i class="fa-solid fa-microchip"></i>',
   'BBA' : '<i class="fa-solid fa-chart-bar"></i>',
   'BAE' : '<i class="fa-solid fa-gears"></i>',
   'BAS' : '<i class="fa-solid fa-earth-asia"></i>'
