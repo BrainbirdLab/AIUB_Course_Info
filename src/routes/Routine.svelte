@@ -1,7 +1,7 @@
 <script lang="ts">
     import { parseCourseId, semesterClassRoutine, semesterName, CourseIconColors } from "$lib/store";
     import { onDestroy, onMount } from "svelte";
-    import { fly } from "svelte/transition";
+    import { fade, fly } from "svelte/transition";
 
     let mounted = false;
 
@@ -67,10 +67,10 @@
 
 
 {#if mounted}
-<div class="wrapper">
+<div class="wrapper" in:fly={{x: -10}}>
     {#if classData}
-    <div class="title" transition:fly|global={{x: 20, duration: 200}}>Your class routine</div>
-    <div class="dropdownlist" transition:fly|global={{y: 20, duration: 200}}>
+    <div class="title" in:fly|global={{x: 20, duration: 200}}>Your class routine</div>
+    <div class="dropdownlist" in:fly|global={{y: 20, duration: 200}}>
         <select bind:value={$semesterName} on:change={()=>{
             localStorage.setItem('semester', $semesterName);
             console.log($semesterName);
@@ -90,32 +90,30 @@
             {#each [0, 1, 2, 3, 4, 5, 6, 7, 8] as i}
                 <div class="time">
                     <!-- Have am/pm -->
-                    <div class="text">
+                    <div class="text" in:fly|global={{y: 50*i+1}}>
                         {i == 0 ? '8:00 am' : i == 1 ? '9:30 am' : i == 2 ? '11:00 am' : i == 3 ? '12:30 pm' : i == 4 ? '2:00 pm' : i == 5 ? '3:30 pm' : i == 6 ? '5:00 pm' : i == 7 ? '6:30 pm' : i == 8 ? '8:00 pm' : '9:30 pm'}
                     </div>
                 </div>
             {/each}
         </div>
         <div class="routine">
-            {#if classData}
-                {#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo], i}
-                    {#if classInfo != null}
-                    <div class="day" in:fly|global={{y: 10, delay: 50*(i+1)}}>
-                        <div class="dayname">{day}</div>
-                        {#each Object.entries(classInfo).sort((a, b) => timeParser(a[0])[0] - timeParser(b[0])[0]) as [time, Class], i}
-                            <div class="class" in:fly={{y: 10, delay: 50*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(timeParser(time)[1] - timeParser(time)[0])}px; top: {timeParser(time)[0] - 480}px;">
-                                <div class="classContent">
-                                    <div class="coursename">{shorten(Class.course_name)} [{Class.section}]</div>
-                                    <div class="type">Type: {Class.type}</div>
-                                    <div class="room">Room: {Class.room}</div>
-                                    <div class="time">{time}</div>
-                                </div>
+            {#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo], i}
+                {#if classInfo != null}
+                <div class="day" in:fly|global={{y: 10, delay: 50*(i+1)}}>
+                    <div class="dayname">{day}</div>
+                    {#each Object.entries(classInfo).sort((a, b) => timeParser(a[0])[0] - timeParser(b[0])[0]) as [time, Class], i}
+                        <div class="class" in:fly|global={{y: 10, delay: 50*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(timeParser(time)[1] - timeParser(time)[0])}px; top: {timeParser(time)[0] - 480}px;">
+                            <div class="classContent">
+                                <div class="coursename">{shorten(Class.course_name)} [{Class.section}]</div>
+                                <div class="type">Type: {Class.type}</div>
+                                <div class="room">Room: {Class.room}</div>
+                                <div class="time">{time}</div>
                             </div>
-                        {/each}
-                    </div>
-                    {/if}
-                {/each}
-            {/if}
+                        </div>
+                    {/each}
+                </div>
+                {/if}
+            {/each}
         </div>
     </div>
     {/if}
