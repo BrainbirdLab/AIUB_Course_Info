@@ -9,7 +9,7 @@
 <div class="courses">
     {#if $unlockedCourses}
     {#each Object.entries($unlockedCourses) as [courseId, courseInfo], i}
-        <div class="course" in:fly|global={{y: 10, delay: 50*(i+1)}} style="background: {CourseIconColors[parseCourseId(courseId)].COLOR};">
+        <div class="course" in:fly|global={{y: 10, delay: 50*(i+1)}} style="background: {CourseIconColors[parseCourseId(courseId)].COLOR || 'var(--light-dark)'};">
             <div class="name"> {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseInfo.course_name} <div class="retake">{#if courseInfo.retake}(Retake){/if}</div></div>
             <div class="metadata">
                 <div class="credit">Credit: {courseInfo.credit}</div>

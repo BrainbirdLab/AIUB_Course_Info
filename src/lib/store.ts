@@ -103,6 +103,10 @@ export const CourseIconColors = {
     'ICON' : '<i class="fa-solid fa-chart-bar"></i>',
     'COLOR' : '#4ed51f'
   },
+  'MBA' : {
+    'ICON' : '<i class="fa-solid fa-chart-bar"></i>',
+    'COLOR' : '#4ed51f'
+  },
   'BAE' : {
     'ICON' : '<i class="fa-solid fa-gears"></i>',
     'COLOR' : '#f8b747'
@@ -110,7 +114,47 @@ export const CourseIconColors = {
   'BAS' : {
     'ICON' : '<i class="fa-solid fa-earth-asia"></i>',
     'COLOR' : '#93c42e'
-  }
+  },
+  'MGT' : {
+    'ICON' : '<i class="fa-solid fa-briefcase"></i>',
+    'COLOR' : '#00d45f4'
+  },
+  'MIS' : {
+    'ICON' : '<i class="fa-solid fa-server"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'F' : {
+    'ICON' : '<i class="fa-solid fa-money-bill"></i>',
+    'COLOR' : '#4ed51f'
+  },
+  'HUM' : {
+    'ICON' : '<i class="fa-solid fa-book"></i>',
+    'COLOR' : '#d32636'
+  },
+  'FIN': {
+    'ICON' : '<i class="fa-solid fa-money-bill"></i>',
+    'COLOR' : '#4ed51f'
+  },
+  'MPH' : {
+    'ICON' : '<i class="fa-solid fa-user-md"></i>',
+    'COLOR' : '#d32636'
+  },
+  'OSCM' : {
+    'ICON' : '<i class="fa-solid fa-truck"></i>',
+    'COLOR' : '#ff5722'
+  }, 
+  'MMC' : {
+    'ICON' : '<i class="fa-solid fa-clapperboard"></i>',
+    'COLOR' : '#d32636'
+  }, 
+  'Major' : {
+    'ICON' : '<i class="fa-solid fa-graduation-cap"></i>',
+    'COLOR' : '#4caf50'
+  }, 
+  'MKT' : {
+    'ICON' : '<i class="fa-solid fa-bullhorn"></i>',
+    'COLOR' : '#ff5722'
+  },
 }
 
 export function parseCourseId(courseId: string) {

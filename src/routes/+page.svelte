@@ -285,7 +285,7 @@
 		position: fixed;
 		top: 0;
 		left: 0;
-		z-index: 10;
+		z-index: 30;
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -342,7 +342,7 @@
 		justify-content: center;
 		align-items: center;
 		width: 100%;
-
+		z-index: 20;
 		li{
 			cursor: pointer;
 			text-align: center;
