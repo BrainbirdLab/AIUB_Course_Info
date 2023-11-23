@@ -45,6 +45,7 @@ export const completedCourses: Writable<CompletedCoursesType> = writable({});
 export const unlockedCourses: Writable<UnlockedCoursesType> = writable({});
 export const showLogin = writable(false);
 
+/*
 export const ICONS = {
   'CSC' : '<i class="fa-solid fa-laptop-code"></i>',
   'MAT' : '<i class="fa-solid fa-calculator"></i>',
@@ -59,9 +60,61 @@ export const ICONS = {
   'BAE' : '<i class="fa-solid fa-gears"></i>',
   'BAS' : '<i class="fa-solid fa-earth-asia"></i>'
 }
+*/
+
+export const CourseIconColors = {
+  'CSC' : {
+    'ICON' : '<i class="fa-solid fa-laptop-code"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'MAT' : {
+    'ICON' : '<i class="fa-solid fa-calculator"></i>',
+    'COLOR' : '#2f4f4f'
+  },
+  'ENG' : {
+    'ICON' : '<i class="fa-solid fa-book"></i>',
+    'COLOR' : '#d32636'
+  },
+  'PHY' : {
+    'ICON' : '<i class="fa-solid fa-atom"></i>',
+    'COLOR' : '#413ab7'
+  },
+  'CHEM' : {
+    'ICON' : '<i class="fa-solid fa-flask"></i>',
+    'COLOR' : '#7c0f9e'
+  },
+  'BIO' : {
+    'ICON' : '<i class="fa-solid fa-microscope"></i>',
+    'COLOR' : '#2196f3'
+  },
+  'ECO' : {
+    'ICON' : '<i class="fa-solid fa-money-bill"></i>',
+    'COLOR' : '#03a9f4'
+  },
+  'EEE' : {
+    'ICON' : '<i class="fa-solid fa-bolt"></i>',
+    'COLOR' : '#ff8426'
+  },
+  'COE' : {
+    'ICON' : '<i class="fa-solid fa-microchip"></i>',
+    'COLOR' : '#f89347'
+  },
+  'BBA' : {
+    'ICON' : '<i class="fa-solid fa-chart-bar"></i>',
+    'COLOR' : '#4ed51f'
+  },
+  'BAE' : {
+    'ICON' : '<i class="fa-solid fa-gears"></i>',
+    'COLOR' : '#f8b747'
+  },
+  'BAS' : {
+    'ICON' : '<i class="fa-solid fa-earth-asia"></i>',
+    'COLOR' : '#93c42e'
+  }
+}
 
 export function parseCourseId(courseId: string) {
-  return courseId.match(/[A-Z]+/)![0] as keyof typeof ICONS;
+  return courseId.match(/[A-Z]+/)![0] as keyof typeof CourseIconColors;
 }
 
 export function clearData(){
@@ -76,4 +129,12 @@ export function clearData(){
   semesterName.set('');
   User.set('');
   showLogin.set(true);
+}
+
+export function titleCase(str: string) {
+  const temp = str.toLowerCase().split(' ');
+  for (var i = 0; i < temp.length; i++) {
+      temp[i] = temp[i].charAt(0).toUpperCase() + temp[i].slice(1);
+  }
+  return temp.join(' ');
 }

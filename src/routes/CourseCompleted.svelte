@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { completedCourses, ICONS, parseCourseId } from '$lib/store';
+    import { completedCourses, CourseIconColors, parseCourseId } from '$lib/store';
     import { fly } from 'svelte/transition';
 </script>
 
@@ -7,8 +7,8 @@
 <div class="courses">
     {#if $completedCourses}
     {#each Object.entries($completedCourses) as [courseId, courseInfo], i}
-        <div class="course" in:fly|global={{y: 10, delay: 50 * (i+1)}}>
-            <div class="name"> {@html ICONS[parseCourseId(courseId)] || ''} {courseInfo.course_name}</div>
+        <div class="course" in:fly|global={{y: 10, delay: 50 * (i+1)}} style="background: {CourseIconColors[parseCourseId(courseId)].COLOR};">
+            <div class="name"> {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseInfo.course_name}</div>
             <div class="metadata">
                 <div class="credit">Credit: {courseInfo.credit || '-'}</div>
                 <div class="grade">Grade: {courseInfo.grade}</div>

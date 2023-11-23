@@ -93,6 +93,7 @@ select:-webkit-autofill:focus {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding: 15px;
 }
 .name i {
   font-size: 1.5rem;
@@ -106,7 +107,7 @@ select:-webkit-autofill:focus {
   flex-direction: row;
   flex-wrap: wrap;
   gap: 1rem;
-  color: var(--accent);
+  color: ghostwhite;
 }
 
 .prerequisites {
