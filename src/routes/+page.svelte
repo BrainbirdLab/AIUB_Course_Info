@@ -8,6 +8,7 @@
     import ClassRoutine from "./ClassRoutine.svelte";
     import CourseCompleted from "./CourseCompleted.svelte";
 	import UnlockedCourses from "./UnlockedCourses.svelte";
+    import Routine from "./Routine.svelte";
 	//localStorage.setItem('semesterClassRoutine', JSON.stringify(data));
 
 	let loaded = false;
@@ -151,9 +152,7 @@
 			</ul>
 			{#if $tabs == 'Routine'}
 				{#if $semesterName}
-					{#key $semesterName}
-						<ClassRoutine />
-					{/key}
+					<Routine/>
 				{/if}
 			{:else if $tabs == 'Completed'}
 				<CourseCompleted />

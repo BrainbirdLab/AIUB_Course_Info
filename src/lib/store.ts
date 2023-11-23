@@ -2,7 +2,7 @@ import { writable, type Writable } from 'svelte/store';
 
 
 export type Class = {
-    course_id: string;
+    class_id: string;
     course_name: string;
     room: string;
     section: string;

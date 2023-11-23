@@ -23,10 +23,10 @@
 
     let ColorsMap = new Map<string, string>();
 
-    let showSelectionPanel = false;
-
+    
     ColorsMap.set('Free', '#000800aa');
     ColorsMap.set('Break', '#077518');
+    let showSelectionPanel = false;
 
     function getDayNumber(day: string) {
 		const daysOfWeek = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
