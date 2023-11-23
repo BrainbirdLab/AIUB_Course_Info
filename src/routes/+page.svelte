@@ -189,7 +189,7 @@
 		align-items: center;
 		justify-content: center;
 		font-size: 1.2rem;
-		padding: 50px 0 0 0;
+		padding: 50px 10px 10px 10px;
 		gap: 10px;
 	}
 
@@ -199,6 +199,7 @@
 		align-items: center;
 		justify-content: center;
 		gap: 30px;
+		width: 100%;
 
 		.moto{
 			display: flex;
@@ -331,6 +332,10 @@
 
 	.menu{
 		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
 		gap: 15px;
 		list-style: none;
 		color: var(--accent);

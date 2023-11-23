@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { parseCourseId, semesterClassRoutine, semesterName, CourseIconColors } from "$lib/store";
-    import { onDestroy, onMount } from "svelte";
-    import { fade, fly } from "svelte/transition";
+    import { semesterClassRoutine, semesterName, getColors } from "$lib/store";
+    import { onMount } from "svelte";
+    import { fly } from "svelte/transition";
 
     let mounted = false;
 
@@ -23,38 +23,26 @@
         return [startMinutes, endMinutes];
     }
 
-    let AvailableColors =  [
-        "#405b91",
-        "#1d8ad3",
-        "#123472",
-        "#d3251d",
-        "#009169",
-        "#008a91",
-        "#064491",
-        "#7d12df",
-        "#4caf50",
-        "#4d6a59",
-    ];
-
-    let copyColors = new Array(...AvailableColors);
+    let AvailableColors = getColors();
 
     let ColorsMap = new Map<string, string>();
 
     function chooseColor(classId: string) {
-
         if (ColorsMap.has(classId)) {
             return ColorsMap.get(classId);
         } else {
             const color = AvailableColors[Math.floor(Math.random() * AvailableColors.length)];
             ColorsMap.set(classId, color);
             //remove the color from the available colors
-            AvailableColors = AvailableColors.filter((c) => c != color);
+            AvailableColors.splice(AvailableColors.indexOf(color), 1);
             return color;
         }
     }
 
     function shorten(str: string){
         if (str.length > 15) {
+            //ignore words inside brackets like [lab] [Fst/Fe] [FASS] 
+            str = str.replace(/\[.*?\]/g, '');
             return str.split(' ').map((word) => word.toLowerCase() != 'lab' ? word.toLowerCase().replace('to', '')[0] : ` ${word}`).join('').toUpperCase();
         }
         return str;
@@ -63,6 +51,18 @@
     onMount(() => {
         mounted = true;
     });
+
+
+    function handleSelect(node: HTMLSelectElement){
+        node.onchange = () => {
+            localStorage.setItem('semester', node.value);
+            //reset the available colors
+            AvailableColors = getColors();
+            ColorsMap = new Map<string, string>();
+            semesterName.set(node.value);
+        }
+    }
+
 </script>
 
 
@@ -71,12 +71,7 @@
     {#if classData}
     <div class="title" in:fly|global={{x: 10, duration: 200, delay: 100}}>Your class routine</div>
     <div class="dropdownlist" in:fly|global={{y: 20, duration: 200}}>
-        <select bind:value={$semesterName} on:change={()=>{
-            localStorage.setItem('semester', $semesterName);
-            console.log($semesterName);
-            //reset the available colors
-            AvailableColors = new Array(...copyColors);
-        }}>
+        <select use:handleSelect >
             <option value="" selected disabled>Select Semester</option>
             {#if $semesterClassRoutine}
                 {#each Object.keys($semesterClassRoutine) as sem, i}
@@ -96,13 +91,14 @@
                 </div>
             {/each}
         </div>
+        {#key $semesterName}
         <div class="routine">
             {#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo], i}
                 {#if classInfo != null}
                 <div class="day" in:fly|global={{y: 10, delay: 50*(i+1)}}>
                     <div class="dayname">{day}</div>
                     {#each Object.entries(classInfo).sort((a, b) => timeParser(a[0])[0] - timeParser(b[0])[0]) as [time, Class], i}
-                        <div class="class" in:fly|global={{y: 10, delay: 50*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(timeParser(time)[1] - timeParser(time)[0])}px; top: {timeParser(time)[0] - 480}px;">
+                        <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(timeParser(time)[1] - timeParser(time)[0])}px; top: {timeParser(time)[0] - 480}px;">
                             <div class="classContent">
                                 <div class="coursename">{shorten(Class.course_name)} [{Class.section}]</div>
                                 <div class="type">Type: {Class.type}</div>
@@ -113,8 +109,9 @@
                     {/each}
                 </div>
                 {/if}
-            {/each}
-        </div>
+                {/each}
+            </div>
+        {/key}
     </div>
     {/if}
 </div>
@@ -126,27 +123,28 @@
         display: flex;
         gap: 10px;
         flex-direction: column;
-        flex-wrap: wrap;
         justify-content: center;
         align-items: center;
-        padding: 5px;
+        padding: 15px;
+        max-width: 100vw;
     }
     
     .classRoutine{
         display: flex;
         gap: 5px;
         flex-direction: row;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: flex-start;
-        padding-top: 30px;
+        padding: 60px 0px 20px 60px;
         height: 100%;
         position: relative;
+        width: 100%;
 
         .routine{
             display: flex;
             gap: 5px;
             flex-direction: row;
-            justify-content: center;
+            justify-content: flex-start;
             align-items: flex-start;
             padding: 0px;
             height: 100%;
@@ -160,15 +158,15 @@
             .day{
                 position: relative;
                 overflow: visible;
-                width: 100px;
+                width: 120px;
                 z-index: 10;
                 height: 810px;
                 .dayname{
                     text-align: center;
-                    width: 100%;
+                    width: 120px;
                     font-weight: bold;
                     padding: 1px;
-                    position: absolute;
+                    position: relative;
                     top: -28px;
                 }
             }
@@ -189,7 +187,7 @@
             align-items: flex-start;
             justify-content: flex-start;
             position: relative;
-            width: 90%;
+            width: 100%;
             height: 100%;
             height: 90px;
             overflow: visible;
@@ -197,7 +195,7 @@
             border-top: 1px solid var(--label-color);
             .text{
                 position: relative;
-                left: -70px;
+                left: 0px;
             }
         }
     }
@@ -214,7 +212,7 @@
         gap: 5px;
         padding: 10px;
         border-radius: 10px;
-        width: 100px;
+        width: 100%;
         font-size: 0.7rem;
         position: absolute;
 
@@ -224,6 +222,7 @@
             align-items: flex-start;
             justify-content: flex-start;
             overflow: scroll;
+            word-wrap: break-word;
         }
 
         .time{
@@ -238,7 +237,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
-		width: 350px;
+		width: 100%;
         gap: 20px;
 	}
 

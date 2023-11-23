@@ -62,6 +62,23 @@ export const ICONS = {
 }
 */
 
+const AvailableColors =  [
+  "#405b91",
+  "#1d8ad3",
+  "#123472",
+  "#d3251d",
+  "#009169",
+  "#008a91",
+  "#064491",
+  "#7d12df",
+  "#4caf50",
+  "#4d6a59",
+];
+
+export function getColors(){
+  return new Array(...AvailableColors);
+}
+
 export const CourseIconColors = {
   'CSC' : {
     'ICON' : '<i class="fa-solid fa-laptop-code"></i>',
