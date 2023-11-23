@@ -98,19 +98,22 @@
                 <div class="day" in:fly|global={{y: 10, delay: 50*(i+1)}}>
                     <div class="dayname">{day}</div>
                     {#each Object.entries(classInfo).sort((a, b) => timeParser(a[0])[0] - timeParser(b[0])[0]) as [time, Class], i}
-                        <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(timeParser(time)[1] - timeParser(time)[0])}px; top: {timeParser(time)[0] - 480}px;">
-                            <div class="classContent">
-                                <div class="coursename">{shorten(Class.course_name)} [{Class.section}]</div>
-                                <div class="type">Type: {Class.type}</div>
-                                <div class="room">Room: {Class.room}</div>
-                                <div class="time">{time}</div>
-                            </div>
+                    <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(timeParser(time)[1] - timeParser(time)[0])}px; top: {timeParser(time)[0] - 480}px;">
+                        <div class="toolTip">
+                            {Class.course_name}
                         </div>
+                        <div class="classContent">
+                            <div class="coursename">{shorten(Class.course_name)} [{Class.section}]</div>
+                            <div class="type">Type: {Class.type}</div>
+                            <div class="room">Room: {Class.room}</div>
+                            <div class="time">{time}</div>
+                        </div>
+                    </div>
                     {/each}
                 </div>
                 {/if}
-                {/each}
-            </div>
+            {/each}
+        </div>
         {/key}
     </div>
     {/if}
@@ -118,7 +121,6 @@
 {/if}
 
 <style lang="scss">
-
     .wrapper{
         display: flex;
         gap: 10px;
@@ -204,6 +206,31 @@
         display: none;
     }
 
+    .toolTip{
+        position: absolute;
+        background: rgba(0, 0, 0, 0.7803921569);
+        padding: 5px;
+        border-radius: 5px;
+        width: 100%;
+        font-size: 0.7rem;
+        top: -10px;
+        z-index: 50;
+        transition: 200ms ease-in-out;
+        visibility: hidden;
+        opacity: 0;
+
+        &::after{
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: #000000c7 transparent transparent transparent;
+        }
+    }
+
     .class{
         display: flex;
         flex-direction: column;
@@ -215,6 +242,7 @@
         width: 100%;
         font-size: 0.7rem;
         position: absolute;
+        cursor: pointer;
 
         .classContent{
             display: flex;
@@ -227,6 +255,14 @@
 
         .time{
             font-size: 0.5rem;
+        }
+
+        &:hover{
+            .toolTip{
+                visibility: visible;
+                opacity: 1;
+                top: -20px;
+            }
         }
     }
 
