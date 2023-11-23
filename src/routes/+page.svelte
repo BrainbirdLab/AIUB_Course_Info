@@ -113,9 +113,9 @@
 	{#if loaded}
 		{#if $showLogin}
 
-		<div class="moto">
+		<div class="moto" in:fly|global={{y: -10}}>
 			AIUB Solution
-			<div class="sub">
+			<div class="sub" in:fly|global={{x: 10}}>
 				- A simple solution for your AIUB portal
 			</div>
 		</div>
@@ -123,11 +123,11 @@
 		<Login />
 
 		<!-- Say concent before loging in with their password -->
-		<div class="concent">
+		<div class="concent" in:fly|global={{y: -10}}>
 			<div class="t">
 				Please read the following carefully!
 			</div>
-			<ul>
+			<ul in:fly|global={{x: -10, delay: 200}}>
 				<li>We use your User Id and Password only for getting your data from the portal.</li>
 				<li>We do not store your User Id and Password anywhere.</li>
 				<li>After completing the session all data is stored on your device.</li>
@@ -207,6 +207,7 @@
 			align-items: center;
 			justify-content: center;
 			font-size: 1.2rem;
+			padding: 50px 0 0 0;
 			.sub{
 				font-size: 0.7rem;
 				color: var(--label-color)
