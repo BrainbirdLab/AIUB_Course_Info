@@ -6,6 +6,7 @@
 
 
 <div class="title" in:fly={{x: 10}}>{Object.keys($unlockedCourses).length} Courses are ready to take</div>
+<div class="note">Note: You may have to complete certain credits to take some courses</div>
 <div class="courses">
     {#if $unlockedCourses}
     {#each Object.entries($unlockedCourses) as [courseId, courseInfo], i}
@@ -29,3 +30,9 @@
     {/each}
     {/if}
 </div>
+
+<style>
+    .note{
+        font-size: 0.7rem;
+    }
+</style>
