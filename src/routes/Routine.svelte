@@ -16,11 +16,16 @@
 
     let range: Array<number> = [];
 
+    //Day name today. Eg: Saturday
+    const today = new Date().toLocaleString('en-us', {  weekday: 'long' });
+
+    let longestTimeEnd = 0;
+
     $: {
         classData = $semesterClassRoutine[$semesterName];
         //find the longest time end and make the range accordingly
         if (classData) {
-            let longestTimeEnd = 0;
+            longestTimeEnd = 0;
             for (const day in classData) {
                 for (const time in classData[day]) {
                     const timeEnd = timeParser(time)[1];
@@ -31,7 +36,7 @@
             }
             longestTimeEnd = Math.ceil((longestTimeEnd - 480) / 90) + 1;
             range = Array.from(Array(longestTimeEnd).keys());
-            //console.log(longestTimeEnd);
+            console.log(longestTimeEnd);
         }
     }
 
@@ -124,7 +129,7 @@
             <div class="routine">
             {#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo], i}
                 {#if classInfo != null}
-                <div class="day" in:fly|global={{y: 10, delay: 50*(i+1)}}>
+                <div class="day" style="height: {(longestTimeEnd * 90) - 90}px;" class:focused={day == today} in:fly|global={{y: 10, delay: 50*(i+1)}}>
                     <div class="dayname">{day}</div>
                     {#each Object.entries(classInfo) as [time, Class], i}
                     <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(timeParser(time)[1] - timeParser(time)[0])}px; top: {timeParser(time)[0] - 480}px;">
@@ -190,7 +195,11 @@
                 overflow: visible;
                 width: 120px;
                 z-index: 10;
-                height: 810px;
+
+                &.focused{
+                    background: #ffffff14;
+                    border-radius: 5px;
+                }
                 .dayname{
                     text-align: center;
                     width: 120px;

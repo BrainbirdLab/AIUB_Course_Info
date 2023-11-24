@@ -80,19 +80,19 @@
 		}
 	}
 
-	let showSettings = false;
+	let showLogout = false;
 
-	function handleSettings(node: HTMLElement){
+	function handleLogout(node: HTMLElement){
 		node.onclick = (e: Event) => {
 			const target = e.target as HTMLElement;
 			if (node == target){
-				showSettings = !showSettings;
+				showLogout = !showLogout;
 				return;
 			}
 
 			else if (target.classList.contains('clear')){
 				clearData();
-				showSettings = false;
+				showLogout = false;
 			}
 		}
 
@@ -143,11 +143,26 @@
 			</div>
 
 			<ul class="menu" use:handleNav>
-				<li class="navBtn" id="nav-Routine" class:shown="{$tabs == 'Routine'}"><i class="fa-regular fa-calendar-days"></i></li>
-				<li class="navBtn" id="nav-Completed" class:shown="{$tabs == 'Completed'}"><i class="fa-solid fa-circle-check"></i></li>
-				<li class="navBtn" id="nav-Unlocked" class:shown="{$tabs == 'Unlocked'}"><i class="fa-solid fa-unlock"></i></li>
-				<button class="settings" on:click={()=>{showSettings = true;}}>
-					<i class="fa-solid fa-trash"></i>
+				<li class="navBtn" id="nav-Routine" class:shown="{$tabs == 'Routine'}">
+					<div class="content">
+						Routine <i class="fa-regular fa-calendar-days"></i>
+					</div>
+				</li>
+				<li class="navBtn" id="nav-Completed" class:shown="{$tabs == 'Completed'}">
+					<div class="content">
+						Completed <i class="fa-solid fa-circle-check"></i>
+					</div>
+				</li>
+				<li class="navBtn" id="nav-Unlocked" class:shown="{$tabs == 'Unlocked'}">
+					<div class="content">
+						Unlocked <i class="fa-solid fa-unlock"></i>
+					</div>
+				</li>
+				<button class="logout" on:click={()=>{showLogout = true;}}>
+					<div class="content">
+						Logout 
+						<i class="fa-solid fa-door-open"></i>
+					</div>
 				</button>
 			</ul>
 			{#if $tabs == 'Routine'}
@@ -161,10 +176,10 @@
 			{/if}
 		{/if}
 		
-		{#if showSettings}
-		<div class="wrapper" use:handleSettings transition:fly={{y:10, duration: 200}}>
+		{#if showLogout}
+		<div class="wrapper" use:handleLogout transition:fly={{y:10, duration: 200}}>
 			<div class="settings-options">
-				<div class="title">Want to clear your data?</div>
+				<div class="title">Are you sure?</div>
 				<div class="btn-grp">
 					<button class="clear">Yes</button>
 				</div>
@@ -264,18 +279,17 @@
 		}
 	}
 
-	.settings{
+	.logout{
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		color: var(--accent);
 		transition: 200ms ease-in-out;
 		cursor: pointer;
+		color: red;
+		font-size: 0.7rem;
 		&:hover{
 			opacity: 0.8;
-		}
-		.fa-trash{
-			color: red;
 		}
 	}
 
@@ -350,7 +364,22 @@
 		li{
 			cursor: pointer;
 			text-align: center;
-			padding: 5px;
+			font-size: 0.7rem;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 5px;
+
+			.content{
+				display: flex;
+				flex-direction: row;
+				align-items: flex-end;
+				justify-content: center;
+				gap: 5px;
+				pointer-events: none;
+			}
+
 			&::after{
 				content: '';
 				display: block;
@@ -362,11 +391,12 @@
 				filter: brightness(1);
 				transform-origin: center;
 			}
-
+	
 			&:hover{
 				filter: brightness(1.2);
 			}
 		}
+		
 
 		li.shown{
 			&::after{
