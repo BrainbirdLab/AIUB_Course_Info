@@ -5,7 +5,36 @@
 
     let mounted = false;
 
-    let classData = $semesterClassRoutine[$semesterName];
+    let classData: {[day: string]: {
+        [timeslot: string]: {
+            class_id: string,
+            course_name: string,
+            section: string,
+            room: string
+        }
+    }} = $semesterClassRoutine[$semesterName];
+
+    let range: Array<number> = [];
+
+    $: {
+        classData = $semesterClassRoutine[$semesterName];
+        //find the longest time end and make the range accordingly
+        if (classData) {
+            let longestTimeEnd = 0;
+            for (const day in classData) {
+                for (const time in classData[day]) {
+                    const timeEnd = timeParser(time)[1];
+                    if (timeEnd > longestTimeEnd) {
+                        longestTimeEnd = timeEnd;
+                    }
+                }
+            }
+            longestTimeEnd = Math.ceil((longestTimeEnd - 480) / 90) + 1;
+            range = Array.from(Array(longestTimeEnd).keys());
+            //console.log(longestTimeEnd);
+        }
+    }
+
 
     function getDayNumber(day: string) {
 		const daysOfWeek = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
@@ -55,7 +84,6 @@
 
     function handleSelect(node: HTMLSelectElement){
         node.onchange = () => {
-            classData = $semesterClassRoutine[node.value];
             localStorage.setItem('semester', node.value);
             //reset the available colors
             AvailableColors = getColors();
@@ -84,7 +112,7 @@
     <div class="classRoutine" out:fade={{duration: 50, delay: 0}}>
         {#key $semesterName}
         <div class="timeline">
-            {#each [0, 1, 2, 3, 4, 5, 6, 7, 8] as i}
+            {#each range as i}
             <div class="time">
                 <!-- Have am/pm -->
                     <div class="text" in:fly|global={{y: 10, delay: 50*(i+1)}}>
