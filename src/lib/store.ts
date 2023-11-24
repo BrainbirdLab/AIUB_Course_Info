@@ -134,7 +134,7 @@ export const CourseIconColors = {
   },
   'MGT' : {
     'ICON' : '<i class="fa-solid fa-briefcase"></i>',
-    'COLOR' : '#00d45f4'
+    'COLOR' : '#00d45f'
   },
   'MIS' : {
     'ICON' : '<i class="fa-solid fa-server"></i>',
