@@ -96,7 +96,7 @@
 				return;
 			}
 
-			else if (target.classList.contains('clearData')){
+			else if (target.id == 'clearData'){
 				clearData();
 				showOptions = false;
 			}
