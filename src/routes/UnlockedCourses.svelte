@@ -34,5 +34,8 @@
 <style>
     .note{
         font-size: 0.7rem;
+        text-align: center;
+        padding: 10px;
+        color: tomato;
     }
 </style>

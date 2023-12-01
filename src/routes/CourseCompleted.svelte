@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { completedCourses, CourseIconColors, parseCourseId } from '$lib/store';
+    import { completedCourses, CourseIconColors, parseCourseId, showGrade } from '$lib/store';
     import { fly } from 'svelte/transition';
 </script>
 
@@ -11,7 +11,13 @@
             <div class="name"> {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseInfo.course_name}</div>
             <div class="metadata">
                 <div class="credit">Credit: {courseInfo.credit || '-'}</div>
-                <div class="grade">Grade: {courseInfo.grade}</div>
+                <div class="grade">Grade:
+                    {#if $showGrade} 
+                    {courseInfo.grade}
+                    {:else}
+                    😭
+                    {/if}
+                </div>
                 <div class="courseid">Course ID: {courseId}</div>
             </div>
         </div>

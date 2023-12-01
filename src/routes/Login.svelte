@@ -76,6 +76,22 @@
 				yield "It's worth the wait.";
 				yield "It's worth the wait..";
 				yield "It's worth the wait...";
+				yield "Grab a cup of coffee";
+				yield "Grab a cup of coffee.";
+				yield "Grab a cup of coffee..";
+				yield "Grab a cup of coffee...";
+				yield "Yeah, it's taking time";
+				yield "Yeah, it's taking time.";
+				yield "Yeah, it's taking time..";
+				yield "Yeah, it's taking time...";
+				yield "Wooh! you have a lot of data";
+				yield "Wooh! you have a lot of data.";
+				yield "Wooh! you have a lot of data..";
+				yield "Wooh! you have a lot of data...";
+				yield "We are almost done";
+				yield "We are almost done.";
+				yield "We are almost done..";
+				yield "We are almost done...";
 			}
 		}
 
@@ -86,7 +102,7 @@
 		}, 1000);
 
 		try{
-			const res = await fetch('https://aiubproxyserver.onrender.com', {
+			const res = await fetch('http://localhost:5000', {
 					method: 'POST',
 					body: new URLSearchParams({
 						'UserName': username.value,

@@ -44,6 +44,7 @@ export const semesterClassRoutine: Writable<SemesterDataType> = writable({});
 export const completedCourses: Writable<CompletedCoursesType> = writable({});
 export const unlockedCourses: Writable<UnlockedCoursesType> = writable({});
 export const showLogin = writable(false);
+export const showGrade = writable(false);
 
 /*
 export const ICONS = {

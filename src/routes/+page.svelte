@@ -2,10 +2,9 @@
 
 <script lang="ts">
 	import Login from "./Login.svelte";
-	import { clearData, showLogin, User, semesterClassRoutine, semesterName, completedCourses, type SemesterDataType, unlockedCourses, tabs, type TABS } from "$lib/store";
-    import { onMount } from "svelte";
+	import { showGrade, clearData, showLogin, User, semesterClassRoutine, semesterName, completedCourses, type SemesterDataType, unlockedCourses, tabs, type TABS } from "$lib/store";
+    import { onMount, tick } from "svelte";
 	import { fly } from "svelte/transition";
-    import ClassRoutine from "./ClassRoutine.svelte";
     import CourseCompleted from "./CourseCompleted.svelte";
 	import UnlockedCourses from "./UnlockedCourses.svelte";
     import Routine from "./Routine.svelte";
@@ -45,6 +44,13 @@
 
 			tabs.set(localStorage.getItem('tabs') as TABS || 'Routine');
 			localStorage.setItem('tabs', $tabs);
+
+			const gradeshow = localStorage.getItem('showGrade') as string;
+			if (gradeshow == 'true'){
+				showGrade.set(true);
+			} else {
+				showGrade.set(false);
+			}
 	
 			if (data satisfies SemesterDataType) {
 				console.log("Data loaded from local storage");
@@ -80,19 +86,24 @@
 		}
 	}
 
-	let showLogout = false;
+	let showOptions = false;
 
-	function handleLogout(node: HTMLElement){
+	function handleOptions(node: HTMLElement){
 		node.onclick = (e: Event) => {
 			const target = e.target as HTMLElement;
 			if (node == target){
-				showLogout = !showLogout;
+				showOptions = !showOptions;
 				return;
 			}
 
-			else if (target.classList.contains('clear')){
+			else if (target.classList.contains('clearData')){
 				clearData();
-				showLogout = false;
+				showOptions = false;
+			}
+
+			else if (target.id == 'showGrade'){
+				const value = (target as HTMLInputElement).checked;
+				localStorage.setItem('showGrade', value.toString());
 			}
 		}
 
@@ -158,10 +169,10 @@
 						Unlocked <i class="fa-solid fa-unlock"></i>
 					</div>
 				</li>
-				<button class="logout" on:click={()=>{showLogout = true;}}>
+				<button class="options" on:click={()=>{showOptions = true;}}>
 					<div class="content">
-						Logout 
-						<i class="fa-solid fa-door-open"></i>
+						Options
+						<i class="fa-solid fa-wrench"></i>
 					</div>
 				</button>
 			</ul>
@@ -176,12 +187,28 @@
 			{/if}
 		{/if}
 		
-		{#if showLogout}
-		<div class="wrapper" use:handleLogout transition:fly={{y:10, duration: 200}}>
+		{#if showOptions}
+		<div class="wrapper" use:handleOptions transition:fly={{y:10, duration: 200}}>
 			<div class="settings-options">
-				<div class="title">Are you sure?</div>
-				<div class="btn-grp">
-					<button class="clear">Yes</button>
+				<div class="title-text">
+					Options <i class="fa-solid fa-gear"></i>
+				</div>
+                <div class="subsettings">
+                    <!-- Enable/disable button sounds -->
+                    <div class="field-checkers"  transition:fly|global={{y: 20, delay: 20}}>
+                        <input
+                            type="checkbox"
+                            id="showGrade"
+							bind:checked={$showGrade}
+                        />
+                        <label for="showGrade">
+                            <div class="textContainer">Show grades</div>
+                            <span class="toggleButton" />
+                        </label>
+                    </div>
+				</div>
+				<div class="subsettings" transition:fly|global={{y: 20, delay: 100}}>
+					<button id="clearData">Clear Data</button>
 				</div>
 			</div>
 		</div>
@@ -197,6 +224,54 @@
 
 
 <style lang="scss">
+
+	.toggleButton {
+		position: relative;
+		width: 40px;
+		height: 20px;
+		background: tomato;
+		display: flex;
+		border-radius: 25px;
+		transition: 300ms ease-in-out;
+		&::after {
+			content: "";
+			position: absolute;
+			height: 20px;
+			width: 20px;
+			border-radius: 50px;
+			background: white;
+			top: 0;
+			left: 0;
+			transition: 300ms ease-in-out;
+			transform: translateX(0px);
+		}
+	}
+
+	.title-text{
+		font-size: 1.2rem;
+		padding: 10px;
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		color: var(--accent);
+	}
+
+	input {
+		cursor: pointer;
+		display: none;
+		&:checked ~ label .toggleButton {
+			background: rgb(0, 149, 255);
+			&::after {
+				transform: translateX(20px);
+			}
+		}
+	}
+
+	#clearData{
+		background: red;
+	}
 
 	.user{
 		display: flex;
@@ -279,18 +354,8 @@
 		}
 	}
 
-	.logout{
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: var(--accent);
-		transition: 200ms ease-in-out;
-		cursor: pointer;
-		color: red;
-		font-size: 0.7rem;
-		&:hover{
-			opacity: 0.8;
-		}
+	.options{
+		color: tomato;
 	}
 
 	.wrapper{
@@ -306,11 +371,52 @@
 		backdrop-filter: blur(2px) brightness(0.8);
 	}
 
+
+	.subsettings{
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.field-checkers {
+		display: flex;
+		position: relative;
+		cursor: pointer;
+		user-select: none;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		gap: 5px;
+		padding: 10px;
+		padding: 5px 10px;
+		width: 100%;
+		border-radius: 10px;
+		label{
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			gap: 5px;
+			width: 100%;
+			cursor: pointer;
+			padding: 10px;
+			border-radius: 10px;
+
+			&:hover{
+				background: var(--hover-light-dark);
+			}
+		}
+	}
+
 	.settings-options{
 		background: var(--light-dark);
 		padding: 10px;
 		border-radius: 10px;
-		height: 200px;
+		//height: 200px;
+		width: 250px;
+		padding-bottom: 20px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
