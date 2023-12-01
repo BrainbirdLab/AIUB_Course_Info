@@ -248,14 +248,17 @@
 	}
 
 	.title-text{
-		font-size: 1.2rem;
-		padding: 10px;
+		font-size: 1rem;
+		font-weight: bold;
+		padding: 10px 0 5px 0;
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+		width: 100%;
 		justify-content: center;
 		gap: 10px;
 		color: var(--accent);
+		border-bottom: 2px solid;
 	}
 
 	input {
