@@ -268,12 +268,14 @@
 
 			<div class="log">
 				{#if $reloadStatus == 'loading' || $reloadStatus == 'success'}
+				<div class="content" transition:fly={{y: 10}}>
 					{$reloadLog}
-					{#if $reloadStatus == 'loading'}
-					<i class="fa-solid fa-rotate fa-spin"></i>
-					{:else if $reloadStatus == 'success'}
-					<i class="fa-solid fa-check"></i>
-					{/if}
+						{#if $reloadStatus == 'loading'}
+						<i class="fa-solid fa-rotate fa-spin"></i>
+						{:else if $reloadStatus == 'success'}
+						<i class="fa-solid fa-check"></i>
+						{/if}
+					</div>
 				{/if}
 			</div>
 
