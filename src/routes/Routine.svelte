@@ -36,7 +36,7 @@
             }
             longestTimeEnd = Math.ceil((longestTimeEnd - 480) / 90) + 1;
             range = Array.from(Array(longestTimeEnd).keys());
-            console.log(longestTimeEnd);
+            //console.log(longestTimeEnd);
         }
     }
 

@@ -180,11 +180,7 @@ export function parseCourseId(courseId: string) {
 }
 
 export function clearData(){
-  localStorage.removeItem('semesterClassRoutine');
-  localStorage.removeItem('semester');
-  localStorage.removeItem('user');
-  localStorage.removeItem('completedCourses');
-  localStorage.removeItem('unlockedCourses');
+  localStorage.clear();
   completedCourses.set({});
   unlockedCourses.set({});
   semesterClassRoutine.set({});

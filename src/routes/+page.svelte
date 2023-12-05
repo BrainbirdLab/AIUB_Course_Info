@@ -101,6 +101,11 @@
 				showOptions = false;
 			}
 
+			else if (target.id == 'reloadData'){
+				reloadData();
+				showOptions = false;
+			}
+
 			else if (target.id == 'showGrade'){
 				const value = (target as HTMLInputElement).checked;
 				localStorage.setItem('showGrade', value.toString());
@@ -113,6 +118,69 @@
 			}
 		}
 	
+	}
+
+	let log = '';
+	let reloadStatus = '';
+
+	async function reloadData(){
+		const UserName = localStorage.getItem('UserName');
+		const Password = localStorage.getItem('Password');
+		if (!UserName || !Password){
+			console.log("No user name or password");
+			log = "Credentials not found. Please login again";
+			reloadStatus = 'error';
+			return;
+		}
+
+		log = "Reloading data";
+		reloadStatus = 'loading';
+
+		try{
+			//https://aiubproxyserver.onrender.com/
+			const res = await fetch('https://aiubproxyserver.onrender.com', {
+					method: 'POST',
+					body: new URLSearchParams({
+						'UserName': UserName,
+						'Password': Password
+					}),
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded'
+					}
+				});
+			
+			const data = await res.json();
+
+			if (res.ok){
+				reloadStatus = '';
+				//console.log(data);
+				//logText = data.message;
+				User.set(data.result.user);
+				semesterClassRoutine.set(data.result.semesterClassRoutine);
+				unlockedCourses.set(data.result.unlockedCourses);
+				completedCourses.set(data.result.completedCourses);
+				semesterName.set(data.result.currentSemester);
+				localStorage.setItem('user', data.result.user);
+				localStorage.setItem('semesterClassRoutine', JSON.stringify(data.result.semesterClassRoutine));
+				localStorage.setItem('unlockedCourses', JSON.stringify(data.result.unlockedCourses));
+				localStorage.setItem('completedCourses', JSON.stringify(data.result.completedCourses));
+				localStorage.setItem('semester', data.result.currentSemester);
+				showLogin.set(false);
+				log = "Updated successfully";
+				setTimeout(() => {
+					log = '';
+				}, 2000);
+			} else {
+				reloadStatus = 'error';
+				//console.log(data);
+				log = data.message;
+			}
+
+		} catch(e){
+			console.log(e);
+			log = "Something went wrong. Resolve issues on you portal.";
+		}
+
 	}
 
 </script>
@@ -176,6 +244,17 @@
 					</div>
 				</button>
 			</ul>
+
+			{#if log}
+			<div class="log" transition:fly={{y: 10}} class:error={reloadStatus == 'error'}>{log}
+				{#if reloadStatus == 'loading'}
+				<i class="fa-solid fa-rotate fa-spin"></i>
+				{:else if reloadStatus == 'error'}
+				<i class="fa-solid fa-triangle-exclamation"></i>
+				{/if}
+			</div>
+			{/if}
+
 			{#if $tabs == 'Routine'}
 				{#if $semesterName}
 					<Routine/>
@@ -207,7 +286,8 @@
                         </label>
                     </div>
 				</div>
-				<div class="subsettings" transition:fly|global={{y: 20, delay: 100}}>
+				<div class="subsettings btn-grp" transition:fly|global={{y: 20, delay: 100}}>
+					<button id="reloadData">Reload Data</button>
 					<button id="clearData">Clear Data</button>
 				</div>
 			</div>
@@ -224,6 +304,8 @@
 
 
 <style lang="scss">
+
+	
 
 	.toggleButton {
 		position: relative;
@@ -245,6 +327,22 @@
 			transition: 300ms ease-in-out;
 			transform: translateX(0px);
 		}
+	}
+
+	.log{
+		font-size: 0.8rem;
+		color: var(--accent);
+		i{
+			font-size: inherit;
+		}
+
+		&.error{
+			color: red;
+		}
+	}
+
+	.fa-triangle-exclamation {
+		color: orange !important;
 	}
 
 	.title-text{
@@ -383,6 +481,11 @@
 		justify-content: center;
 	}
 
+	.btn-grp{
+		flex-direction: row;
+		gap: 20px;
+	}
+
 	.field-checkers {
 		display: flex;
 		position: relative;
@@ -415,10 +518,10 @@
 
 	.settings-options{
 		background: var(--light-dark);
-		padding: 10px;
+		padding: 25px;
 		border-radius: 10px;
 		//height: 200px;
-		width: 250px;
+		width: max-content;
 		padding-bottom: 20px;
 		display: flex;
 		flex-direction: column;

@@ -39,11 +39,8 @@
 			return;
 		}
 
-		//console.log("Valid Password");
-
-		//console.log("Submitting form");
-
-
+		const UserName = username.value;
+		const Password = password.value;
 
 		submitting = true;
 
@@ -102,11 +99,12 @@
 		}, 1000);
 
 		try{
-			const res = await fetch('https://aiubproxyserver.onrender.com/', {
+			//https://aiubproxyserver.onrender.com/
+			const res = await fetch('https://aiubproxyserver.onrender.com', {
 					method: 'POST',
 					body: new URLSearchParams({
-						'UserName': username.value,
-						'Password': password.value
+						'UserName': UserName,
+						'Password': Password
 					}),
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
@@ -137,6 +135,8 @@
 				localStorage.setItem('unlockedCourses', JSON.stringify(data.result.unlockedCourses));
 				localStorage.setItem('completedCourses', JSON.stringify(data.result.completedCourses));
 				localStorage.setItem('semester', data.result.currentSemester);
+				localStorage.setItem('UserName', UserName);
+				localStorage.setItem('Password', Password);
 				showLogin.set(false);
 			} else {
 				errlog = true;
