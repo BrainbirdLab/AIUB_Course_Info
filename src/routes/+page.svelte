@@ -2,8 +2,8 @@
 
 <script lang="ts">
 	import Login from "./Login.svelte";
-	import { showGrade, clearData, showLogin, User, semesterClassRoutine, semesterName, completedCourses, type SemesterDataType, unlockedCourses, tabs, type TABS } from "$lib/store";
-    import { onMount, tick } from "svelte";
+	import { reloadLog, reloadStatus, showGrade, clearData, showLogin, User, semesterClassRoutine, semesterName, completedCourses, type SemesterDataType, unlockedCourses, tabs, type TABS } from "$lib/store";
+    import { onMount} from "svelte";
 	import { fly } from "svelte/transition";
     import CourseCompleted from "./CourseCompleted.svelte";
 	import UnlockedCourses from "./UnlockedCourses.svelte";
@@ -120,21 +120,25 @@
 	
 	}
 
-	let log = '';
-	let reloadStatus = '';
-
 	async function reloadData(){
 		const UserName = localStorage.getItem('UserName');
 		const Password = localStorage.getItem('Password');
 		if (!UserName || !Password){
 			console.log("No user name or password");
-			log = "Credentials not found. Please login again";
-			reloadStatus = 'error';
+			reloadLog.set("Credentials not found. Please login again");
+			reloadStatus.set('error');
 			return;
 		}
 
-		log = "Reloading data";
-		reloadStatus = 'loading';
+		//if offline
+		if (navigator.onLine == false) {
+			reloadLog.set('You are offline');
+			reloadStatus.set('error');
+			return;
+		}
+
+		reloadLog.set("Reloading data");
+		reloadStatus.set('loading');
 
 		try{
 			//https://aiubproxyserver.onrender.com/
@@ -152,7 +156,7 @@
 			const data = await res.json();
 
 			if (res.ok){
-				reloadStatus = '';
+				reloadStatus.set('success');
 				//console.log(data);
 				//logText = data.message;
 				User.set(data.result.user);
@@ -166,21 +170,38 @@
 				localStorage.setItem('completedCourses', JSON.stringify(data.result.completedCourses));
 				localStorage.setItem('semester', data.result.currentSemester);
 				showLogin.set(false);
-				log = "Updated successfully";
+				reloadLog.set("Updated successfully");
 				setTimeout(() => {
-					log = '';
+					reloadLog.set('');
+					reloadStatus.set('');
 				}, 2000);
 			} else {
-				reloadStatus = 'error';
+				reloadStatus.set('error');
 				//console.log(data);
-				log = data.message;
+				reloadLog.set(data.message);
 			}
 
 		} catch(e){
 			console.log(e);
-			log = "Something went wrong. Resolve issues on you portal.";
+			reloadLog.set("Something went wrong. Resolve issues on you portal.");
 		}
 
+	}
+
+	function resetError(node: HTMLElement){
+		node.onclick = (e: Event) => {
+			const target = e.target as HTMLElement;
+			if (target.classList.contains('modalwrapper') || target.classList.contains('ok')){
+				reloadStatus.set('');
+				reloadLog.set('');
+			}
+		}
+
+		return {
+			destroy(){
+				node.onclick = null;
+			}
+		}
 	}
 
 </script>
@@ -245,13 +266,23 @@
 				</button>
 			</ul>
 
-			{#if log}
-			<div class="log" transition:fly={{y: 10}} class:error={reloadStatus == 'error'}>{log}
-				{#if reloadStatus == 'loading'}
-				<i class="fa-solid fa-rotate fa-spin"></i>
-				{:else if reloadStatus == 'error'}
-				<i class="fa-solid fa-triangle-exclamation"></i>
+			<div class="log">
+				{#if $reloadStatus == 'loading' || $reloadStatus == 'success'}
+					{$reloadLog}
+					{#if $reloadStatus == 'loading'}
+					<i class="fa-solid fa-rotate fa-spin"></i>
+					{:else if $reloadStatus == 'success'}
+					<i class="fa-solid fa-check"></i>
+					{/if}
 				{/if}
+			</div>
+
+			{#if $reloadStatus == 'error'}
+			<div class="modalwrapper" use:resetError>
+				<div class="errorModal" transition:fly|global={{y: 10}}>
+					<div class="text">{$reloadLog} <i class="fa-solid fa-triangle-exclamation"></i></div>
+					<button class="ok">Ok</button>
+				</div>
 			</div>
 			{/if}
 
@@ -305,7 +336,45 @@
 
 <style lang="scss">
 
-	
+	.modalwrapper{
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 20;
+		backdrop-filter: blur(2px) brightness(0.8);
+	}
+
+	.errorModal{
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		background: var(--light-dark);
+		border-radius: 10px;
+		width: max-content;
+		font-size: 0.8rem;
+		padding: 20px;
+		gap: 20px;
+		
+		button{
+			background: black;
+			border-radius: 10px;
+			padding: 10px 20px;
+			color: ghostwhite;
+			cursor: pointer;
+			font-size: 0.8rem;
+
+			&:hover{
+				background: rgb(17, 17, 17);
+			}
+		}
+	}
 
 	.toggleButton {
 		position: relative;
@@ -332,17 +401,20 @@
 	.log{
 		font-size: 0.8rem;
 		color: var(--accent);
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		gap: 3px;
+		height: 10px;
 		i{
 			font-size: inherit;
-		}
-
-		&.error{
-			color: red;
 		}
 	}
 
 	.fa-triangle-exclamation {
 		color: orange !important;
+		font-size: 0.8rem;
 	}
 
 	.title-text{
@@ -479,6 +551,7 @@
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		font-size: 0.8rem;
 	}
 
 	.btn-grp{
@@ -544,14 +617,11 @@
 			border-radius: 10px;
 			padding: 10px 15px;
 			color: ghostwhite;
+			font-size: 0.8rem;
 			background: var(--accent);
 			cursor: pointer;
 			&:hover{
 				filter: brightness(0.9);
-			}
-
-			&.clear{
-				background: red;
 			}
 		}
 	}

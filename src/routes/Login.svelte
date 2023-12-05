@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
     import Logo from "./Logo.svelte";
     import { fly } from "svelte/transition";
-	import {showLogin, semesterClassRoutine, User, unlockedCourses, completedCourses, semesterName } from "$lib/store";
+	import {showLogin, semesterClassRoutine, User, unlockedCourses, completedCourses, semesterName, reloadLog, reloadStatus } from "$lib/store";
 
 	let usernameLabel = "AIUB ID";
 	let passwordLabel = "Password";
@@ -43,6 +43,14 @@
 		const Password = password.value;
 
 		submitting = true;
+
+		//if offline
+		if (navigator.onLine == false) {
+			submitting = false;
+			errlog = true;
+			logText = "You are offline";
+			return;
+		}
 
 		errlog = false;
 
@@ -137,6 +145,8 @@
 				localStorage.setItem('semester', data.result.currentSemester);
 				localStorage.setItem('UserName', UserName);
 				localStorage.setItem('Password', Password);
+				reloadLog.set('');
+				reloadStatus.set('');
 				showLogin.set(false);
 			} else {
 				errlog = true;
@@ -149,7 +159,7 @@
 			console.log(e);
 			errlog = true;
 			submitting = false;
-			logText = "Something went wrong. Resolve issues on you portal.";
+			logText = "Something went wrong";
 
 			//clear timeout
 			if (intervalId !== null) {
@@ -186,7 +196,12 @@
 		<button type="submit" in:fly|global={{y: 10, delay: 350}}>Login <i class="fa-solid fa-sign-in"></i></button>
 		{/if}
 		{#if logText}
-		<div class="log" class:submitting={submitting} class:error={errlog}>{logText}</div>
+		<div class="log" class:submitting={submitting} class:error={errlog}>
+			{logText}
+			{#if errlog}
+			<i class="fa-solid fa-triangle-exclamation"></i>
+			{/if}
+		</div>
 		{/if}
 	</form>
 </div>
@@ -198,9 +213,20 @@
 	.log{
 		font-size: 0.8rem;
 		color: var(--accent);
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		gap: 3px;
+
 		&.error{
 			color: orangered;
 		}
+
+	}
+
+	.fa-triangle-exclamation {
+		color: orange !important;
 	}
 
 	.formWrapper{

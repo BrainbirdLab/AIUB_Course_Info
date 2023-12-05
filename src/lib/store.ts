@@ -45,6 +45,10 @@ export const completedCourses: Writable<CompletedCoursesType> = writable({});
 export const unlockedCourses: Writable<UnlockedCoursesType> = writable({});
 export const showLogin = writable(false);
 export const showGrade = writable(false);
+//let reloadLog = '';
+//let reloadStatus = '';
+export let reloadLog = writable('');
+export let reloadStatus = writable('');
 
 /*
 export const ICONS = {
