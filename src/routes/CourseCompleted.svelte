@@ -1,9 +1,13 @@
 <script lang="ts">
     import { completedCourses, CourseIconColors, parseCourseId, showGrade } from '$lib/store';
     import { fly } from 'svelte/transition';
+
+    let totalCredit = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
 </script>
 
-<div class="title" in:fly={{x: 10}}>{Object.keys($completedCourses).length} Courses complete</div>
+<div class="title" in:fly={{x: 10}}>{Object.keys($completedCourses).length} Courses complete {
+    totalCredit > 0 && `(${totalCredit} Credits)`
+} </div>
 <div class="courses">
     {#if $completedCourses}
     {#each Object.entries($completedCourses) as [courseId, courseInfo], i}
@@ -18,7 +22,6 @@
                     😭
                     {/if}
                 </div>
-                <div class="courseid">Course ID: {courseId}</div>
             </div>
         </div>
     {/each}
