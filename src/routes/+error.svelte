@@ -1,8 +1,12 @@
+<svelte:head>
+    <title>Oops..!!</title>
+</svelte:head>
+
 
 <div class="content">
     <div class="message">
         <h1>404</h1>
-        <p>Page not found</p>
+        <p>That's not found</p>
     </div>
     <a href="/">Looking for Home?</a>
 </div>
