@@ -422,13 +422,11 @@
 		background: #031826;
 		border-radius: 10px;
 		width: max-content;
-		font-size: 1rem;
+		font-size: 0.9rem;
 		padding: 20px;
 		gap: 20px;
-
-		i{
-			font-size: 1rem;
-		}
+		min-width: 200px;
+		filter: drop-shadow(2px 5px 10px black);
 		
 		button{
 			background: black;
