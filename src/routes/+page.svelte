@@ -266,6 +266,7 @@
 				</button>
 			</ul>
 
+
 			<div class="log">
 				{#if $reloadStatus == 'loading' || $reloadStatus == 'success'}
 				<div class="content" transition:fly={{y: 10}}>
@@ -320,8 +321,8 @@
                     </div>
 				</div>
 				<div class="subsettings btn-grp" transition:fly|global={{y: 20, delay: 100}}>
-					<button id="reloadData">Reload Data</button>
-					<button id="clearData">Clear Data</button>
+					<button id="reloadData">Reload Data <i class="fa-solid fa-rotate"></i></button>
+					<button id="clearData">Clear Data <i class="fa-solid fa-trash"></i></button>
 				</div>
 			</div>
 		</div>
@@ -352,17 +353,82 @@
 		backdrop-filter: blur(2px) brightness(0.8);
 	}
 
+	.menu{
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 15px;
+		list-style: none;
+		color: var(--accent);
+		position: sticky;
+		top: 0;
+		padding: 10px;
+		background: var(--primary);
+		justify-content: center;
+		align-items: center;
+		width: 100%;
+		z-index: 20;
+		li{
+			cursor: pointer;
+			text-align: center;
+			font-size: 0.7rem;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 5px;
+
+			.content{
+				display: flex;
+				flex-direction: row;
+				align-items: flex-end;
+				justify-content: center;
+				gap: 5px;
+				pointer-events: none;
+			}
+
+			&::after{
+				content: '';
+				display: block;
+				width: 100%;
+				height: 2px;
+				background: var(--accent);
+				transition: 200ms ease-in-out;
+				transform: scaleX(0);
+				filter: brightness(1);
+				transform-origin: center;
+			}
+	
+			&:hover{
+				filter: brightness(1.2);
+			}
+		}
+		
+
+		li.shown{
+			&::after{
+				transform: scaleX(1);
+			}
+		}
+	}
+
 	.errorModal{
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		background: var(--light-dark);
+		background: #031826;
 		border-radius: 10px;
 		width: max-content;
-		font-size: 0.8rem;
+		font-size: 1rem;
 		padding: 20px;
 		gap: 20px;
+
+		i{
+			font-size: 1rem;
+		}
 		
 		button{
 			background: black;
@@ -429,8 +495,8 @@
 		width: 100%;
 		justify-content: center;
 		gap: 10px;
-		color: var(--accent);
-		border-bottom: 2px solid;
+		color: var(--label-color);
+		border-bottom: 2px solid #ffffff1f;
 	}
 
 	input {
@@ -454,7 +520,7 @@
 		align-items: center;
 		justify-content: center;
 		font-size: 1.2rem;
-		padding: 50px 10px 10px 10px;
+		padding: 30px 10px 10px 10px;
 		gap: 10px;
 	}
 
@@ -462,9 +528,9 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		justify-content: center;
-		gap: 30px;
+		justify-content: flex-start;
 		width: 100%;
+		height: 100vh;
 
 		.moto{
 			display: flex;
@@ -481,7 +547,7 @@
 	}
 
 	i{
-		font-size: 1.5rem;
+		font-size: 1rem;
 		pointer-events: none;
 	}
 
@@ -586,18 +652,16 @@
 			border-radius: 10px;
 
 			&:hover{
-				background: var(--hover-light-dark);
+				background: var(--primary);
 			}
 		}
 	}
 
 	.settings-options{
-		background: var(--light-dark);
-		padding: 25px;
+		background: #031826;
+		padding: 10px 25px 20px;
 		border-radius: 10px;
-		//height: 200px;
 		width: max-content;
-		padding-bottom: 20px;
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -624,67 +688,6 @@
 			cursor: pointer;
 			&:hover{
 				filter: brightness(0.9);
-			}
-		}
-	}
-
-	.menu{
-		display: flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		align-items: center;
-		justify-content: center;
-		gap: 15px;
-		list-style: none;
-		color: var(--accent);
-		position: sticky;
-		top: 0;
-		padding: 10px;
-		background: var(--primary);
-		justify-content: center;
-		align-items: center;
-		width: 100%;
-		z-index: 20;
-		li{
-			cursor: pointer;
-			text-align: center;
-			font-size: 0.7rem;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-			justify-content: center;
-			gap: 5px;
-
-			.content{
-				display: flex;
-				flex-direction: row;
-				align-items: flex-end;
-				justify-content: center;
-				gap: 5px;
-				pointer-events: none;
-			}
-
-			&::after{
-				content: '';
-				display: block;
-				width: 100%;
-				height: 2px;
-				background: var(--accent);
-				transition: 200ms ease-in-out;
-				transform: scaleX(0);
-				filter: brightness(1);
-				transform-origin: center;
-			}
-	
-			&:hover{
-				filter: brightness(1.2);
-			}
-		}
-		
-
-		li.shown{
-			&::after{
-				transform: scaleX(1);
 			}
 		}
 	}
