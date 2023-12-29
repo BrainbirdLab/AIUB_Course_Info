@@ -327,12 +327,6 @@
 			</div>
 		</div>
 		{/if}
-
-		<footer class="footer">
-			<div class="dev">Developed by <a href="https://itsfuad.vercel.app">Fuad</a></div>
-			<div> - </div>
-			<div class="source"><a href="https://github.com/itsfuad/AIUB_Solution">Source code <i class="fa-solid fa-code"></i></a></div>
-		</footer>
 	{/if}
 </div>
 
@@ -528,7 +522,7 @@
 		align-items: center;
 		justify-content: flex-start;
 		width: 100%;
-		height: 100vh;
+		min-height: 100vh;
 
 		.moto{
 			display: flex;
@@ -547,28 +541,6 @@
 	i{
 		font-size: 1rem;
 		pointer-events: none;
-	}
-
-	.footer{
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-		padding: 10px;
-		gap: 5px;
-		font-size: 0.6rem;
-		*{
-			padding: 0;
-			color: ghostwhite;
-		}
-
-		a{
-			text-decoration: underline;
-		}
-		i{
-			font-size: 0.7rem;
-		}
 	}
 
 	.concent{

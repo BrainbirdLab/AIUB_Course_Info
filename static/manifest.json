@@ -1,6 +1,6 @@
 {
-  "name": "AIUB Solution",
-  "short_name": "AIUB Solution",
+  "name": "AIUB Course Info",
+  "short_name": "AIUB Course Info",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#111d2a",
