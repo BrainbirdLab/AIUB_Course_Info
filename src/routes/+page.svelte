@@ -1,5 +1,3 @@
-
-
 <script lang="ts">
 	import Login from "./Login.svelte";
 	import { reloadLog, reloadStatus, showGrade, clearData, showLogin, User, semesterClassRoutine, semesterName, completedCourses, type SemesterDataType, unlockedCourses, tabs, type TABS } from "$lib/store";
@@ -8,7 +6,8 @@
     import CourseCompleted from "./CourseCompleted.svelte";
 	import UnlockedCourses from "./UnlockedCourses.svelte";
     import Routine from "./Routine.svelte";
-	//localStorage.setItem('semesterClassRoutine', JSON.stringify(data));
+    import { pushState, replaceState } from "$app/navigation";
+    import { page } from "$app/stores";
 
 	let loaded = false;
 
@@ -60,6 +59,7 @@
 				console.log("Invalid data");
 				clearData();
 			}
+
 			loaded = true;
 		} catch (e) {
 			console.log("Error loading data");
@@ -86,24 +86,21 @@
 		}
 	}
 
-	let showOptions = false;
-
 	function handleOptions(node: HTMLElement){
 		node.onclick = (e: Event) => {
 			const target = e.target as HTMLElement;
 			if (node == target){
-				showOptions = !showOptions;
+				console.log("modal closed");
+				history.back();
 				return;
 			}
 
 			else if (target.id == 'clearData'){
 				clearData();
-				showOptions = false;
 			}
 
 			else if (target.id == 'reloadData'){
 				reloadData();
-				showOptions = false;
 			}
 
 			else if (target.id == 'showGrade'){
@@ -204,6 +201,10 @@
 		}
 	}
 
+	function showOptions(){
+		pushState('/', {options: true});
+	}
+
 </script>
 
 <svelte:head>
@@ -235,9 +236,7 @@
 				<li>Use this site with your concent</li>
 			</ul>
 		</div>
-
 		{:else}
-
 			<div class="user">
 				<i class="fa-solid fa-user"></i> Hello, {$User}!
 			</div>
@@ -258,7 +257,7 @@
 						Unlocked <i class="fa-solid fa-unlock"></i>
 					</div>
 				</li>
-				<button class="options" on:click={()=>{showOptions = true;}}>
+				<button class="options" on:click={showOptions}>
 					<div class="content">
 						Options
 						<i class="fa-solid fa-wrench"></i>
@@ -300,7 +299,7 @@
 			{/if}
 		{/if}
 		
-		{#if showOptions}
+		{#if $page.state.options}
 		<div class="wrapper" use:handleOptions transition:fly={{y:10, duration: 200}}>
 			<div class="settings-options">
 				<div class="title-text">

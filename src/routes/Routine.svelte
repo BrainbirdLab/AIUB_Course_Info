@@ -132,7 +132,7 @@
                 <div class="day" style="height: {(longestTimeEnd * 90) - 90}px;" class:focused={day == today} in:fly|global={{y: 10, delay: 50*(i+1)}}>
                     <div class="dayname">{day}</div>
                     {#each Object.entries(classInfo) as [time, Class], i}
-                    <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(timeParser(time)[1] - timeParser(time)[0])}px; top: {timeParser(time)[0] - 480}px;">
+                    <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(timeParser(time)[1] - timeParser(time)[0] - 1)}px; top: {timeParser(time)[0] - 479}px;">
                         <div class="toolTip">
                             {Class.course_name}
                         </div>
@@ -231,7 +231,7 @@
             height: 90px;
             overflow: visible;
             font-size: 0.5rem;
-            border-top: 1px solid var(--label-color);
+            border-top: 2px solid #5b72892e;
             .text{
                 position: relative;
                 left: 0px;
