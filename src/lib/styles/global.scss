@@ -38,6 +38,10 @@ body{
     justify-content: center;
 }
 
+body, html{
+	overscroll-behavior-y: none;
+}
+
 
 button{
     background: none;
