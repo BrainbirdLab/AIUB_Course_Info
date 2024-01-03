@@ -99,8 +99,8 @@ select:-webkit-autofill:focus {
     background-color: rgb(21, 49, 68);
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
     padding: 15px;
-    height: 200px;
-    width: 300px;
+    aspect-ratio: 1/0.7;
+    width: min(300px, 90vw);
 }
 
 .name {

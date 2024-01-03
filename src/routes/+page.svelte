@@ -2,7 +2,7 @@
 	import Login from "./Login.svelte";
 	import { reloadLog, reloadStatus, showGrade, clearData, showLogin, User, semesterClassRoutine, semesterName, completedCourses, type SemesterDataType, unlockedCourses, tabs, type TABS } from "$lib/store";
     import { onMount} from "svelte";
-	import { fly } from "svelte/transition";
+	import { fade, fly } from "svelte/transition";
     import CourseCompleted from "./CourseCompleted.svelte";
 	import UnlockedCourses from "./UnlockedCourses.svelte";
     import Routine from "./Routine.svelte";
@@ -86,21 +86,27 @@
 		}
 	}
 
+	const controller = new AbortController();
+	const signal = controller.signal;
+
 	function handleOptions(node: HTMLElement){
 		node.onclick = (e: Event) => {
 			const target = e.target as HTMLElement;
 			if (node == target){
-				console.log("modal closed");
 				history.back();
-				return;
 			}
 
 			else if (target.id == 'clearData'){
 				clearData();
+				//abort all fetch requests
+				controller.abort();
+				history.back();
 			}
 
 			else if (target.id == 'reloadData'){
+				controller.abort();
 				reloadData();
+				history.back();
 			}
 
 			else if (target.id == 'showGrade'){
@@ -114,7 +120,6 @@
 				node.onclick = null;
 			}
 		}
-	
 	}
 
 	async function reloadData(){
@@ -147,7 +152,8 @@
 					}),
 					headers: {
 						'Content-Type': 'application/x-www-form-urlencoded'
-					}
+					},
+					signal: signal
 				});
 			
 			const data = await res.json();
@@ -178,8 +184,12 @@
 				reloadLog.set(data.message);
 			}
 
-		} catch(e){
-			console.log(e);
+		} catch(e: any){
+			//if aborted
+			if (e.name == 'AbortError'){
+				console.log("Aborted reload");
+				return;
+			}
 			reloadLog.set("Something went wrong. Resolve issues on you portal.");
 		}
 
@@ -202,7 +212,7 @@
 	}
 
 	function showOptions(){
-		pushState('/', {options: true});
+		pushState('', {options: true});
 	}
 
 </script>
@@ -237,11 +247,11 @@
 			</ul>
 		</div>
 		{:else}
-			<div class="user">
+			<div class="user" in:fade>
 				<i class="fa-solid fa-user"></i> Hello, {$User}!
 			</div>
 
-			<ul class="menu" use:handleNav>
+			<ul class="menu" use:handleNav in:fade>
 				<li class="navBtn" id="nav-Routine" class:shown="{$tabs == 'Routine'}">
 					<div class="content">
 						Routine <i class="fa-regular fa-calendar-days"></i>
@@ -350,8 +360,6 @@
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
-		align-items: center;
-		justify-content: center;
 		gap: 15px;
 		list-style: none;
 		color: var(--accent);
@@ -418,6 +426,7 @@
 		font-size: 0.9rem;
 		padding: 20px;
 		gap: 20px;
+		z-index: 30;
 		min-width: 200px;
 		filter: drop-shadow(2px 5px 10px black);
 		

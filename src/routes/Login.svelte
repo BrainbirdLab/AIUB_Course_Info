@@ -131,6 +131,9 @@
 
 			if (res.ok){
 				errlog = false;
+				reloadLog.set('');
+				reloadStatus.set('');
+				showLogin.set(false);
 				//console.log(data);
 				//logText = data.message;
 				User.set(data.result.user);
@@ -145,14 +148,10 @@
 				localStorage.setItem('semester', data.result.currentSemester);
 				localStorage.setItem('UserName', UserName);
 				localStorage.setItem('Password', Password);
-				reloadLog.set('');
-				reloadStatus.set('');
-				showLogin.set(false);
 			} else {
 				errlog = true;
 				//console.log(data);
 				logText = data.message;
-
 			}
 
 		} catch(e){
