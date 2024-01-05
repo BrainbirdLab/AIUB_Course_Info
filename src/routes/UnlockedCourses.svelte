@@ -6,7 +6,7 @@
 
 {#if $unlockedCourses && Object.keys($unlockedCourses).length > 0}
 <div class="container">
-    <div class="title" in:fly={{x: 10}}>{Object.keys($unlockedCourses).length} Courses are ready to take</div>
+    <div class="title" in:fly={{x: 10}}>{Object.keys($unlockedCourses).length} Courses available</div>
     <div class="note">Note: You may have to complete certain credits to take some courses</div>
     <div class="courses">
         {#each Object.entries($unlockedCourses) as [courseId, courseInfo], i}
