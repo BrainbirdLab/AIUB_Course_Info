@@ -107,8 +107,8 @@
 		}, 1000);
 
 		try{
-			//https://aiubproxyserver.onrender.com/
-			const res = await fetch('https://aiubproxyserver.onrender.com', {
+			//https://course-visualizer-proxy-server-ovrt.onrender.com//
+			const res = await fetch('https://course-visualizer-proxy-server-ovrt.onrender.com/', {
 					method: 'POST',
 					body: new URLSearchParams({
 						'UserName': UserName,
