@@ -473,7 +473,7 @@
 	}
 
 	.log{
-		font-size: 0.8rem;
+		font-size: 0.7rem;
 		color: var(--accent);
 		display: flex;
 		flex-direction: row;
