@@ -139,7 +139,7 @@
 			return;
 		}
 
-		updateLog.set("updateing data");
+		updateLog.set("Updating data");
 		updateStatus.set('loading');
 
 		try{
