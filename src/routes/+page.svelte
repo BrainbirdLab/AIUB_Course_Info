@@ -195,7 +195,8 @@
 				console.log("Aborted update");
 				return;
 			}
-			updateLog.set("Something went wrong. Resolve issues on you portal.");
+			updateStatus.set('error');
+			updateLog.set("Something went wrong.");
 		}
 
 	}
