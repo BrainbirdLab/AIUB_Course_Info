@@ -86,8 +86,8 @@
 		}
 	}
 
-	const controller = new AbortController();
-	const signal = controller.signal;
+	let controller = new AbortController();
+	let signal = controller.signal;
 
 	function handleOptions(node: HTMLElement){
 		node.onclick = (e: Event) => {
@@ -104,7 +104,6 @@
 			}
 
 			else if (target.id == 'updateData'){
-				controller.abort();
 				updateData();
 				history.back();
 			}
@@ -143,6 +142,12 @@
 		updateStatus.set('loading');
 
 		try{
+
+			//abort previous fetch requests
+			controller.abort();
+			controller = new AbortController();
+			signal = controller.signal;
+
 			//https://course-visualizer-proxy-server-ovrt.onrender.com//
 			const res = await fetch('https://course-visualizer-proxy-server-ovrt.onrender.com/', {
 					method: 'POST',
