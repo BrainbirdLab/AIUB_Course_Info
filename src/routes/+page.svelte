@@ -1,12 +1,12 @@
 <script lang="ts">
 	import Login from "./Login.svelte";
-	import { reloadLog, reloadStatus, showGrade, clearData, showLogin, User, semesterClassRoutine, semesterName, completedCourses, type SemesterDataType, unlockedCourses, tabs, type TABS } from "$lib/store";
+	import { updateLog, updateStatus, showGrade, clearData, showLogin, User, semesterClassRoutine, semesterName, completedCourses, type SemesterDataType, unlockedCourses, tabs, type TABS } from "$lib/store";
     import { onMount} from "svelte";
 	import { fade, fly } from "svelte/transition";
     import CourseCompleted from "./CourseCompleted.svelte";
 	import UnlockedCourses from "./UnlockedCourses.svelte";
     import Routine from "./Routine.svelte";
-    import { pushState, replaceState } from "$app/navigation";
+    import { pushState } from "$app/navigation";
     import { page } from "$app/stores";
 
 	let loaded = false;
@@ -103,9 +103,9 @@
 				history.back();
 			}
 
-			else if (target.id == 'reloadData'){
+			else if (target.id == 'updateData'){
 				controller.abort();
-				reloadData();
+				updateData();
 				history.back();
 			}
 
@@ -122,25 +122,25 @@
 		}
 	}
 
-	async function reloadData(){
+	async function updateData(){
 		const UserName = localStorage.getItem('UserName');
 		const Password = localStorage.getItem('Password');
 		if (!UserName || !Password){
 			console.log("No user name or password");
-			reloadLog.set("Credentials not found. Please login again");
-			reloadStatus.set('error');
+			updateLog.set("Credentials not found. Please login again");
+			updateStatus.set('error');
 			return;
 		}
 
 		//if offline
 		if (navigator.onLine == false) {
-			reloadLog.set('You are offline');
-			reloadStatus.set('error');
+			updateLog.set('You are offline');
+			updateStatus.set('error');
 			return;
 		}
 
-		reloadLog.set("Reloading data");
-		reloadStatus.set('loading');
+		updateLog.set("updateing data");
+		updateStatus.set('loading');
 
 		try{
 			//https://course-visualizer-proxy-server-ovrt.onrender.com//
@@ -159,7 +159,7 @@
 			const data = await res.json();
 
 			if (res.ok){
-				reloadStatus.set('success');
+				updateStatus.set('success');
 				//console.log(data);
 				//logText = data.message;
 				User.set(data.result.user);
@@ -173,24 +173,24 @@
 				localStorage.setItem('completedCourses', JSON.stringify(data.result.completedCourses));
 				localStorage.setItem('semester', data.result.currentSemester);
 				showLogin.set(false);
-				reloadLog.set("Updated successfully");
+				updateLog.set("Updated successfully");
 				setTimeout(() => {
-					reloadLog.set('');
-					reloadStatus.set('');
+					updateLog.set('');
+					updateStatus.set('');
 				}, 2000);
 			} else {
-				reloadStatus.set('error');
+				updateStatus.set('error');
 				//console.log(data);
-				reloadLog.set(data.message);
+				updateLog.set(data.message);
 			}
 
 		} catch(e: any){
 			//if aborted
 			if (e.name == 'AbortError'){
-				console.log("Aborted reload");
+				console.log("Aborted update");
 				return;
 			}
-			reloadLog.set("Something went wrong. Resolve issues on you portal.");
+			updateLog.set("Something went wrong. Resolve issues on you portal.");
 		}
 
 	}
@@ -199,8 +199,8 @@
 		node.onclick = (e: Event) => {
 			const target = e.target as HTMLElement;
 			if (target.classList.contains('modalwrapper') || target.classList.contains('ok')){
-				reloadStatus.set('');
-				reloadLog.set('');
+				updateStatus.set('');
+				updateLog.set('');
 			}
 		}
 
@@ -277,22 +277,22 @@
 
 
 			<div class="log">
-				{#if $reloadStatus == 'loading' || $reloadStatus == 'success'}
+				{#if $updateStatus == 'loading' || $updateStatus == 'success'}
 				<div class="content" transition:fly={{y: 10}}>
-					{$reloadLog}
-						{#if $reloadStatus == 'loading'}
+					{$updateLog}
+						{#if $updateStatus == 'loading'}
 						<i class="fa-solid fa-rotate fa-spin"></i>
-						{:else if $reloadStatus == 'success'}
+						{:else if $updateStatus == 'success'}
 						<i class="fa-solid fa-check"></i>
 						{/if}
 					</div>
 				{/if}
 			</div>
 
-			{#if $reloadStatus == 'error'}
+			{#if $updateStatus == 'error'}
 			<div class="modalwrapper" use:resetError>
 				<div class="errorModal" transition:fly|global={{y: 10}}>
-					<div class="text">{$reloadLog} <i class="fa-solid fa-triangle-exclamation"></i></div>
+					<div class="text">{$updateLog} <i class="fa-solid fa-triangle-exclamation"></i></div>
 					<button class="ok">Ok</button>
 				</div>
 			</div>
@@ -330,7 +330,7 @@
                     </div>
 				</div>
 				<div class="subsettings btn-grp" transition:fly|global={{y: 20, delay: 100}}>
-					<button id="reloadData">Reload Data <i class="fa-solid fa-rotate"></i></button>
+					<button id="updateData">Update Data <i class="fa-solid fa-rotate"></i></button>
 					<button id="clearData">Clear Data <i class="fa-solid fa-trash"></i></button>
 				</div>
 			</div>

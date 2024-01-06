@@ -47,8 +47,8 @@ export const showLogin = writable(false);
 export const showGrade = writable(false);
 //let reloadLog = '';
 //let reloadStatus = '';
-export let reloadLog = writable('');
-export let reloadStatus = writable('');
+export let updateLog = writable('');
+export let updateStatus = writable('');
 
 /*
 export const ICONS = {

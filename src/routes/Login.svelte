@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
     import Logo from "./Logo.svelte";
     import { fly } from "svelte/transition";
-	import {showLogin, semesterClassRoutine, User, unlockedCourses, completedCourses, semesterName, reloadLog, reloadStatus } from "$lib/store";
+	import {showLogin, semesterClassRoutine, User, unlockedCourses, completedCourses, semesterName, updateLog, updateStatus } from "$lib/store";
 
 	let usernameLabel = "AIUB ID";
 	let passwordLabel = "Password";
@@ -131,8 +131,8 @@
 
 			if (res.ok){
 				errlog = false;
-				reloadLog.set('');
-				reloadStatus.set('');
+				updateLog.set('');
+				updateStatus.set('');
 				showLogin.set(false);
 				//console.log(data);
 				//logText = data.message;

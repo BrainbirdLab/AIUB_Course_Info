@@ -7,7 +7,7 @@
 
 {#if $completedCourses && Object.keys($completedCourses).length > 0}
 <div class="container">
-    <div class="title" in:fly={{x: 10}}>{Object.keys($completedCourses).length} Courses {
+    <div class="title" in:fly|global={{x: -10}}>{Object.keys($completedCourses).length} Courses {
         totalCredit > 0 && `(${totalCredit} Credits)`
     } </div>
     <div class="courses">

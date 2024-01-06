@@ -1,13 +1,13 @@
 
 <script lang="ts">
     import { unlockedCourses, CourseIconColors, parseCourseId } from '$lib/store';
-    import { fly } from 'svelte/transition';
+    import { fade, fly } from 'svelte/transition';
 </script>
 
 {#if $unlockedCourses && Object.keys($unlockedCourses).length > 0}
 <div class="container">
-    <div class="title" in:fly={{x: 10}}>{Object.keys($unlockedCourses).length} Courses available</div>
-    <div class="note">Note: You may have to complete certain credits to take some courses</div>
+    <div class="title" in:fly|global={{x: -10}}>{Object.keys($unlockedCourses).length} Courses available</div>
+    <div class="note" in:fade|global>Note: You may have to complete certain credits to take some courses</div>
     <div class="courses">
         {#each Object.entries($unlockedCourses) as [courseId, courseInfo], i}
             <div class="course" in:fly|global={{y: 10, delay: 50*(i+1)}} style="background: {CourseIconColors[parseCourseId(courseId)].COLOR || 'var(--light-dark)'};">
