@@ -2,7 +2,7 @@
     import { completedCourses, CourseIconColors, parseCourseId, showGrade } from '$lib/store';
     import { fly } from 'svelte/transition';
 
-    let totalCredit = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
+    $: totalCredit = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
 </script>
 
 {#if $completedCourses && Object.keys($completedCourses).length > 0}
