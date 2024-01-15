@@ -148,8 +148,8 @@
 			controller = new AbortController();
 			signal = controller.signal;
 
-			//https://course-visualizer-proxy-server-ovrt.onrender.com//
-			const res = await fetch('https://course-visualizer-proxy-server-ovrt.onrender.com/', {
+			//https://course-visualizer-proxy.onrender.com
+			const res = await fetch('https://course-visualizer-proxy.onrender.com', {
 					method: 'POST',
 					body: new URLSearchParams({
 						'UserName': UserName,

@@ -107,15 +107,15 @@
 		}, 1000);
 
 		try{
-			//https://course-visualizer-proxy-server-ovrt.onrender.com//
-			const res = await fetch('https://course-visualizer-proxy-server-ovrt.onrender.com/', {
+			//https://course-visualizer-proxy.onrender.com
+			const res = await fetch('https://course-visualizer-proxy.onrender.com', {
 					method: 'POST',
 					body: new URLSearchParams({
 						'UserName': UserName,
 						'Password': Password
 					}),
 					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded'
+						'Content-Type': 'application/x-www-form-urlencoded',
 					}
 				});
 				
