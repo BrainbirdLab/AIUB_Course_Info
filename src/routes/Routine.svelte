@@ -234,7 +234,10 @@
             border-top: 2px solid #5b72892e;
             .text{
                 position: relative;
-                left: 0px;
+                left: 0;
+                margin-top: -15px;
+                background: var(--primary);
+                padding: 5px;
             }
         }
     }
@@ -285,14 +288,14 @@
         .classContent{
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             justify-content: flex-start;
             overflow: scroll;
             word-wrap: break-word;
         }
 
         .time{
-            font-size: 0.5rem;
+            font-size: 0.6rem;
         }
 
         &:hover{
