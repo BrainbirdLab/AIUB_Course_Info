@@ -581,6 +581,7 @@
 
 	.options{
 		color: tomato;
+		font-size: 0.7rem;
 	}
 
 	.wrapper{
