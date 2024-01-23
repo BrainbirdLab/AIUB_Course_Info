@@ -232,7 +232,7 @@
 		{#if $showLogin}
 
 		<div class="moto" in:fly|global={{y: -10}}>
-			AIUB Solution
+			AIUB Course Info
 			<div class="sub" in:fly|global={{x: 10}}>
 				- A simple solution for your AIUB portal
 			</div>
