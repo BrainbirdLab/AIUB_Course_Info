@@ -24,6 +24,8 @@
 
 </script>
 
+<svelte:body on:contextmenu|preventDefault />
+
 <slot></slot>
 
 <footer class="footer">
