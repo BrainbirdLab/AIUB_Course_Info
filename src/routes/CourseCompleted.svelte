@@ -20,7 +20,7 @@
                         {#if $showGrade} 
                         {courseInfo.grade}
                         {:else}
-                        😭
+                        🙈
                         {/if}
                     </div>
                 </div>
