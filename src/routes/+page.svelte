@@ -4,59 +4,75 @@
 
 <script lang="ts">
 	import Login from "./Login.svelte";
-	import { updateLog, updateStatus, showGrade, clearData, showLogin, User, semesterClassRoutine, semesterName, completedCourses, type SemesterDataType, unlockedCourses, tabs, type TABS } from "$lib/store";
-    import { onMount} from "svelte";
+	import {
+		updateLog,
+		updateStatus,
+		showGrade,
+		clearData,
+		showLogin,
+		User,
+		semesterClassRoutine,
+		semesterName,
+		completedCourses,
+		type SemesterDataType,
+		unlockedCourses,
+		tabs,
+		type TABS,
+	} from "$lib/store";
+	import { onMount } from "svelte";
 	import { fade, fly } from "svelte/transition";
-    import CourseCompleted from "./CourseCompleted.svelte";
+	import CourseCompleted from "./CourseCompleted.svelte";
 	import UnlockedCourses from "./UnlockedCourses.svelte";
-    import Routine from "./Routine.svelte";
-    import { pushState } from "$app/navigation";
-    import { page } from "$app/stores";
+	import Routine from "./Routine.svelte";
+	import { pushState } from "$app/navigation";
+	import { page } from "$app/stores";
 
 	let loaded = false;
 
-	console.log(`Url is ${url}`);
-
 	onMount(() => {
+		try {
+			const raw = localStorage.getItem("semesterClassRoutine");
 
-		try{
-			const raw = localStorage.getItem('semesterClassRoutine');
-
-			if (raw == null || raw == undefined || raw == '' || raw == '{}'){
-				localStorage.removeItem('semesterClassRoutine');
+			if (raw == null || raw == undefined || raw == "" || raw == "{}") {
+				localStorage.removeItem("semesterClassRoutine");
 				console.log("No data");
 				showLogin.set(true);
 				loaded = true;
 				return;
 			}
 
-			const sem = localStorage.getItem('semester') as string;
+			const sem = localStorage.getItem("semester") as string;
 
 			semesterName.set(sem);
-			
-			User.set(localStorage.getItem('user') || '');
-	
+
+			User.set(localStorage.getItem("user") || "");
+
 			const data = JSON.parse(raw);
 
-			const rawCompletedCourses = localStorage.getItem('completedCourses');
-			const rawUnlockedCourses = localStorage.getItem('unlockedCourses');
+			const rawCompletedCourses =
+				localStorage.getItem("completedCourses");
+			const rawUnlockedCourses = localStorage.getItem("unlockedCourses");
 
-			const parsedCompletedCourses = rawCompletedCourses ? JSON.parse(rawCompletedCourses) : {};
-			const parsedUnlockedCourses = rawUnlockedCourses ? JSON.parse(rawUnlockedCourses) : {};
+			const parsedCompletedCourses = rawCompletedCourses
+				? JSON.parse(rawCompletedCourses)
+				: {};
+			const parsedUnlockedCourses = rawUnlockedCourses
+				? JSON.parse(rawUnlockedCourses)
+				: {};
 
 			completedCourses.set(parsedCompletedCourses);
 			unlockedCourses.set(parsedUnlockedCourses);
 
-			tabs.set(localStorage.getItem('tabs') as TABS || 'Routine');
-			localStorage.setItem('tabs', $tabs);
+			tabs.set((localStorage.getItem("tabs") as TABS) || "Routine");
+			localStorage.setItem("tabs", $tabs);
 
-			const gradeshow = localStorage.getItem('showGrade') as string;
-			if (gradeshow == 'true'){
+			const gradeshow = localStorage.getItem("showGrade") as string;
+			if (gradeshow == "true") {
 				showGrade.set(true);
 			} else {
 				showGrade.set(false);
 			}
-	
+
 			if (data satisfies SemesterDataType) {
 				console.log("Data loaded from local storage");
 				semesterClassRoutine.set(data);
@@ -74,108 +90,98 @@
 		}
 	});
 
-
-	function handleNav(node: HTMLElement){
+	function handleNav(node: HTMLElement) {
 		node.onclick = (e: Event) => {
 			const target = e.target as HTMLElement;
-			if (target.classList.contains('navBtn')){
+			if (target.classList.contains("navBtn")) {
 				const id = target.id;
-				tabs.set(id.split('-')[1] as TABS);
-				localStorage.setItem('tabs', $tabs);
+				tabs.set(id.split("-")[1] as TABS);
+				localStorage.setItem("tabs", $tabs);
 			}
-		}
+		};
 
 		return {
-			destroy(){
+			destroy() {
 				node.onclick = null;
-			}
-		}
+			},
+		};
 	}
 
 	let controller = new AbortController();
 	let signal = controller.signal;
 
-	function handleOptions(node: HTMLElement){
+	function handleOptions(node: HTMLElement) {
 		node.onclick = (e: Event) => {
 			const target = e.target as HTMLElement;
-			if (node == target){
+			if (node == target) {
 				history.back();
-			}
-
-			else if (target.id == 'clearData'){
+			} else if (target.id == "clearData") {
 				clearData();
 				//abort all fetch requests
 				controller.abort();
 				history.back();
-			}
-
-			else if (target.id == 'updateData'){
+			} else if (target.id == "updateData") {
 				updateData();
 				history.back();
-			}
-
-			else if (target.id == 'showGrade'){
+			} else if (target.id == "showGrade") {
 				const value = (target as HTMLInputElement).checked;
-				if (!value){
-					localStorage.setItem('showGrade', 'false');
+				if (!value) {
+					localStorage.setItem("showGrade", "false");
 				} else {
-					localStorage.setItem('showGrade', 'true');
+					localStorage.setItem("showGrade", "true");
 				}
 			}
-		}
+		};
 
 		return {
-			destroy(){
+			destroy() {
 				node.onclick = null;
-			}
-		}
+			},
+		};
 	}
 
-	async function updateData(){
-		const UserName = localStorage.getItem('UserName');
-		const Password = localStorage.getItem('Password');
-		if (!UserName || !Password){
+	async function updateData() {
+		const UserName = localStorage.getItem("UserName");
+		const Password = localStorage.getItem("Password");
+		if (!UserName || !Password) {
 			console.log("No user name or password");
 			updateLog.set("Credentials not found. Please login again");
-			updateStatus.set('error');
+			updateStatus.set("error");
 			return;
 		}
 
 		//if offline
 		if (navigator.onLine == false) {
-			updateLog.set('You are offline');
-			updateStatus.set('error');
+			updateLog.set("You are offline");
+			updateStatus.set("error");
 			return;
 		}
 
 		updateLog.set("Updating data");
-		updateStatus.set('loading');
+		updateStatus.set("loading");
 
-		try{
-
+		try {
 			//abort previous fetch requests
 			controller.abort();
 			controller = new AbortController();
 			signal = controller.signal;
 
 			const res = await fetch(url, {
-					method: 'POST',
-					body: new URLSearchParams({
-						'UserName': UserName,
-						'Password': Password
-					}),
-					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded'
-					},
-					signal: signal
-				});
-			
+				method: "POST",
+				body: new URLSearchParams({
+					UserName: UserName,
+					Password: Password,
+				}),
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded",
+				},
+				signal: signal,
+			});
+
 			const data = await res.json();
 
-			console.log(data);
-
-			if (data.success){
-				updateStatus.set('success');
+			if (data.success) {
+				updateStatus.set("success");
 				//console.log(data);
 				//logText = data.message;
 				User.set(data.result.user);
@@ -183,55 +189,64 @@
 				unlockedCourses.set(data.result.unlockedCourses);
 				completedCourses.set(data.result.completedCourses);
 				semesterName.set(data.result.currentSemester);
-				localStorage.setItem('user', data.result.user);
-				localStorage.setItem('semesterClassRoutine', JSON.stringify(data.result.semesterClassRoutine));
-				localStorage.setItem('unlockedCourses', JSON.stringify(data.result.unlockedCourses));
-				localStorage.setItem('completedCourses', JSON.stringify(data.result.completedCourses));
-				localStorage.setItem('semester', data.result.currentSemester);
+				localStorage.setItem("user", data.result.user);
+				localStorage.setItem(
+					"semesterClassRoutine",
+					JSON.stringify(data.result.semesterClassRoutine),
+				);
+				localStorage.setItem(
+					"unlockedCourses",
+					JSON.stringify(data.result.unlockedCourses),
+				);
+				localStorage.setItem(
+					"completedCourses",
+					JSON.stringify(data.result.completedCourses),
+				);
+				localStorage.setItem("semester", data.result.currentSemester);
 				showLogin.set(false);
 				updateLog.set("Updated successfully");
 				setTimeout(() => {
-					updateLog.set('');
-					updateStatus.set('');
+					updateLog.set("");
+					updateStatus.set("");
 				}, 2000);
 			} else {
-				updateStatus.set('error');
+				updateStatus.set("error");
 				//console.log(data);
 				updateLog.set(data.message);
 			}
-
-		} catch(e: any){
+		} catch (e: any) {
 			//if aborted
-			if (e.name == 'AbortError'){
+			if (e.name == "AbortError") {
 				console.log("Aborted update");
 				return;
 			}
-			updateStatus.set('error');
+			updateStatus.set("error");
 			updateLog.set("Something went wrong.");
 		}
-
 	}
 
-	function resetError(node: HTMLElement){
+	function resetError(node: HTMLElement) {
 		node.onclick = (e: Event) => {
 			const target = e.target as HTMLElement;
-			if (target.classList.contains('modalwrapper') || target.classList.contains('ok')){
-				updateStatus.set('');
-				updateLog.set('');
+			if (
+				target.classList.contains("modalwrapper") ||
+				target.classList.contains("ok")
+			) {
+				updateStatus.set("");
+				updateLog.set("");
 			}
-		}
+		};
 
 		return {
-			destroy(){
+			destroy() {
 				node.onclick = null;
-			}
-		}
+			},
+		};
 	}
 
-	function showOptions(){
-		pushState('', {options: true});
+	function showOptions() {
+		pushState("", { options: true });
 	}
-
 </script>
 
 <svelte:head>
@@ -241,45 +256,60 @@
 <div class="container">
 	{#if loaded}
 		{#if $showLogin}
-
-		<div class="moto" in:fly|global={{y: -10}}>
-			AIUB Course Info
-			<div class="sub" in:fly|global={{x: 10}}>
-				- A simple solution for your AIUB portal
+			<div class="moto" in:fly|global={{ y: -10 }}>
+				AIUB Course Info
+				<div class="sub" in:fly|global={{ x: 10 }}>
+					- A simple solution for your AIUB portal
+				</div>
 			</div>
-		</div>
 
-		<Login url={url}/>
+			<Login {url} />
 
-		<!-- Say concent before loging in with their password -->
-		<div class="concent" in:fly|global={{y: -10}}>
-			<div class="t">
-				Please read the following carefully!
+			<!-- Say concent before loging in with their password -->
+			<div class="concent" in:fly|global={{ y: -10 }}>
+				<div class="t">Please read the following carefully!</div>
+				<ul in:fly|global={{ x: -10, delay: 200 }}>
+					<li>
+						We use your User Id and Password only for getting your
+						data from the portal.
+					</li>
+					<li>We do not store your User Id and Password anywhere.</li>
+					<li>
+						After completing the session all data is stored on your
+						device.
+					</li>
+					<li>Use this site with your concent</li>
+				</ul>
 			</div>
-			<ul in:fly|global={{x: -10, delay: 200}}>
-				<li>We use your User Id and Password only for getting your data from the portal.</li>
-				<li>We do not store your User Id and Password anywhere.</li>
-				<li>After completing the session all data is stored on your device.</li>
-				<li>Use this site with your concent</li>
-			</ul>
-		</div>
 		{:else}
 			<div class="user" in:fade>
 				<i class="fa-solid fa-user"></i> Hello, {$User}!
 			</div>
 
 			<ul class="menu" use:handleNav in:fade>
-				<li class="navBtn" id="nav-Routine" class:shown="{$tabs == 'Routine'}">
+				<li
+					class="navBtn"
+					id="nav-Routine"
+					class:shown={$tabs == "Routine"}
+				>
 					<div class="content">
 						Routine <i class="fa-regular fa-calendar-days"></i>
 					</div>
 				</li>
-				<li class="navBtn" id="nav-Completed" class:shown="{$tabs == 'Completed'}">
+				<li
+					class="navBtn"
+					id="nav-Completed"
+					class:shown={$tabs == "Completed"}
+				>
 					<div class="content">
 						Completed <i class="fa-solid fa-circle-check"></i>
 					</div>
 				</li>
-				<li class="navBtn" id="nav-Unlocked" class:shown="{$tabs == 'Unlocked'}">
+				<li
+					class="navBtn"
+					id="nav-Unlocked"
+					class:shown={$tabs == "Unlocked"}
+				>
 					<div class="content">
 						Unlocked <i class="fa-solid fa-unlock"></i>
 					</div>
@@ -292,74 +322,90 @@
 				</button>
 			</ul>
 
-
 			<div class="log">
-				{#if $updateStatus == 'loading' || $updateStatus == 'success'}
-				<div class="content" transition:fly={{y: 10}}>
-					{$updateLog}
-						{#if $updateStatus == 'loading'}
-						<i class="fa-solid fa-rotate fa-spin"></i>
-						{:else if $updateStatus == 'success'}
-						<i class="fa-solid fa-check"></i>
+				{#if $updateStatus == "loading" || $updateStatus == "success"}
+					<div class="content" transition:fly={{ y: 10 }}>
+						{$updateLog}
+						{#if $updateStatus == "loading"}
+							<i class="fa-solid fa-rotate fa-spin"></i>
+						{:else if $updateStatus == "success"}
+							<i class="fa-solid fa-check"></i>
 						{/if}
 					</div>
 				{/if}
 			</div>
 
-			{#if $updateStatus == 'error'}
-			<div class="modalwrapper" use:resetError>
-				<div class="errorModal" transition:fly|global={{y: 10}}>
-					<div class="text">{$updateLog} <i class="fa-solid fa-triangle-exclamation"></i></div>
-					<button class="ok">Ok</button>
+			{#if $updateStatus == "error"}
+				<div class="modalwrapper" use:resetError>
+					<div class="errorModal" transition:fly|global={{ y: 10 }}>
+						<div class="text">
+							{$updateLog}
+							<i class="fa-solid fa-triangle-exclamation"></i>
+						</div>
+						<button class="ok">Ok</button>
+					</div>
 				</div>
-			</div>
 			{/if}
 
-			{#if $tabs == 'Routine'}
+			{#if $tabs == "Routine"}
 				{#if $semesterName}
-					<Routine/>
+					<Routine />
 				{/if}
-			{:else if $tabs == 'Completed'}
+			{:else if $tabs == "Completed"}
 				<CourseCompleted />
-			{:else if $tabs == 'Unlocked'}
+			{:else if $tabs == "Unlocked"}
 				<UnlockedCourses />
 			{/if}
 		{/if}
-		
+
 		{#if $page.state.options}
-		<div class="wrapper" use:handleOptions transition:fly={{y:10, duration: 200}}>
-			<div class="settings-options">
-				<div class="title-text">
-					Options <i class="fa-solid fa-gear"></i>
-				</div>
-                <div class="subsettings">
-                    <!-- Enable/disable button sounds -->
-                    <div class="field-checkers"  transition:fly|global={{y: 20, delay: 20}}>
-                        <input
-                            type="checkbox"
-                            id="showGrade"
-							bind:checked={$showGrade}
-                        />
-                        <label for="showGrade">
-                            <div class="textContainer">Show grades</div>
-                            <span class="toggleButton" />
-                        </label>
-                    </div>
-				</div>
-				<div class="subsettings btn-grp" transition:fly|global={{y: 20, delay: 100}}>
-					<button id="updateData">Update Data <i class="fa-solid fa-rotate"></i></button>
-					<button id="clearData">Clear Data <i class="fa-solid fa-trash"></i></button>
+			<div
+				class="wrapper"
+				use:handleOptions
+				transition:fly={{ y: 10, duration: 200 }}
+			>
+				<div class="settings-options">
+					<div class="title-text">
+						Options <i class="fa-solid fa-gear"></i>
+					</div>
+					<div class="subsettings">
+						<!-- Enable/disable button sounds -->
+						<div
+							class="field-checkers"
+							transition:fly|global={{ y: 20, delay: 20 }}
+						>
+							<input
+								type="checkbox"
+								id="showGrade"
+								bind:checked={$showGrade}
+							/>
+							<label for="showGrade">
+								<div class="textContainer">Show grades</div>
+								<span class="toggleButton" />
+							</label>
+						</div>
+					</div>
+					<div
+						class="subsettings btn-grp"
+						transition:fly|global={{ y: 20, delay: 100 }}
+					>
+						<button id="updateData"
+							>Update Data <i class="fa-solid fa-rotate"
+							></i></button
+						>
+						<button id="clearData"
+							>Clear Data <i class="fa-solid fa-trash"
+							></i></button
+						>
+					</div>
 				</div>
 			</div>
-		</div>
 		{/if}
 	{/if}
 </div>
 
-
 <style lang="scss">
-
-	.modalwrapper{
+	.modalwrapper {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -373,7 +419,7 @@
 		backdrop-filter: blur(2px) brightness(0.8);
 	}
 
-	.menu{
+	.menu {
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
@@ -388,7 +434,7 @@
 		align-items: center;
 		width: 100%;
 		z-index: 20;
-		li{
+		li {
 			cursor: pointer;
 			text-align: center;
 			font-size: 0.7rem;
@@ -398,7 +444,7 @@
 			justify-content: center;
 			gap: 5px;
 
-			.content{
+			.content {
 				display: flex;
 				flex-direction: row;
 				align-items: flex-end;
@@ -407,8 +453,8 @@
 				pointer-events: none;
 			}
 
-			&::after{
-				content: '';
+			&::after {
+				content: "";
 				display: block;
 				width: 100%;
 				height: 2px;
@@ -418,21 +464,20 @@
 				filter: brightness(1);
 				transform-origin: center;
 			}
-	
-			&:hover{
+
+			&:hover {
 				filter: brightness(1.2);
 			}
 		}
-		
 
-		li.shown{
-			&::after{
+		li.shown {
+			&::after {
 				transform: scaleX(1);
 			}
 		}
 	}
 
-	.errorModal{
+	.errorModal {
 		display: flex;
 		flex-direction: column;
 		justify-content: center;
@@ -446,8 +491,8 @@
 		z-index: 30;
 		min-width: 200px;
 		filter: drop-shadow(2px 5px 10px black);
-		
-		button{
+
+		button {
 			background: black;
 			border-radius: 10px;
 			padding: 10px 20px;
@@ -455,7 +500,7 @@
 			cursor: pointer;
 			font-size: 0.8rem;
 
-			&:hover{
+			&:hover {
 				background: rgb(17, 17, 17);
 			}
 		}
@@ -483,7 +528,7 @@
 		}
 	}
 
-	.log{
+	.log {
 		font-size: 0.7rem;
 		color: var(--accent);
 		display: flex;
@@ -492,7 +537,7 @@
 		justify-content: center;
 		gap: 3px;
 		height: 10px;
-		i{
+		i {
 			font-size: inherit;
 		}
 	}
@@ -502,7 +547,7 @@
 		font-size: 0.8rem;
 	}
 
-	.title-text{
+	.title-text {
 		font-size: 1rem;
 		font-weight: bold;
 		padding: 10px 0 5px 0;
@@ -527,11 +572,11 @@
 		}
 	}
 
-	#clearData{
+	#clearData {
 		background: red;
 	}
 
-	.user{
+	.user {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -541,7 +586,7 @@
 		gap: 10px;
 	}
 
-	.container{
+	.container {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
@@ -549,53 +594,52 @@
 		width: 100%;
 		min-height: 100vh;
 
-		.moto{
+		.moto {
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
 			font-size: 1.2rem;
 			padding: 50px 0 35px;
-			.sub{
+			.sub {
 				font-size: 0.7rem;
-				color: var(--label-color)
+				color: var(--label-color);
 			}
 		}
 	}
 
-	i{
+	i {
 		font-size: 1rem;
 		pointer-events: none;
 	}
 
-	.concent{
+	.concent {
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		color: var(--label-color);
 		padding: 20px;
-		.t{
+		.t {
 			color: ghostwhite;
-            font-size: 0.8rem;
+			font-size: 0.8rem;
 		}
-		ul{  
+		ul {
 			padding: 15px;
 			font-size: 0.7rem;
-			li{
+			li {
 				margin: 5px 0;
 				font-size: 0.7rem;
 			}
-		
 		}
 	}
 
-	.options{
+	.options {
 		color: tomato;
 		font-size: 0.7rem;
 	}
 
-	.wrapper{
+	.wrapper {
 		height: 100%;
 		width: 100%;
 		position: fixed;
@@ -608,8 +652,7 @@
 		backdrop-filter: blur(2px) brightness(0.8);
 	}
 
-
-	.subsettings{
+	.subsettings {
 		width: 100%;
 		display: flex;
 		flex-direction: column;
@@ -618,7 +661,7 @@
 		font-size: 0.8rem;
 	}
 
-	.btn-grp{
+	.btn-grp {
 		flex-direction: row;
 		gap: 20px;
 	}
@@ -636,7 +679,7 @@
 		padding: 5px 10px;
 		width: 100%;
 		border-radius: 10px;
-		label{
+		label {
 			display: flex;
 			flex-direction: row;
 			justify-content: space-between;
@@ -647,13 +690,13 @@
 			padding: 10px;
 			border-radius: 10px;
 
-			&:hover{
+			&:hover {
 				background: var(--primary);
 			}
 		}
 	}
 
-	.settings-options{
+	.settings-options {
 		background: #031826;
 		padding: 10px 25px 20px;
 		border-radius: 10px;
@@ -665,7 +708,7 @@
 		gap: 15px;
 		filter: drop-shadow(2px 5px 10px black);
 
-		.btn-grp{
+		.btn-grp {
 			display: flex;
 			flex-direction: row;
 			align-items: center;
@@ -673,7 +716,7 @@
 			gap: 15px;
 		}
 
-		button{
+		button {
 			border: none;
 			outline: none;
 			border-radius: 10px;
@@ -682,7 +725,7 @@
 			font-size: 0.8rem;
 			background: var(--accent);
 			cursor: pointer;
-			&:hover{
+			&:hover {
 				filter: brightness(0.9);
 			}
 		}
