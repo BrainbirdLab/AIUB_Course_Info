@@ -31,7 +31,9 @@
 <footer class="footer">
     <div class="source"><a href="https://github.com/itsfuad/AIUB_Solution">Source code <i class="fa-solid fa-code"></i></a></div>
     ・
-    <a href="https://www.flaticon.com/free-icons/course" title="course icons">Icon by Freepik - Flaticon</a>
+    <a href="https://www.flaticon.com/free-icons/course" title="course icons">Flaticon</a>
+    ・
+    <a href="https://www.fontawesome.com" title="fontawesome">Fontawesome</a>
 </footer>
 
 <style lang="scss">

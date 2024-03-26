@@ -1,3 +1,7 @@
+<script context="module" lang="ts">
+	const url = import.meta.env.VITE_API_SERVER_URL as string;
+</script>
+
 <script lang="ts">
 	import Login from "./Login.svelte";
 	import { updateLog, updateStatus, showGrade, clearData, showLogin, User, semesterClassRoutine, semesterName, completedCourses, type SemesterDataType, unlockedCourses, tabs, type TABS } from "$lib/store";
@@ -10,6 +14,8 @@
     import { page } from "$app/stores";
 
 	let loaded = false;
+
+	console.log(`Url is ${url}`);
 
 	onMount(() => {
 
@@ -110,7 +116,11 @@
 
 			else if (target.id == 'showGrade'){
 				const value = (target as HTMLInputElement).checked;
-				localStorage.setItem('showGrade', value.toString());
+				if (!value){
+					localStorage.setItem('showGrade', 'false');
+				} else {
+					localStorage.setItem('showGrade', 'true');
+				}
 			}
 		}
 
@@ -148,8 +158,7 @@
 			controller = new AbortController();
 			signal = controller.signal;
 
-			//https://course-visualizer-proxy.onrender.com
-			const res = await fetch('https://course-visualizer-proxy.onrender.com', {
+			const res = await fetch(url, {
 					method: 'POST',
 					body: new URLSearchParams({
 						'UserName': UserName,
@@ -163,7 +172,9 @@
 			
 			const data = await res.json();
 
-			if (res.ok){
+			console.log(data);
+
+			if (data.success){
 				updateStatus.set('success');
 				//console.log(data);
 				//logText = data.message;
@@ -238,7 +249,7 @@
 			</div>
 		</div>
 
-		<Login />
+		<Login url={url}/>
 
 		<!-- Say concent before loging in with their password -->
 		<div class="concent" in:fly|global={{y: -10}}>

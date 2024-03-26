@@ -4,6 +4,9 @@
     import { fly } from "svelte/transition";
 	import {showLogin, semesterClassRoutine, User, unlockedCourses, completedCourses, semesterName, updateLog, updateStatus } from "$lib/store";
 
+
+	export let url: string;
+
 	let usernameLabel = "AIUB ID";
 	let passwordLabel = "Password";
 	let username: HTMLInputElement;
@@ -12,6 +15,8 @@
 	let submitting = false;
 	let errlog = false;
 	let logText = "";
+
+	console.log(url);
 
 	async function handleForm(){
 		//console.log("Reading form");
@@ -108,7 +113,7 @@
 
 		try{
 			//https://course-visualizer-proxy.onrender.com
-			const res = await fetch('https://course-visualizer-proxy.onrender.com', {
+			const res = await fetch(url, {
 					method: 'POST',
 					body: new URLSearchParams({
 						'UserName': UserName,
@@ -129,7 +134,7 @@
 				intervalId = null;
 			}
 
-			if (res.ok){
+			if (data.success){
 				errlog = false;
 				updateLog.set('');
 				updateStatus.set('');
