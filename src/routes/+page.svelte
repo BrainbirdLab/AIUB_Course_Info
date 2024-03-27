@@ -76,13 +76,16 @@
 			if (data satisfies SemesterDataType) {
 				console.log("Data loaded from local storage");
 				semesterClassRoutine.set(data);
+				console.log("Semester set");
 				showLogin.set(false);
+				console.log("Login shown");
 			} else {
 				console.log("Invalid data");
 				clearData();
 			}
 
 			loaded = true;
+			console.log("Loaded set to true");
 		} catch (e) {
 			console.log("Error loading data");
 			loaded = true;
