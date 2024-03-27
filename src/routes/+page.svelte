@@ -266,7 +266,7 @@
 				</div>
 			</div>
 
-			<Login {url} />
+			<Login url={url} />
 
 			<!-- Say concent before loging in with their password -->
 			<div class="concent" in:fly|global={{ y: -10 }}>
