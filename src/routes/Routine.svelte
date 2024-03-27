@@ -14,7 +14,7 @@
         }
     }} = $semesterClassRoutine[$semesterName];
 
-    let range: Array<number> = [];
+    let range: number[] = [];
 
     //Day name today. Eg: Saturday
     const today = new Date().toLocaleString('en-us', {  weekday: 'long' });
@@ -48,13 +48,27 @@
 
     function timeParser(timeRange: string): [number, number] {
         const times = timeRange.split("-").map((time) => time.trim());
-        const startTime = times[0];
-        const endTime = times[1];
-        const start = new Date("1970-01-01 " + startTime);
-        const end = new Date("1970-01-01 " + endTime);
-        const startMinutes = start.getHours() * 60 + start.getMinutes();
-        const endMinutes = end.getHours() * 60 + end.getMinutes();
+        const startTime = parseTime(times[0]);
+        const endTime = parseTime(times[1]);
+        const startMinutes = startTime[0] * 60 + startTime[1];
+        const endMinutes = endTime[0] * 60 + endTime[1];
         return [startMinutes, endMinutes];
+    }
+
+    function parseTime(timeStr: string): [number, number] {
+        const match = timeStr.match(/(\d+):(\d+)\s+(AM|PM)/i);
+        if (!match) {
+            throw new Error("Invalid time format");
+        }
+        let hours = parseInt(match[1]);
+        const minutes = parseInt(match[2]);
+        const period = match[3].toUpperCase();
+        if (hours === 12) {
+            hours = period === "AM" ? 0 : 12;
+        } else {
+            hours += period === "PM" ? 12 : 0;
+        }
+        return [hours, minutes];
     }
 
     let AvailableColors = getColors();
