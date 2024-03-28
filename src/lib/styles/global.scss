@@ -130,15 +130,12 @@ select:-webkit-autofill:focus {
 }
 
 .name {
-    font-size: 0.9rem;
+    font-size: 1rem;
     text-align: center;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    i{
-        font-size: 1.5rem;
-    }
 }
 
 .metadata {
