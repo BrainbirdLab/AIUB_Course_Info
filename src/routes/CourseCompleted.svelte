@@ -12,17 +12,14 @@
     } </div>
     <div class="courses">
         {#each Object.entries($completedCourses) as [courseId, courseInfo], i}
-            <div class="course" in:fly|global={{y: 10, delay: 50 * (i+1)}} style="background: {CourseIconColors[parseCourseId(courseId)].COLOR || 'var(--light-dark)'};">
-                <div class="name"> {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseInfo.course_name}</div>
+            <div class="course" in:fly|global={{y: 10, delay: 50 * (i+1)}}>
+                <div class="courseid tag bookmark" style:background={CourseIconColors[parseCourseId(courseId)].COLOR}>
+                    {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseId}
+                </div>
+                <div class="name">{courseInfo.course_name}</div>
                 <div class="metadata">
                     <div class="credit">Credit: {courseInfo.credit || '-'}</div>
-                    <div class="grade">Grade:
-                        {#if $showGrade} 
-                        {courseInfo.grade}
-                        {:else}
-                        🙈
-                        {/if}
-                    </div>
+                    <div class="grade">Grade: {$showGrade ? courseInfo.grade : '🙈'}</div>
                 </div>
             </div>
         {/each}

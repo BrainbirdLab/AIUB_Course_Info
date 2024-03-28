@@ -10,19 +10,21 @@
     <div class="note" in:fade|global>Note: You may have to complete certain credits to take some courses</div>
     <div class="courses">
         {#each Object.entries($unlockedCourses) as [courseId, courseInfo], i}
-            <div class="course" in:fly|global={{y: 10, delay: 50*(i+1)}} style="background: {CourseIconColors[parseCourseId(courseId)].COLOR || 'var(--light-dark)'};">
+            <div class="course" in:fly|global={{y: 10, delay: 50*(i+1)}}>
+                <div class="courseid tag bookmark" style:background={CourseIconColors[parseCourseId(courseId)].COLOR}>
+                    {courseId}
+                </div>
                 <div class="name"> {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseInfo.course_name} <div class="retake">{#if courseInfo.retake}(Retake){/if}</div></div>
                 <div class="metadata">
                     <div class="credit">Credit: {courseInfo.credit}</div>
                     <div class="prerequisites">
+                        Prerequisites
                         {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
-                        Prerequisite: &#91;
-                        {#each courseInfo.prerequisites as prerequisite, i}
-                            <div class="prerequisite">{prerequisite} {i < courseInfo.prerequisites.length - 1 ? ',' : ''}</div>
-                        {/each}
-                        &#93;
+                            {#each courseInfo.prerequisites as prerequisite}
+                                <div class="prerequisite tag" style:background={CourseIconColors[parseCourseId(courseId)].COLOR}>{prerequisite}</div>
+                            {/each}
                         {:else}
-                        Prerequisite: None
+                            <div class="prerequisite tag" style:background={"#398982"}>None</div>
                         {/if}
                     </div>
                 </div>

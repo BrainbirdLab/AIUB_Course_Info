@@ -107,6 +107,25 @@ select:-webkit-autofill:focus {
     padding: 15px;
     aspect-ratio: 1/0.7;
     width: min(300px, 90vw);
+    position: relative;
+}
+
+.courseid{
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.tag{
+    font-size: 0.6rem;
+    padding: 5px 8px;
+    border-radius: 25px;
+    &.bookmark{
+        font-size: 0.8rem;
+        padding: 8px 12px;
+        border-top-left-radius: inherit;
+        border-bottom-left-radius: 0;
+    }
 }
 
 .name {
