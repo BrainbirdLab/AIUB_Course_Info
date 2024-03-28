@@ -12,7 +12,7 @@
         {#each Object.entries($unlockedCourses) as [courseId, courseInfo], i}
             <div class="course" in:fly|global={{y: 10, delay: 50*(i+1)}}>
                 <div class="courseid tag bookmark" style:background={CourseIconColors[parseCourseId(courseId)].COLOR}>
-                    {courseId}
+                    {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseId}
                 </div>
                 <div class="name"> {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseInfo.course_name} <div class="retake">{#if courseInfo.retake}(Retake){/if}</div></div>
                 <div class="metadata">
