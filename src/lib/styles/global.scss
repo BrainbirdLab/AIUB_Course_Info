@@ -135,7 +135,8 @@ select:-webkit-autofill:focus {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 15px;
+    padding: 0 15px 15px 15px;
+    margin-top: 25px;
     i{
         font-size: 1.5rem;
     }
