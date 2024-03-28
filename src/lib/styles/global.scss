@@ -1,12 +1,12 @@
 @import "fontawesome/css/all.min.css";
 
 @font-face {
-    font-family: 'Now';
-    src: url('/fonts/now-web.woff2') format('woff2');
+    font-family: 'light';
+    src: url('/fonts/light.woff2') format('woff2');
 }
 
 *{
-    font-family: 'Now', sans-serif;
+    font-family: 'light', sans-serif;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
