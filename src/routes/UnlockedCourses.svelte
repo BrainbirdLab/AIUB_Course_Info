@@ -1,4 +1,3 @@
-
 <script lang="ts">
     import { unlockedCourses, CourseIconColors, parseCourseId } from '$lib/store';
     import { fade, fly } from 'svelte/transition';
@@ -21,7 +20,7 @@
                         Prerequisites
                         {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
                             {#each courseInfo.prerequisites as prerequisite}
-                                <div class="prerequisite tag" style:background={CourseIconColors[parseCourseId(courseId)].COLOR}>{prerequisite}</div>
+                                <div class="prerequisite tag" style:background={CourseIconColors[parseCourseId(prerequisite)].COLOR}>{prerequisite}</div>
                             {/each}
                         {:else}
                             <div class="prerequisite tag" style:background={"#398982"}>None</div>
