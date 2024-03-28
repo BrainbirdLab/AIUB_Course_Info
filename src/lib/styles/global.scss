@@ -1,8 +1,8 @@
-@import "fontawesome/css/all.min.css";
+@import "$lib/styles/fontawesome/css/all.min.css";
 
 @font-face {
     font-family: 'light';
-    src: url('/fonts/light.woff2') format('woff2');
+    src: url('$lib/fonts/light.woff2') format('woff2');
 }
 
 *{
