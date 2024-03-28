@@ -14,7 +14,7 @@
                 <div class="courseid tag bookmark" style:background={CourseIconColors[parseCourseId(courseId)].COLOR}>
                     {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseId}
                 </div>
-                <div class="name"> {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseInfo.course_name} <div class="retake">{#if courseInfo.retake}(Retake){/if}</div></div>
+                <div class="name">{courseInfo.course_name} <div class="retake">{#if courseInfo.retake}(Retake){/if}</div></div>
                 <div class="metadata">
                     <div class="credit">Credit: {courseInfo.credit}</div>
                     <div class="prerequisites">

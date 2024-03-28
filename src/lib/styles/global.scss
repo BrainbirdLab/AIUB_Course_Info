@@ -104,7 +104,8 @@ select:-webkit-autofill:focus {
     border-radius: 10px;
     background-color: rgb(21, 49, 68);
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
-    padding: 15px;
+    padding: 25px 15px;
+    gap: 10px;
     aspect-ratio: 1/0.7;
     width: min(300px, 90vw);
     position: relative;
@@ -135,8 +136,6 @@ select:-webkit-autofill:focus {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 0 15px 15px 15px;
-    margin-top: 25px;
     i{
         font-size: 1.5rem;
     }
