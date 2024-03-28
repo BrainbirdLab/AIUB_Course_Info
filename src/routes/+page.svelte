@@ -4,6 +4,7 @@
 
 <script lang="ts">
 	import Login from "./Login.svelte";
+	import Logo from "./Logo.svelte";
 	import {
 		updateLog,
 		updateStatus,
@@ -255,9 +256,12 @@
 <svelte:head>
 	<title>AIUB Course Info</title>
 </svelte:head>
-
-<div class="container">
-	{#if loaded}
+{#if !loaded}
+	<div class="preload" in:fade out:fly={{ y: 10 }}>
+		<Logo />
+	</div>
+{:else}
+	<div class="container">
 		{#if $showLogin}
 			<div class="moto" in:fly|global={{ y: -10 }}>
 				AIUB Course Info
@@ -266,7 +270,7 @@
 				</div>
 			</div>
 
-			<Login url={url} />
+			<Login {url} />
 
 			<!-- Say concent before loging in with their password -->
 			<div class="concent" in:fly|global={{ y: -10 }}>
@@ -404,18 +408,42 @@
 				</div>
 			</div>
 		{/if}
-	{/if}
-	<footer class="footer">
-		<div class="source"><a href="https://github.com/itsfuad/AIUB_Solution">Source code <i class="fa-solid fa-code"></i></a></div>
-		・
-		<a href="https://www.flaticon.com/free-icons/course" title="course icons">Flaticon</a>
-		・
-		<a href="https://www.fontawesome.com" title="fontawesome">Fontawesome</a>
-	</footer>
-</div>
+		<footer class="footer">
+			<div class="source">
+				<a href="https://github.com/itsfuad/AIUB_Solution"
+					>Source code <i class="fa-solid fa-code"></i></a
+				>
+			</div>
+			・
+			<a
+				href="https://www.flaticon.com/free-icons/course"
+				title="course icons">Flaticon</a
+			>
+			・
+			<a href="https://www.fontawesome.com" title="fontawesome"
+				>Fontawesome</a
+			>
+		</footer>
+	</div>
+{/if}
 
 <style lang="scss">
-	.footer{
+	.preload {
+		position: fixed;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		width: 100%;
+		inset: 0;
+		font-size: 0.8rem;
+		color: var(--accent);
+		gap: 10px;
+		z-index: 100;
+	}
+
+	.footer {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
@@ -424,16 +452,16 @@
 		padding: 10px;
 		gap: 5px;
 		font-size: 0.6rem;
-        position: relative;
-		*{
+		position: relative;
+		* {
 			padding: 0;
 			color: ghostwhite;
 		}
 
-		a{
+		a {
 			text-decoration: underline;
 		}
-		i{
+		i {
 			font-size: 0.7rem;
 		}
 	}
