@@ -299,7 +299,7 @@
 					id="nav-Routine"
 					class:shown={$tabs == "Routine"}
 				>
-					<div class="content">
+					<div class="content pointer-none">
 						Routine <i class="fa-regular fa-calendar-days"></i>
 					</div>
 				</li>
@@ -308,7 +308,7 @@
 					id="nav-Completed"
 					class:shown={$tabs == "Completed"}
 				>
-					<div class="content">
+					<div class="content pointer-none">
 						Completed <i class="fa-solid fa-circle-check"></i>
 					</div>
 				</li>
@@ -317,16 +317,16 @@
 					id="nav-Unlocked"
 					class:shown={$tabs == "Unlocked"}
 				>
-					<div class="content">
+					<div class="content pointer-none">
 						Unlocked <i class="fa-solid fa-unlock"></i>
 					</div>
 				</li>
-				<button class="options" on:click={showOptions}>
-					<div class="content">
+				<li class="options">
+					<button class="content" on:click={showOptions}>
 						Options
 						<i class="fa-solid fa-wrench"></i>
-					</div>
-				</button>
+					</button>
+				</li>
 			</ul>
 
 			<div class="log">
@@ -510,7 +510,9 @@
 				align-items: flex-end;
 				justify-content: center;
 				gap: 5px;
-				pointer-events: none;
+				&.pointer-none{
+					pointer-events: none;
+				}
 			}
 
 			&::after {
@@ -697,6 +699,10 @@
 	.options {
 		color: tomato;
 		font-size: 0.7rem;
+		button{
+			color: inherit;
+			font-size: inherit;
+		}
 	}
 
 	.wrapper {
