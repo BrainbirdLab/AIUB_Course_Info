@@ -14,18 +14,18 @@
                     {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseId}
                 </div>
                 <div class="name">{courseInfo.course_name} <div class="retake">{#if courseInfo.retake}(Retake){/if}</div></div>
-                <div class="metadata">
-                    <div class="credit">Credit: {courseInfo.credit}</div>
-                    <div class="prerequisites">
-                        Prerequisites
-                        {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
-                            {#each courseInfo.prerequisites as prerequisite}
-                                <div class="prerequisite tag" style:background={CourseIconColors[parseCourseId(prerequisite)].COLOR}>{prerequisite}</div>
-                            {/each}
-                        {:else}
-                            <div class="prerequisite tag" style:background={"#398982"}>None</div>
-                        {/if}
-                    </div>
+                <div class="credit">
+                    {courseInfo.credit || '-'}
+                </div>
+                <div class="prerequisites">
+                    Prerequisites
+                    {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
+                        {#each courseInfo.prerequisites as prerequisite}
+                            <div class="prerequisite tag" style:background={CourseIconColors[parseCourseId(prerequisite)].COLOR}>{@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {prerequisite}</div>
+                        {/each}
+                    {:else}
+                        <div class="prerequisite tag" style:background={"#398982"}>None</div>
+                    {/if}
                 </div>
             </div>
         {/each}

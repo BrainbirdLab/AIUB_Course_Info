@@ -17,10 +17,10 @@
                     {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseId}
                 </div>
                 <div class="name">{courseInfo.course_name}</div>
-                <div class="metadata">
-                    <div class="credit">Credit: {courseInfo.credit || '-'}</div>
-                    <div class="grade">Grade: {$showGrade ? courseInfo.grade : '🙈'}</div>
+                <div class="credit">
+                    {courseInfo.credit || '-'}
                 </div>
+                <div class="grade">Grade: {$showGrade ? courseInfo.grade : '🙈'}</div>
             </div>
         {/each}
     </div>

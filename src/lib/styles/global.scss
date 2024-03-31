@@ -100,11 +100,11 @@ select:-webkit-autofill:focus {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;
     border-radius: 10px;
     background-color: rgb(21, 49, 68);
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
-    padding: 25px 15px;
+    padding: 35px 25px;
     gap: 10px;
     aspect-ratio: 1/0.7;
     width: min(300px, 90vw);
@@ -121,6 +121,7 @@ select:-webkit-autofill:focus {
     font-size: 0.6rem;
     padding: 5px 8px;
     border-radius: 25px;
+    color: ghostwhite;
     &.bookmark{
         font-size: 0.8rem;
         padding: 8px 12px;
@@ -136,24 +137,32 @@ select:-webkit-autofill:focus {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    z-index: 2;
 }
 
-.metadata {
-    align-items: center;
-    justify-content: center;
-    font-size: 0.8rem;
+
+.credit{
+    position: absolute;
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
     display: flex;
     flex-direction: row;
-    flex-wrap: wrap;
-    gap: 1rem;
-    color: ghostwhite;
+    align-items: flex-end;
+    justify-content: center;
+    bottom: 0;
+    right: 0;
+    z-index: 1;
+    color: rgba(255, 255, 255, 0.1);
 }
 
-.prerequisites {
+.prerequisites, .grade {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
     gap: 4px;
+    font-size: 0.8rem;
+    z-index: 2;
 }
