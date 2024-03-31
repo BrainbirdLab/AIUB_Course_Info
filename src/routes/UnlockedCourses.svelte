@@ -1,6 +1,20 @@
 <script lang="ts">
-    import { unlockedCourses, CourseIconColors, parseCourseId } from '$lib/store';
+    import { unlockedCourses, CourseIconColors, parseCourseId, creditsPrerequisitesObj, completedCourses } from '$lib/store';
     import { fade, fly } from 'svelte/transition';
+
+    
+    $: creditsCompleted = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
+
+    $: {
+        Object.keys($unlockedCourses).forEach((courseId) => {
+            if (creditsPrerequisitesObj[courseId]) {
+                if ((creditsPrerequisitesObj[courseId] > creditsCompleted)){
+                    delete $unlockedCourses[courseId];
+                }
+            }
+        });
+    }
+
 </script>
 
 {#if $unlockedCourses && Object.keys($unlockedCourses).length > 0}

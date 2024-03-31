@@ -2,13 +2,14 @@
     import { completedCourses, CourseIconColors, parseCourseId, showGrade } from '$lib/store';
     import { fly } from 'svelte/transition';
 
-    $: totalCredit = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
+    $: creditsCompleted = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0) + 100;
+
 </script>
 
 {#if $completedCourses && Object.keys($completedCourses).length > 0}
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>{Object.keys($completedCourses).length} Courses {
-        totalCredit > 0 && `(${totalCredit} Credits)`
+        creditsCompleted > 0 && `(${creditsCompleted} Credits)`
     } </div>
     <div class="courses">
         {#each Object.entries($completedCourses) as [courseId, courseInfo], i}

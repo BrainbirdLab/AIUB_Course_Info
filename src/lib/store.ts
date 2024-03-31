@@ -1,4 +1,4 @@
-import { writable, type Writable } from 'svelte/store';
+import { get, writable, type Writable } from 'svelte/store';
 
 
 export type Class = {
@@ -178,6 +178,10 @@ export const CourseIconColors = {
     'COLOR' : '#ff5722'
   },
 }
+
+export const creditsPrerequisitesObj: {[key:string]: number} = {
+  'CSC4197': 100,
+};
 
 export function parseCourseId(courseId: string) {
   return courseId.match(/[A-Z]+/)![0] as keyof typeof CourseIconColors;
