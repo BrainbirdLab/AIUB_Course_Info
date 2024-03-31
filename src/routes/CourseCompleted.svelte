@@ -17,7 +17,7 @@
                     {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseId}
                 </div>
                 <div class="name">{courseInfo.course_name}</div>
-                <div class="credit">
+                <div class="credit" title="{courseInfo.credit || '-'} credits">
                     {courseInfo.credit || '-'}
                 </div>
                 <div class="grade">Grade: {$showGrade ? courseInfo.grade : '🙈'}</div>

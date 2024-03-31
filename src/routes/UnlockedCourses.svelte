@@ -14,7 +14,7 @@
                     {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseId}
                 </div>
                 <div class="name">{courseInfo.course_name} <div class="retake">{#if courseInfo.retake}(Retake){/if}</div></div>
-                <div class="credit">
+                <div class="credit" title="{courseInfo.credit || '-'} credits">
                     {courseInfo.credit || '-'}
                 </div>
                 <div class="prerequisites">
