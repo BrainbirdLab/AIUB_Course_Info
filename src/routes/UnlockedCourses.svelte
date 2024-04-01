@@ -1,8 +1,7 @@
 <script lang="ts">
-    import { unlockedCourses, CourseIconColors, parseCourseId, creditsPrerequisitesObj, completedCourses } from '$lib/store';
+    import { unlockedCourses, CourseIconColors, parseCourseId, creditsPrerequisitesObj, completedCourses, preregisteredCourses } from '$lib/store';
     import { fade, fly } from 'svelte/transition';
 
-    
     $: creditsCompleted = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
 
     $: {
@@ -27,11 +26,23 @@
                 <div class="courseid tag bookmark" style:background={CourseIconColors[parseCourseId(courseId)].COLOR}>
                     {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseId}
                 </div>
-                <div class="name">{courseInfo.course_name} <div class="retake">{#if courseInfo.retake}(Retake){/if}</div></div>
+                <div class="name">
+                    {courseInfo.course_name} 
+                    {#if courseInfo.retake}
+                    <div class="retake">
+                        (Retake)
+                    </div>
+                    {/if}
+                    {#if $preregisteredCourses[courseId]}
+                        <span class="registered tag">
+                            Registered <i class="fa-solid fa-circle-check"></i>
+                        </span>
+                    {/if}
+                </div>
                 <div class="credit" title="{courseInfo.credit || '-'} credits">
                     {courseInfo.credit || '-'}
                 </div>
-                <div class="prerequisites">
+                <span class="prerequisites">
                     Prerequisites
                     {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
                         {#each courseInfo.prerequisites as prerequisite}
@@ -40,7 +51,7 @@
                     {:else}
                         <div class="prerequisite tag" style:background={"#398982"}>None</div>
                     {/if}
-                </div>
+                </span>
             </div>
         {/each}
     </div>
@@ -49,7 +60,11 @@
     <div class="info no-course">No courses available</div>
 {/if}
 
-<style>
+<style lang="scss">
+
+    .registered{
+        background: #09bc65;
+    }
   
     .container{
         display: flex;

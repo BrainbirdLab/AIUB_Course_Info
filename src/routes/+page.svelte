@@ -19,6 +19,7 @@
 		unlockedCourses,
 		tabs,
 		type TABS,
+        preregisteredCourses,
 	} from "$lib/store";
 	import { onMount } from "svelte";
 	import { fade, fly } from "svelte/transition";
@@ -52,16 +53,23 @@
 
 			const rawCompletedCourses =
 				localStorage.getItem("completedCourses");
+			const rawPreregisteredCourses = localStorage.getItem("preregisteredCourses");
 			const rawUnlockedCourses = localStorage.getItem("unlockedCourses");
 
 			const parsedCompletedCourses = rawCompletedCourses
 				? JSON.parse(rawCompletedCourses)
 				: {};
+
+			const parsedPreregisteredCourses = rawPreregisteredCourses
+				? JSON.parse(rawPreregisteredCourses)
+				: {};
+			
 			const parsedUnlockedCourses = rawUnlockedCourses
 				? JSON.parse(rawUnlockedCourses)
 				: {};
 
 			completedCourses.set(parsedCompletedCourses);
+			preregisteredCourses.set(parsedPreregisteredCourses);
 			unlockedCourses.set(parsedUnlockedCourses);
 
 			tabs.set((localStorage.getItem("tabs") as TABS) || "Routine");
@@ -191,6 +199,7 @@
 				User.set(data.result.user);
 				semesterClassRoutine.set(data.result.semesterClassRoutine);
 				unlockedCourses.set(data.result.unlockedCourses);
+				preregisteredCourses.set(data.result.preregisteredCourses);
 				completedCourses.set(data.result.completedCourses);
 				semesterName.set(data.result.currentSemester);
 				localStorage.setItem("user", data.result.user);
@@ -201,6 +210,10 @@
 				localStorage.setItem(
 					"unlockedCourses",
 					JSON.stringify(data.result.unlockedCourses),
+				);
+				localStorage.setItem(
+					"preregisteredCourses",
+					JSON.stringify(data.result.preregisteredCourses),
 				);
 				localStorage.setItem(
 					"completedCourses",

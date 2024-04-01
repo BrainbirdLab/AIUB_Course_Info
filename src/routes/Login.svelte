@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
     import Logo from "./Logo.svelte";
     import { fly } from "svelte/transition";
-	import {showLogin, semesterClassRoutine, User, unlockedCourses, completedCourses, semesterName, updateLog, updateStatus } from "$lib/store";
+	import {showLogin, semesterClassRoutine, User, unlockedCourses, completedCourses, semesterName, updateLog, updateStatus, preregisteredCourses } from "$lib/store";
 
 
 	export let url: string;
@@ -144,11 +144,13 @@
 				User.set(data.result.user);
 				semesterClassRoutine.set(data.result.semesterClassRoutine);
 				unlockedCourses.set(data.result.unlockedCourses);
+				preregisteredCourses.set(data.result.preregisteredCourses);
 				completedCourses.set(data.result.completedCourses);
 				semesterName.set(data.result.currentSemester);
 				localStorage.setItem('user', data.result.user);
 				localStorage.setItem('semesterClassRoutine', JSON.stringify(data.result.semesterClassRoutine));
 				localStorage.setItem('unlockedCourses', JSON.stringify(data.result.unlockedCourses));
+				localStorage.setItem('preregisteredCourses', JSON.stringify(data.result.preregisteredCourses));
 				localStorage.setItem('completedCourses', JSON.stringify(data.result.completedCourses));
 				localStorage.setItem('semester', data.result.currentSemester);
 				localStorage.setItem('UserName', UserName);
