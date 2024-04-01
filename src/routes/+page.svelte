@@ -415,14 +415,11 @@
 				>
 			</div>
 			・
-			<a
-				href="https://www.flaticon.com/free-icons/course"
-				title="course icons">Flaticon</a
-			>
-			・
-			<a href="https://www.fontawesome.com" title="fontawesome"
-				>Fontawesome</a
-			>
+			<div class="support">
+				<a href="mailto:fuad@programmer.net">
+					Submit issue on fuad@programmer.net
+				</a>
+			</div>
 		</footer>
 	</div>
 {/if}
