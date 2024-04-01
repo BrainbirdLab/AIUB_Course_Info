@@ -410,7 +410,7 @@
 		{/if}
 		<footer class="footer">
 			<div class="source">
-				<a href="https://github.com/itsfuad/AIUB_Solution"
+				<a href="https://github.com/itsfuad/AIUB_Course_Info"
 					>Source code <i class="fa-solid fa-code"></i></a
 				>
 			</div>
