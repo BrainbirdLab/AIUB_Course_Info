@@ -410,7 +410,7 @@
 						transition:fly|global={{ y: 20, delay: 100 }}
 					>
 						<button id="updateData"
-							>Update Data <i class="fa-solid fa-rotate"
+							>Sync with portal <i class="fa-solid fa-rotate"
 							></i></button
 						>
 						<button id="clearData"
