@@ -463,6 +463,7 @@
 		gap: 5px;
 		font-size: 0.6rem;
 		position: relative;
+		margin: auto 0 0;
 		* {
 			padding: 0;
 			color: ghostwhite;

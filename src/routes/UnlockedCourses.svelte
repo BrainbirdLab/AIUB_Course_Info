@@ -1,5 +1,6 @@
 <script lang="ts">
     import { unlockedCourses, CourseIconColors, parseCourseId, creditsPrerequisitesObj, completedCourses, preregisteredCourses } from '$lib/store';
+    import { flip } from 'svelte/animate';
     import { fade, fly } from 'svelte/transition';
 
     $: creditsCompleted = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
@@ -14,15 +15,46 @@
         });
     }
 
+
+    const filterOptions: string[] = ['All', 'Registered', 'Unregistered'];
+
+    let selectedGroup = "All";
+
+    let unlockedCoursesArray = Object.entries($unlockedCourses);
+
+    $: {
+        if (selectedGroup) {
+            if (selectedGroup === 'Registered') {
+                unlockedCoursesArray = Object.entries($unlockedCourses).filter(([courseId, courseInfo]) => $preregisteredCourses[courseId]);
+            } else if (selectedGroup === 'Unregistered') {
+                unlockedCoursesArray = Object.entries($unlockedCourses).filter(([courseId, courseInfo]) => !$preregisteredCourses[courseId]);
+            } else {
+                unlockedCoursesArray = Object.entries($unlockedCourses);
+            }
+        }
+    }
+
 </script>
 
-{#if $unlockedCourses && Object.keys($unlockedCourses).length > 0}
+<div class="filter">
+    <!-- radio button -->
+    {#each filterOptions as option}
+        <div class="form-field">
+            <input type="radio" name="filter" id="{option}" value="{option}" bind:group={selectedGroup} />
+            <label for="{option}" class="tag">
+                {option}
+            </label>
+        </div>
+    {/each}
+</div>
+
+{#if unlockedCoursesArray && unlockedCoursesArray.length > 0}
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>{Object.keys($unlockedCourses).length} Courses available</div>
     <div class="note" in:fade|global>Note: You may have to complete certain credits to take some courses</div>
     <div class="courses">
-        {#each Object.entries($unlockedCourses) as [courseId, courseInfo], i}
-            <div class="course" in:fly|global={{y: 10, delay: 50*(i+1)}}>
+        {#each unlockedCoursesArray as [courseId, courseInfo], i (courseId)}
+            <div animate:flip={{duration: 300}} class="course" in:fly|global={{y: 10, delay: 50*(i+1)}}>
                 <div class="courseid tag bookmark" style:background={CourseIconColors[parseCourseId(courseId)].COLOR}>
                     {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseId}
                 </div>
@@ -64,6 +96,36 @@
 
     .registered{
         background: #09bc65;
+    }
+
+    .filter{
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin: 10px;
+
+        .form-field{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .tag{
+            background: var(--light-dark);
+            color: #ffffff5a;
+            cursor: pointer; 
+        }
+
+        input{
+            display: none;
+        }
+
+        input:checked + label{
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
     }
   
     .container{

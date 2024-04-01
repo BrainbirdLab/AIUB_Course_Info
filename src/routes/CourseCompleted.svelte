@@ -27,7 +27,7 @@
     </div>
 </div>
 {:else}
-    <div class="info no-course">No courses available</div>
+    <div class="info no-course">No courses completed yet</div>
 {/if}
 
 <style lang="scss">
