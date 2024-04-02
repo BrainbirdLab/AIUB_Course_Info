@@ -429,8 +429,8 @@
 			</div>
 			・
 			<div class="support">
-				<a href="mailto:fuad@programmer.net">
-					Submit issue on fuad@programmer.net
+				<a href="https://github.com/itsfuad/AIUB_Course_Info/issues">
+					Submit issues
 				</a>
 			</div>
 		</footer>
