@@ -430,7 +430,7 @@
 			・
 			<div class="support">
 				<a href="https://github.com/itsfuad/AIUB_Course_Info/issues">
-					Submit issues
+					Submit issues <i class="fa-solid fa-circle-exclamation"></i>
 				</a>
 			</div>
 		</footer>
