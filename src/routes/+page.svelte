@@ -464,16 +464,15 @@
 		font-size: 0.6rem;
 		position: relative;
 		margin: auto 0 0;
-		* {
-			padding: 0;
-			color: ghostwhite;
-		}
+		color: var(--label-color);
 
 		a {
 			text-decoration: underline;
+			color: inherit;
 		}
+
 		i {
-			font-size: 0.7rem;
+			font-size: inherit;
 		}
 	}
 	.modalwrapper {

@@ -123,6 +123,8 @@ select:-webkit-autofill:focus {
     padding: 5px 8px;
     border-radius: 25px;
     color: ghostwhite;
+    min-width: 35px;
+    text-align: center;
     &.bookmark{
         font-size: 0.8rem;
         padding: 8px 12px;
