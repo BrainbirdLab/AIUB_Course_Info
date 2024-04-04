@@ -126,6 +126,10 @@
             background: var(--accent-dim);
             color: var(--accent);
         }
+
+        input:not(:checked) + label:hover{
+            background: var(--hover-light-dark);
+        }
     }
   
     .container{
