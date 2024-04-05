@@ -1,8 +1,6 @@
 <script lang="ts">
     import "$lib/styles/global.scss";
 
-    import { inject } from '@vercel/analytics'
-
     import { onMount } from "svelte";
 
     async function detectSWUpdate(){
@@ -21,16 +19,7 @@
     }
 
     onMount(() => {
-        
         detectSWUpdate();
-
-        try{
-            if (navigator.onLine){
-                inject();
-            }
-        } catch (e){
-            console.error(e);
-        }
     })
 
 </script>
