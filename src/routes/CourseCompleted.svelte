@@ -22,9 +22,6 @@
                     {courseInfo.credit || '-'}
                 </div>
                 <div class="grade">Grade: {$showGrade ? courseInfo.grade : '🙈'}</div>
-                <div class="unlocked">
-                    
-                </div>
             </div>
         {/each}
     </div>

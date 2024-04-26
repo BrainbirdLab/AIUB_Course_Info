@@ -205,10 +205,7 @@
 					"completedCourses",
 					JSON.stringify(data.result.completedCourses),
 				);
-				localStorage.setItem(
-					"allCourses",
-					JSON.stringify(data.result.allCourses),
-				);
+				//localStorage.setItem("allCourses", JSON.stringify(data.result.allCourses));
 				localStorage.setItem("semester", data.result.currentSemester);
 				showLogin.set(false);
 				updateLog.set("Updated successfully");

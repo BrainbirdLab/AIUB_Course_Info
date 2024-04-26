@@ -152,7 +152,7 @@
 				localStorage.setItem('unlockedCourses', JSON.stringify(data.result.unlockedCourses));
 				localStorage.setItem('preregisteredCourses', JSON.stringify(data.result.preregisteredCourses));
 				localStorage.setItem('completedCourses', JSON.stringify(data.result.completedCourses));
-				localStorage.setItem('allCourses', JSON.stringify(data.result.allCourses));
+				//localStorage.setItem('allCourses', JSON.stringify(data.result.allCourses));
 				localStorage.setItem('semester', data.result.currentSemester);
 				localStorage.setItem('UserName', UserName);
 				localStorage.setItem('Password', Password);
