@@ -26,7 +26,6 @@
 	import CourseCompleted from "./CourseCompleted.svelte";
 	import UnlockedCourses from "./UnlockedCourses.svelte";
 	import Routine from "./Routine.svelte";
-	import { pushState } from "$app/navigation";
 	import { page } from "$app/stores";
 	import Navbar from "./Navbar.svelte";
 
