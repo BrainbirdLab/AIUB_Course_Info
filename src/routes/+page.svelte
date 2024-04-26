@@ -372,13 +372,13 @@
 		{/if}
 		<footer class="footer">
 			<div class="source">
-				<a href="https://github.com/itsfuad/AIUB_Course_Info"
+				<a href="https://github.com/BrainbirdLab/AIUB_Course_Info"
 					>Source code <i class="fa-solid fa-code"></i></a
 				>
 			</div>
 			・
 			<div class="support">
-				<a href="https://github.com/itsfuad/AIUB_Course_Info/issues">
+				<a href="https://github.com/BrainbirdLab/AIUB_Course_Info/issues">
 					Submit issues <i class="fa-solid fa-circle-exclamation"></i>
 				</a>
 			</div>

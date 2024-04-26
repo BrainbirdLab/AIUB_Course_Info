@@ -15,4 +15,4 @@ No internet connection is required to use this app after you've loaded data once
 
 Give it a try today!
 
-Proxy server: https://github.com/itsfuad/ProxyServer
+Proxy server: https://github.com/BrainbirdLab/AIUB_Course_Info_API
