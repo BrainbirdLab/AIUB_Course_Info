@@ -1,4 +1,4 @@
-import { get, writable, type Writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 
 
 export type Class = {
@@ -17,11 +17,16 @@ export type SemesterDataType = {
     };
 };
 
-export type UnlockedCoursesType = {
+export type CourseType = {
   [courseId: string]: {
     course_name: string;
     credit: number;
     prerequisites: string[];
+  };
+};
+
+export type UnlockedCoursesType = CourseType & {
+  [courseId: string]: {
     retake: boolean;
   };
 };
@@ -38,12 +43,14 @@ export type TABS = 'Completed' | 'Unlocked' | 'Routine';
 
 export const tabs: Writable<TABS> = writable('Routine');
 
+
 export const User = writable('');
 export const semesterName = writable('');
 export const semesterClassRoutine: Writable<SemesterDataType> = writable({});
 export const completedCourses: Writable<CompletedCoursesType> = writable({});
 export const unlockedCourses: Writable<UnlockedCoursesType> = writable({});
 export const preregisteredCourses: Writable<UnlockedCoursesType> = writable({});
+export const allCourses: Writable<CourseType> = writable({});
 export const showLogin = writable(false);
 export const showGrade = writable(false);
 //let reloadLog = '';

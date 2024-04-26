@@ -117,12 +117,13 @@
 {#if mounted}
 <div class="wrapper" in:fade>
     {#if classData}
+    {#key classData}
     <div class="title" in:fly|global={{y: -10, duration: 200, delay: 100}}>Your class routine</div>
     <div class="dropdownlist" in:fly|global={{y: 10, duration: 200, delay: 150}}>
         <select use:handleSelect value={$semesterName}>
             <option value="" selected disabled>Select Semester</option>
             {#if $semesterClassRoutine}
-                {#each Object.keys($semesterClassRoutine) as sem, i}
+                {#each Object.keys($semesterClassRoutine) as sem, i (sem)}
                     <option value={sem}>Semester: {i+1} - {sem}</option>
                 {/each}
             {/if}
@@ -131,7 +132,7 @@
     <div class="classRoutine" out:fade={{duration: 50, delay: 0}}>
         {#key $semesterName}
         <div class="timeline">
-            {#each range as i}
+            {#each range as i (i)}
             <div class="time">
                 <!-- Have am/pm -->
                     <div class="text" in:fly|global={{y: 10, delay: 50*(i+1)}}>
@@ -141,7 +142,7 @@
                 {/each}
             </div>
             <div class="routine">
-            {#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo], i}
+            {#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo], i (day)}
                 {#if classInfo != null}
                 <div class="day" style="height: {(longestTimeEnd * 90) - 90}px;" class:focused={day == today} in:fly|global={{y: 10, delay: 50*(i+1)}}>
                     <div class="dayname">{day}</div>
@@ -163,6 +164,7 @@
         </div>
         {/key}
     </div>
+    {/key}
     {/if}
 </div>
 {/if}

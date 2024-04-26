@@ -19,7 +19,7 @@
 		unlockedCourses,
 		tabs,
 		type TABS,
-        preregisteredCourses,
+		preregisteredCourses,
 	} from "$lib/store";
 	import { onMount } from "svelte";
 	import { fade, fly } from "svelte/transition";
@@ -28,7 +28,7 @@
 	import Routine from "./Routine.svelte";
 	import { pushState } from "$app/navigation";
 	import { page } from "$app/stores";
-    import Navbar from "./Navbar.svelte";
+	import Navbar from "./Navbar.svelte";
 
 	let loaded = false;
 
@@ -54,7 +54,9 @@
 
 			const rawCompletedCourses =
 				localStorage.getItem("completedCourses");
-			const rawPreregisteredCourses = localStorage.getItem("preregisteredCourses");
+			const rawPreregisteredCourses = localStorage.getItem(
+				"preregisteredCourses",
+			);
 			const rawUnlockedCourses = localStorage.getItem("unlockedCourses");
 
 			const parsedCompletedCourses = rawCompletedCourses
@@ -64,7 +66,7 @@
 			const parsedPreregisteredCourses = rawPreregisteredCourses
 				? JSON.parse(rawPreregisteredCourses)
 				: {};
-			
+
 			const parsedUnlockedCourses = rawUnlockedCourses
 				? JSON.parse(rawUnlockedCourses)
 				: {};
@@ -203,6 +205,10 @@
 					"completedCourses",
 					JSON.stringify(data.result.completedCourses),
 				);
+				localStorage.setItem(
+					"allCourses",
+					JSON.stringify(data.result.allCourses),
+				);
 				localStorage.setItem("semester", data.result.currentSemester);
 				showLogin.set(false);
 				updateLog.set("Updated successfully");
@@ -244,7 +250,6 @@
 			},
 		};
 	}
-
 </script>
 
 <svelte:head>
