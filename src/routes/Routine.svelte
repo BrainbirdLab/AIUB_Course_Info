@@ -117,7 +117,6 @@
 {#if mounted}
 <div class="wrapper" in:fade>
     {#if classData}
-    {#key classData}
     <div class="title" in:fly|global={{y: -10, duration: 200, delay: 100}}>Your class routine</div>
     <div class="dropdownlist" in:fly|global={{y: 10, duration: 200, delay: 150}}>
         <select use:handleSelect value={$semesterName}>
@@ -164,7 +163,6 @@
         </div>
         {/key}
     </div>
-    {/key}
     {/if}
 </div>
 {/if}
