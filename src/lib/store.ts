@@ -48,30 +48,12 @@ export const semesterClassRoutine: Writable<SemesterDataType> = writable({});
 export const completedCourses: Writable<CompletedCoursesType> = writable({});
 export const unlockedCourses: Writable<UnlockedCoursesType> = writable({});
 export const preregisteredCourses: Writable<UnlockedCoursesType> = writable({});
-//export const allCourses: Writable<CourseType> = writable({});
+
 export const showLogin = writable(false);
 export const showGrade = writable(false);
-//let reloadLog = '';
-//let reloadStatus = '';
-export let updateLog = writable('');
-export let updateStatus = writable('');
 
-/*
-export const ICONS = {
-  'CSC' : '<i class="fa-solid fa-laptop-code"></i>',
-  'MAT' : '<i class="fa-solid fa-calculator"></i>',
-  'ENG' : '<i class="fa-solid fa-book"></i>',
-  'PHY' : '<i class="fa-solid fa-atom"></i>',
-  'CHEM' : '<i class="fa-solid fa-flask"></i>',
-  'BIO' : '<i class="fa-solid fa-microscope"></i>',
-  'ECO' : '<i class="fa-solid fa-money-bill"></i>',
-  'EEE' : '<i class="fa-solid fa-bolt"></i>',
-  'COE' : '<i class="fa-solid fa-microchip"></i>',
-  'BBA' : '<i class="fa-solid fa-chart-bar"></i>',
-  'BAE' : '<i class="fa-solid fa-gears"></i>',
-  'BAS' : '<i class="fa-solid fa-earth-asia"></i>'
-}
-*/
+export const updateLog = writable('');
+export const updateStatus = writable('');
 
 const AvailableColors =  [
   "#405b91",
@@ -190,7 +172,7 @@ export const creditsPrerequisitesObj: {[key:string]: number} = {
 };
 
 export function parseCourseId(courseId: string) {
-  return courseId.match(/[A-Z]+/)![0] as keyof typeof CourseIconColors;
+  return RegExp(/[A-Z]+/).exec(courseId)![0] as keyof typeof CourseIconColors;
 }
 
 export function clearData(){
@@ -205,7 +187,7 @@ export function clearData(){
 
 export function titleCase(str: string) {
   const temp = str.toLowerCase().split(' ');
-  for (var i = 0; i < temp.length; i++) {
+  for (let i = 0; i < temp.length; i++) {
       temp[i] = temp[i].charAt(0).toUpperCase() + temp[i].slice(1);
   }
   return temp.join(' ');

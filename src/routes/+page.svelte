@@ -248,9 +248,6 @@
 	}
 </script>
 
-<svelte:head>
-	<title>AIUB Course Info</title>
-</svelte:head>
 {#if !loaded}
 	<div class="preload" in:fade out:fly={{ y: 10 }}>
 		<Logo />
