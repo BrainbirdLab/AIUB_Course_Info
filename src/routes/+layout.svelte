@@ -3,8 +3,6 @@
 
     import { onMount } from "svelte";
 
-    import { inject } from '@vercel/analytics'
-
     async function detectSWUpdate(){
 
         const registration = await navigator.serviceWorker.ready;
@@ -23,7 +21,6 @@
     onMount(() => {
         try {
             detectSWUpdate();
-            inject();
         } catch (error) {
             console.error(error);
         }
