@@ -21,8 +21,12 @@
     }
 
     onMount(() => {
-        detectSWUpdate();
-        inject();
+        try {
+            detectSWUpdate();
+            inject();
+        } catch (error) {
+            console.error(error);
+        }
     })
 
 </script>
