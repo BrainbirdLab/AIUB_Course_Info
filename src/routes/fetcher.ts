@@ -17,7 +17,7 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
 		updateStatus.set("loading");
 
         //https://course-visualizer-proxy.onrender.com
-        const source = new EventSource(`${PUBLIC_API_SERVER_URL}/login?username=${UserName}&password=${Password}`, { withCredentials: true });
+        const source = new EventSource(`${PUBLIC_API_SERVER_URL}/login?username=${encodeURIComponent(UserName)}&password=${encodeURIComponent(Password)}`, { withCredentials: true });
 
         source.onmessage = (evt) => {
             const data = JSON.parse(evt.data);
