@@ -1,7 +1,3 @@
-<script context="module" lang="ts">
-	const url = import.meta.env.VITE_API_SERVER_URL as string;
-</script>
-
 <script lang="ts">
 	import Login from "./Login.svelte";
 	import Logo from "./Logo.svelte";
@@ -195,7 +191,7 @@
 				</div>
 			</div>
 
-			<Login {url} />
+			<Login />
 
 			<!-- Say concent before loging in with their password -->
 			<div class="concent" in:fly|global={{ y: -10 }}>

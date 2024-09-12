@@ -5,9 +5,6 @@
 	import { updateLog, updateStatus } from "$lib/store";
     import { GetData } from "./fetcher";
 
-
-	export let url: string;
-
 	let usernameLabel = "AIUB ID";
 	let passwordLabel = "Password";
 	let username: HTMLInputElement;
@@ -16,8 +13,6 @@
 	let submitting = false;
 
 	let showPassword = false;
-
-	console.log(url);
 
 	function handleForm(){
 		//console.log("Reading form");
