@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
     import Logo from "./Logo.svelte";
-    import { fly } from "svelte/transition";
-	import {showLogin, semesterClassRoutine, User, unlockedCourses, completedCourses, semesterName, updateLog, updateStatus, preregisteredCourses } from "$lib/store";
+    import { fade, fly } from "svelte/transition";
+	import { updateLog, updateStatus } from "$lib/store";
+    import { GetData } from "./fetcher";
 
 
 	export let url: string;
@@ -13,12 +14,12 @@
 	let password: HTMLInputElement;
 
 	let submitting = false;
-	let errlog = false;
-	let logText = "";
+
+	let showPassword = false;
 
 	console.log(url);
 
-	async function handleForm(){
+	function handleForm(){
 		//console.log("Reading form");
 
 		if (username.value == "") {
@@ -49,131 +50,9 @@
 
 		submitting = true;
 
-		//if offline
-		if (navigator.onLine == false) {
+		GetData(UserName, Password, (_) => {
 			submitting = false;
-			errlog = true;
-			logText = "You are offline";
-			return;
-		}
-
-		errlog = false;
-
-		logText = "Fire up...";
-
-		function* loadingText(): Generator<string>{
-			while (submitting) {
-				yield "Communicating with server.";
-				yield "Communicating with server..";
-				yield "Communicating with server...";
-				yield "Communicating with server";
-				yield "Communicating with server.";
-				yield "Communicating with server..";
-				yield "Communicating with server...";
-				yield "Scrapping takes time";
-				yield "Scrapping takes time.";
-				yield "Scrapping takes time..";
-				yield "Scrapping takes time...";
-				yield "Have patience";
-				yield "Have patience.";
-				yield "Have patience..";
-				yield "Have patience...";
-				yield "We are almost there";
-				yield "We are almost there.";
-				yield "We are almost there..";
-				yield "We are almost there...";
-				yield "It's worth the wait";
-				yield "It's worth the wait.";
-				yield "It's worth the wait..";
-				yield "It's worth the wait...";
-				yield "Grab a cup of coffee";
-				yield "Grab a cup of coffee.";
-				yield "Grab a cup of coffee..";
-				yield "Grab a cup of coffee...";
-				yield "Yeah, it's taking time";
-				yield "Yeah, it's taking time.";
-				yield "Yeah, it's taking time..";
-				yield "Yeah, it's taking time...";
-				yield "Wooh! you have a lot of data";
-				yield "Wooh! you have a lot of data.";
-				yield "Wooh! you have a lot of data..";
-				yield "Wooh! you have a lot of data...";
-				yield "We are almost done";
-				yield "We are almost done.";
-				yield "We are almost done..";
-				yield "We are almost done...";
-			}
-		}
-
-		let intervalId = null;
-        const val = loadingText();
-		intervalId = setInterval(() => {
-			logText = val.next().value;
-		}, 1000);
-
-		try{
-			//https://course-visualizer-proxy.onrender.com
-			const res = await fetch(url, {
-					method: 'POST',
-					body: new URLSearchParams({
-						'UserName': UserName,
-						'Password': Password
-					}),
-					headers: {
-						'Content-Type': 'application/x-www-form-urlencoded',
-					}
-				});
-				
-			submitting = false;
-			
-			const data = await res.json();
-
-			//clear timeout
-			if (intervalId !== null) {
-				clearInterval(intervalId);
-				intervalId = null;
-			}
-
-			if (data.success){
-				errlog = false;
-				updateLog.set('');
-				updateStatus.set('');
-				showLogin.set(false);
-				//console.log(data);
-				//logText = data.message;
-				User.set(data.result.user);
-				semesterClassRoutine.set(data.result.semesterClassRoutine);
-				unlockedCourses.set(data.result.unlockedCourses);
-				preregisteredCourses.set(data.result.preregisteredCourses);
-				completedCourses.set(data.result.completedCourses);
-				semesterName.set(data.result.currentSemester);
-				localStorage.setItem('user', data.result.user);
-				localStorage.setItem('semesterClassRoutine', JSON.stringify(data.result.semesterClassRoutine));
-				localStorage.setItem('unlockedCourses', JSON.stringify(data.result.unlockedCourses));
-				localStorage.setItem('preregisteredCourses', JSON.stringify(data.result.preregisteredCourses));
-				localStorage.setItem('completedCourses', JSON.stringify(data.result.completedCourses));
-				//localStorage.setItem('allCourses', JSON.stringify(data.result.allCourses));
-				localStorage.setItem('semester', data.result.currentSemester);
-				localStorage.setItem('UserName', UserName);
-				localStorage.setItem('Password', Password);
-			} else {
-				errlog = true;
-				//console.log(data);
-				logText = data.message;
-			}
-
-		} catch(e){
-			console.log(e);
-			errlog = true;
-			submitting = false;
-			logText = "Something went wrong";
-
-			//clear timeout
-			if (intervalId !== null) {
-				clearInterval(intervalId);
-				intervalId = null;
-			}
-		}
+		});
 	}
 
 	let loaded = false;
@@ -197,15 +76,18 @@
 			<label for="UserName">{@html usernameLabel}</label>
 		</div>
 		<div class="formfield" in:fly|global={{y: 10, delay: 300}}>
-			<input on:input={() => {passwordLabel = 'Password'}} placeholder="99" type="password" bind:this={password} id="password" name="Password" />
+			<input on:input={() => {passwordLabel = 'Password'}} placeholder="99" type="{showPassword ? "text" : "password"}" bind:this={password} id="password" name="Password" />
 			<label for="Password">{@html passwordLabel}</label>
+			<button in:fade|global={{delay: 500}} class="eye" type="button" on:click={()=> {showPassword = !showPassword}}>
+				<i class="fa-solid {showPassword ? "fa-eye-slash" : "fa-eye"}"></i>
+			</button>
 		</div>
 		<button type="submit" in:fly|global={{y: 10, delay: 350}}>Login <i class="fa-solid fa-sign-in"></i></button>
 		{/if}
-		{#if logText}
-		<div class="log" class:submitting={submitting} class:error={errlog}>
-			{logText}
-			{#if errlog}
+		{#if $updateLog}
+		<div class="log" class:submitting={submitting} class:error={$updateStatus === "error"}>
+			{$updateLog}
+			{#if $updateStatus === "error"}
 			<i class="fa-solid fa-triangle-exclamation"></i>
 			{/if}
 		</div>
@@ -216,6 +98,17 @@
 
 
 <style lang="scss">
+
+	.eye {
+		background: none;
+		width: initial;
+		height: initial;
+		padding: 0;
+		margin: 0;
+		right: 0px;
+		position: absolute;
+		color: var(--label-color);
+	}
 
 	.log{
 		font-size: 0.8rem;
@@ -281,6 +174,7 @@
 		align-items: flex-start;
 		justify-content: center;
 		width: 100%;
+		position: relative;
 
 		label{
 			position: absolute;

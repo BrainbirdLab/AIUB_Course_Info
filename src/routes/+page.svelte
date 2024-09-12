@@ -28,6 +28,7 @@
 	import Routine from "./Routine.svelte";
 	import { page } from "$app/stores";
 	import Navbar from "./Navbar.svelte";
+    import { GetData } from "./fetcher";
 
 	let loaded = false;
 
@@ -147,85 +148,17 @@
 			return;
 		}
 
-		//if offline
-		if (navigator.onLine == false) {
-			updateLog.set("You are offline");
-			updateStatus.set("error");
-			return;
-		}
-
-		updateLog.set("Updating data");
-		updateStatus.set("loading");
-
-		try {
-			//abort previous fetch requests
-			controller.abort();
-			controller = new AbortController();
-			signal = controller.signal;
-
-			const res = await fetch(url, {
-				method: "POST",
-				body: new URLSearchParams({
-					UserName: UserName,
-					Password: Password,
-				}),
-				headers: {
-					"Content-Type": "application/x-www-form-urlencoded",
-				},
-				signal: signal,
-			});
-
-			const data = await res.json();
-
-			if (data.success) {
-				updateStatus.set("success");
-				//console.log(data);
-				//logText = data.message;
-				User.set(data.result.user);
-				semesterClassRoutine.set(data.result.semesterClassRoutine);
-				unlockedCourses.set(data.result.unlockedCourses);
-				preregisteredCourses.set(data.result.preregisteredCourses);
-				completedCourses.set(data.result.completedCourses);
-				semesterName.set(data.result.currentSemester);
-				localStorage.setItem("user", data.result.user);
-				localStorage.setItem(
-					"semesterClassRoutine",
-					JSON.stringify(data.result.semesterClassRoutine),
-				);
-				localStorage.setItem(
-					"unlockedCourses",
-					JSON.stringify(data.result.unlockedCourses),
-				);
-				localStorage.setItem(
-					"preregisteredCourses",
-					JSON.stringify(data.result.preregisteredCourses),
-				);
-				localStorage.setItem(
-					"completedCourses",
-					JSON.stringify(data.result.completedCourses),
-				);
-				//localStorage.setItem("allCourses", JSON.stringify(data.result.allCourses));
-				localStorage.setItem("semester", data.result.currentSemester);
-				showLogin.set(false);
-				updateLog.set("Updated successfully");
-				setTimeout(() => {
-					updateLog.set("");
-					updateStatus.set("");
-				}, 2000);
-			} else {
-				updateStatus.set("error");
-				//console.log(data);
-				updateLog.set(data.message);
-			}
-		} catch (e: any) {
-			//if aborted
-			if (e.name == "AbortError") {
-				console.log("Aborted update");
+		GetData(UserName, Password, (error: boolean) => {
+			if (error) {
 				return;
 			}
-			updateStatus.set("error");
-			updateLog.set("Something went wrong.");
-		}
+			updateStatus.set("success");
+			updateLog.set("Data updated");
+			setTimeout(() => {
+				updateStatus.set("");
+				updateLog.set("");
+			}, 2000);
+		});
 	}
 
 	function resetError(node: HTMLElement) {
@@ -291,9 +224,7 @@
 				{#if $updateStatus == "loading" || $updateStatus == "success"}
 					<div class="content" transition:fly={{ y: 10 }}>
 						{$updateLog}
-						{#if $updateStatus == "loading"}
-							<i class="fa-solid fa-rotate fa-spin"></i>
-						{:else if $updateStatus == "success"}
+						{#if $updateStatus == "success"}
 							<i class="fa-solid fa-check"></i>
 						{/if}
 					</div>
@@ -443,14 +374,19 @@
 		border-radius: 10px;
 		width: max-content;
 		font-size: 0.9rem;
-		padding: 20px;
+		padding: 30px 20px;
 		gap: 20px;
 		z-index: 30;
 		min-width: 200px;
 		filter: drop-shadow(2px 5px 10px black);
 
+		.text {
+			font-size: 1rem;
+			padding-top: 20px;
+		}
+
 		button {
-			background: black;
+			background: var(--accent);
 			border-radius: 10px;
 			padding: 10px 20px;
 			color: ghostwhite;
@@ -458,7 +394,7 @@
 			font-size: 0.8rem;
 
 			&:hover {
-				background: rgb(17, 17, 17);
+				filter: brightness(0.9);
 			}
 		}
 	}

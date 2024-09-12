@@ -53,7 +53,7 @@ export const showLogin = writable(false);
 export const showGrade = writable(false);
 
 export const updateLog = writable('');
-export const updateStatus = writable('');
+export const updateStatus: Writable<"loading"|"error"|"success"|""> = writable('');
 
 const AvailableColors =  [
   "#405b91",
