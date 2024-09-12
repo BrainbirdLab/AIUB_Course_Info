@@ -153,7 +153,7 @@
 			setTimeout(() => {
 				updateStatus.set("");
 				updateLog.set("");
-			}, 2000);
+			}, 1200);
 		});
 	}
 
