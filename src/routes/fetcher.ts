@@ -1,6 +1,6 @@
 import { PUBLIC_API_SERVER_URL } from "$env/static/public";
-import { completedCourses, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
 
+import { completedCourses, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
 
 export function GetData(UserName: string, Password: string, done: (error: boolean) => void) {
 
