@@ -66,13 +66,17 @@ const AvailableColors =  [
   "#7d12df",
   "#4caf50",
   "#4d6a59",
+  "#622e8e",
+  "#36a61e",
+  "#df9f12",
+  "#363449",
 ];
 
 export function getColors(){
   return new Array(...AvailableColors);
 }
 
-export const CourseIconColors = {
+const CourseIconColors = {
   'CSC' : {
     'ICON' : '<i class="fa-solid fa-laptop-code"></i>',
     'COLOR' : '#2196F3'
@@ -165,6 +169,14 @@ export const CourseIconColors = {
     'ICON' : '<i class="fa-solid fa-bullhorn"></i>',
     'COLOR' : '#ff5722'
   },
+}
+
+export function getIconColor(courseId: string){
+  return CourseIconColors[parseCourseId(courseId)].COLOR || '#121a2b';
+}
+
+export function getIcon(courseId: string){
+  return CourseIconColors[parseCourseId(courseId)].ICON || '<i class="fa-solid fa-book"></i>';
 }
 
 export const creditsPrerequisitesObj: {[key:string]: number} = {

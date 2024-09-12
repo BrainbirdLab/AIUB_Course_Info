@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { unlockedCourses, CourseIconColors, parseCourseId, creditsPrerequisitesObj, completedCourses, preregisteredCourses } from '$lib/store';
+    import { unlockedCourses, parseCourseId, creditsPrerequisitesObj, completedCourses, preregisteredCourses, getIconColor, getIcon } from '$lib/store';
     import { flip } from 'svelte/animate';
     import { fade, fly } from 'svelte/transition';
 
@@ -55,8 +55,8 @@
     <div class="courses">
         {#each unlockedCoursesArray as [courseId, courseInfo], i (courseId)}
             <div animate:flip={{duration: 300}} class="course" in:fly|global={{y: 10, delay: 50*(i+1)}}>
-                <div class="courseid tag bookmark" style:background={CourseIconColors[parseCourseId(courseId)].COLOR}>
-                    {@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {courseId}
+                <div class="courseid tag bookmark" style:background={getIconColor(parseCourseId(courseId))}>
+                    {@html getIcon(parseCourseId(courseId))} {courseId}
                 </div>
                 <div class="name">
                     {courseInfo.course_name} 
@@ -78,7 +78,7 @@
                     Prerequisites
                     {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
                         {#each courseInfo.prerequisites as prerequisite}
-                            <div class="prerequisite tag" style:background={CourseIconColors[parseCourseId(prerequisite)].COLOR}>{@html CourseIconColors[parseCourseId(courseId)].ICON || ''} {prerequisite}</div>
+                            <div class="prerequisite tag" style:background={getIconColor(parseCourseId(prerequisite))}>{@html getIcon(parseCourseId(prerequisite))} {prerequisite}</div>
                         {/each}
                     {:else}
                         <div class="prerequisite tag" style:background={"#398982"}>None</div>
