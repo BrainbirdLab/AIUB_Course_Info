@@ -282,6 +282,7 @@
 						transition:fly|global={{ y: 20, delay: 100 }}
 					>
 						<button id="updateData"
+							disabled={$updateStatus == "loading"}
 							>Sync with portal <i class="fa-solid fa-rotate"
 							></i></button
 						>
@@ -393,6 +394,11 @@
 				filter: brightness(0.9);
 			}
 		}
+	}
+
+	#updateData:disabled{
+		filter: brightness(0.7);
+		cursor: not-allowed;
 	}
 
 	.toggleButton {
