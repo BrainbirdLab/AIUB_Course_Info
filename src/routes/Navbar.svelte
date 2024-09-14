@@ -53,6 +53,15 @@
             Unlocked <i class="fa-solid fa-unlock"></i>
         </div>
     </li>
+	<li
+		class="navBtn"
+		id="nav-Notice"
+		class:shown={$tabs == "Notice"}
+	>
+		<div class="content pointer-none">
+			Notice <i class="fa-solid fa-bell"></i>
+		</div>
+	</li>
     <li class="options">
         <button class="content" on:click={showOptions}>
             Options

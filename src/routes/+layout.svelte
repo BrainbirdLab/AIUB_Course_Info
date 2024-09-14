@@ -1,7 +1,10 @@
 <script lang="ts">
+    import { isOffline, isSubscribed } from "$lib/store";
     import "$lib/styles/global.scss";
 
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
+    import type { Unsubscriber } from "svelte/store";
+    import { fetchNoticesFromDB } from "./fetcher";
 
     async function detectSWUpdate(){
 
@@ -16,15 +19,52 @@
                 }
             });
         });
+
+        // Listen for messages from the service worker
+        if (registration.active) {
+            navigator.serviceWorker.addEventListener("message", (event: any) => {
+                if (event.data.type == "subscribed") {
+                    console.log("Subscribed to push notifications");
+                    isSubscribed.set(true);
+                    localStorage.setItem("isSubscribed", "true");
+                } else if (event.data.type == "unsubscribed") {
+                    console.log("Unsubscribed from push notifications");
+                    isSubscribed.set(false);
+                    localStorage.setItem("isSubscribed", "false");
+                } else if (event.data.type == "notice") {
+                    console.log("New notice available");
+                    fetchNoticesFromDB().catch((e) => {
+                        console.log("Error fetching notices", e);
+                    });
+                }
+            });
+        } else {
+            console.error("No active service worker to listen to messages from.");
+        }
     }
 
-    onMount(() => {
+    let unsub: Unsubscriber;
+
+    onMount(async () => {
         try {
             detectSWUpdate();
+            const isSubscribedLS = localStorage.getItem("isSubscribed") === "true" ? true : false;
+            isSubscribed.set(isSubscribedLS);
+            window.addEventListener("offline", () => {
+                isOffline.set(true);
+            });
+
+            window.addEventListener("online", () => {
+                isOffline.set(false);
+            });
         } catch (error) {
             console.error(error);
         }
     })
+
+    onDestroy(() => {
+        unsub?.();
+    });
 
 </script>
 

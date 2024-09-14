@@ -37,7 +37,7 @@ export type CompletedCoursesType = CourseType & {
   };
 };
 
-export type TABS = 'Completed' | 'Unlocked' | 'Routine';
+export type TABS = 'Completed' | 'Unlocked' | 'Routine' | 'Notice';
 
 export const tabs: Writable<TABS> = writable('Routine');
 
@@ -51,6 +51,18 @@ export const preregisteredCourses: Writable<UnlockedCoursesType> = writable({});
 
 export const showLogin = writable(false);
 export const showGrade = writable(false);
+
+export const turnOnNotification = writable(false);
+export const isSubscribed = writable(false);
+
+export type NoticeOBJECT = {
+  date: string;
+  notice: string;
+}
+
+export const allNotices: Writable<NoticeOBJECT[]> = writable([]);
+
+export const isOffline = writable(false);
 
 export const updateLog = writable('');
 export const updateStatus: Writable<"loading"|"error"|"success"|""> = writable('');
@@ -69,7 +81,6 @@ const AvailableColors =  [
   "#622e8e",
   "#36a61e",
   "#df9f12",
-  "#363449",
 ];
 
 export function getColors(){

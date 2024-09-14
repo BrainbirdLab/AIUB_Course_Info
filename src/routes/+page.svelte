@@ -16,6 +16,7 @@
 		tabs,
 		type TABS,
 		preregisteredCourses,
+        isOffline,
 	} from "$lib/store";
 	import { onMount } from "svelte";
 	import { fade, fly } from "svelte/transition";
@@ -25,6 +26,7 @@
 	import { page } from "$app/stores";
 	import Navbar from "./Navbar.svelte";
     import { GetData } from "./fetcher";
+    import Notice from "./Notice.svelte";
 
 	let loaded = false;
 
@@ -247,6 +249,8 @@
 				<CourseCompleted />
 			{:else if $tabs == "Unlocked"}
 				<UnlockedCourses />
+			{:else if $tabs == "Notice"}
+				<Notice />
 			{/if}
 		{/if}
 
@@ -282,7 +286,7 @@
 						transition:fly|global={{ y: 20, delay: 100 }}
 					>
 						<button id="updateData"
-							disabled={$updateStatus == "loading"}
+							disabled={$updateStatus == "loading" || $isOffline}
 							>Sync with portal <i class="fa-solid fa-rotate"
 							></i></button
 						>

@@ -1,6 +1,52 @@
 import { PUBLIC_API_SERVER_URL } from "$env/static/public";
 
-import { completedCourses, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
+import { allNotices, completedCourses, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, unlockedCourses, updateLog, updateStatus, User, type NoticeOBJECT } from "$lib/store";
+import { get } from "svelte/store";
+
+export async function subscribeToNotice(worker: ServiceWorker | null) {
+    if (!worker) {
+        console.error("Service worker not found");
+        return;
+    }
+    console.log("Asking for notification permission");
+    const permission = await Notification.requestPermission();
+    if (permission === "granted") {
+        console.log("Notification permission granted");
+        worker?.postMessage({ type: "SUBSCRIBE", api: PUBLIC_API_SERVER_URL });
+    } else {
+        console.log("Notification permission denied");
+    }
+}
+
+export async function unsubscribeFromNotice(worker: ServiceWorker | null) {
+    if (!worker) {
+        console.error("Service worker not found");
+        return;
+    }
+    console.log("Unsubscribing from notifications");
+    worker?.postMessage({ type: "UNSUBSCRIBE", api: PUBLIC_API_SERVER_URL });
+}
+
+export function parseNotices(notices: string[]) {
+    allNotices.set([]);
+    notices.map((notice) => {
+        const parts = notice.split("::");
+        const date = parts[0];
+        const noticeText = parts[1];
+        get(allNotices).push({ date, notice: noticeText });
+        if (get(allNotices).length > 10) {
+            get(allNotices).shift(); // remove the first element. first means oldest
+        }
+    });
+}
+
+export async function fetchNoticesFromDB() {
+    const data = await fetch(`${PUBLIC_API_SERVER_URL}/notices`);
+    const json = await data.json();
+    const notices = json.notices;
+    localStorage.setItem("notices", JSON.stringify(notices));
+    parseNotices(notices);
+}
 
 export function GetData(UserName: string, Password: string, done: (error: boolean) => void) {
 
