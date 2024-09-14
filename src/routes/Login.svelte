@@ -45,8 +45,11 @@
 
 		submitting = true;
 
-		GetData(UserName, Password, (_) => {
+		GetData(UserName, Password, (err) => {
 			submitting = false;
+			if (!err) {
+				loaded = false;
+			} 
 		});
 	}
 

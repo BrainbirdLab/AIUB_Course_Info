@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    import { allNotices, isOffline, isSubscribed } from "$lib/store";
+    import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied } from "$lib/store";
     import { onMount } from "svelte";
     import { fly, slide } from "svelte/transition";
     import { fetchNoticesFromDB, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "./fetcher";
@@ -10,6 +10,7 @@
     let loadingText = "Fetching new notices...";
 
     onMount(() => {
+        subPermissionDenied.set(Notification.permission === "denied");
         try {
             try {
                 const notices = JSON.parse(localStorage.getItem("notices") || "[]") as string[];
@@ -18,8 +19,6 @@
                 parseNotices([]);
                 localStorage.removeItem("notices");
             }
-            // fetch notices from server
-            getNotices();
         } catch (error) {
             console.error(error);
             fetching = false;
@@ -40,23 +39,28 @@
         });
     }
 
-    function subStatus() {
+    async function subStatus() {
+        isSubUnsubRunning.set(true);
         if (Notification.permission === "granted" && $isSubscribed) {
-            unsubscribeFromNotice(navigator.serviceWorker.controller);
+            await unsubscribeFromNotice(navigator.serviceWorker.controller);
         } else {
-            subscribeToNotice(navigator.serviceWorker.controller);
+            await subscribeToNotice(navigator.serviceWorker.controller);
         }
     }
 </script>
 
 
-<div class="container">
+<div class="container" in:fly|global={{x: 10}}>
     <div class="btn">
-        <button class="permission button {$isSubscribed ? "unsubscribe" : ""}" disabled={$isOffline} on:click={subStatus}>
-            {#if Notification.permission === "granted" && $isSubscribed}
-                <i class="fa-solid fa-bell-slash"></i> Unsubscribe
+        <button class="permission button {$isSubscribed ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied} on:click={subStatus}>
+            {#if $subPermissionDenied}
+                <i class="fa-solid fa-bell-slash"></i> Permission denied
             {:else}
-                <i class="fa-solid fa-bell"></i> Subscribe
+                {#if Notification.permission === "granted" && $isSubscribed}
+                    <i class="fa-solid fa-bell-slash"></i> Unsubscribe
+                {:else}
+                    <i class="fa-solid fa-bell"></i> Subscribe
+                {/if}
             {/if}
         </button>
         <button class="refresh button" disabled={$isOffline || fetching} on:click={getNotices}>
@@ -70,7 +74,7 @@
         <div class="notices">          
             {#key $allNotices}
             {#each $allNotices as notice, i (notice)}
-                <div class="notice" animate:flip in:fly={{x: 5}}>
+                <div class="notice" animate:flip in:fly|global={{y: 5, delay: (i+1)*100}}>
                     <div class="date">
                         {notice.date}
                     </div>
@@ -82,11 +86,17 @@
             {/key}
         </div>
     {:else}
-        <div class="empty">No notices available</div>
+        <div class="empty" in:fly|global={{y: 5}}>No notices available</div>
     {/if}
 </div>
 
 <style lang="scss">
+
+    .empty {
+        font-size: 0.8rem;
+        color: var(--label-color);
+        padding-top: 50%;
+    }
 
     button {
         padding: 6px 10px;
@@ -124,10 +134,12 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         padding: 10px;
-        width: min(100%, 500px);
+        width: min(100%, 800px);
         max-width: 100%;
+        height: 100%;
+        min-height: 400px;
         max-height: 78vh;
     }
 
@@ -163,15 +175,6 @@
         display: flex;
         justify-content: center;
         align-items: center;
-    }
-
-    .empty {
-        font-size: 0.8rem;
-        color: var(--label-color);
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
     }
 
     .loading {

@@ -52,18 +52,33 @@ self.addEventListener('activate', async (e) => {
 });
 
 self.addEventListener('push', async (e) => {
-    console.log('Service Worker: Push Received: ', e.data?.text());
+    console.log('Service Worker: Push Received: ', e.data?.json());
     if (!e.data) return;
-    const parts = e.data.text().split('::');
-	const date = parts[0];
+
+	const jsonObj = e.data.json();
+
+	const main = jsonObj.data;
+	const title = jsonObj.title;
+	const type = jsonObj.type;
+
+	if (type != 'aiub') {
+		self.registration.showNotification(title, {
+			body: main,
+			icon: './aiub.png',
+		});
+		return;
+	}
+
+	
+    const parts = main.split('::');
 	const data = parts[1];
     console.log('Service Worker: Push Received: ', data);
     
-    self.registration.showNotification('AIUB - ' + date, {
-        body: data,
+    self.registration.showNotification(title, {
+		body: data,
         icon: './aiub.png',
     });
-
+	
 	sendMessage('notice', null);
 });
 
@@ -170,7 +185,6 @@ self.addEventListener('message', (e) => {
 			console.log('getting subscription');
 			//get the public key from the server
 			fetch(`${API_URL}/getkey`).then(res => res.json()).then(data => {
-				console.log(`Got Public Key: ${data.publicKey}`);
 				self.registration.pushManager.subscribe({
 					userVisibleOnly: true,
 					applicationServerKey: base64UrlToArrayBuffer(data.publicKey)
@@ -184,11 +198,19 @@ self.addEventListener('message', (e) => {
 					}).then(res => res.json()).then(() => {
 						console.log('Subscribed');
 						//postMessage to the client
-						sendMessage('subscribed', null);
-					}).catch(err => console.error(err));
-				}).catch(err => console.error(err));
-
-			}).catch(err => console.error(err));
+						sendMessage('subscribed', true);
+					}).catch(err => {
+						console.error(err);
+						sendMessage('subscribed', false);
+					});
+				}).catch(err => {
+					console.error(err);
+					sendMessage('subscribed', false);
+				});
+			}).catch(err => {
+				console.error(err);
+				sendMessage('subscribed', false);
+			});
 		} else if (e.data.type === 'UNSUBSCRIBE') {
 			const API_URL = e.data.api;
 			self.registration.pushManager.getSubscription().then(sub => {
@@ -203,14 +225,20 @@ self.addEventListener('message', (e) => {
 						}).then(res => res.json()).then(() => {
 							console.log('Unsubscribed');
 							//postMessage to the client
-							sendMessage('unsubscribed', null);
-						}).catch(err => console.error(err));
-					}).catch(err => console.error(err));
+							sendMessage('unsubscribed', true);
+						}).catch(err => {
+							console.error(err);
+							sendMessage('unsubscribed', false);
+						});
+					}).catch(err => console.log(err));
 				} else {
 					console.log('No Subscription');
-					sendMessage('unsubscribed', null);
+					sendMessage('unsubscribed', true);
 				}
-			}).catch(err => console.error(err));
+			}).catch(err => {
+				console.error(err);
+				sendMessage('unsubscribed', false);
+			});
 		}
 	}
 });
