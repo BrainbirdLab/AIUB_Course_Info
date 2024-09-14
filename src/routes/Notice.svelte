@@ -140,7 +140,7 @@
         max-width: 100%;
         height: 100%;
         min-height: 400px;
-        max-height: 78vh;
+        max-height: 100%;
     }
 
     .notices {
