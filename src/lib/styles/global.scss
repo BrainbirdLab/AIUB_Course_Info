@@ -28,11 +28,11 @@
 
 :root{
     --primary: #041e2f;
-    --light-dark: #0e2a47;
+    --light-dark: #313d4a75;
     --hover-light-dark: #123050;
-    --accent: #22bdae;
-    --accent-dim: #2cb5b52f;
-    --label-color: #5b7289;
+    --accent: #31cac0;
+    --accent-dim: #1031545e;
+    --label-color: #708192;
 }
 
 body{
@@ -103,7 +103,7 @@ select:-webkit-autofill:focus {
     align-items: center;
     justify-content: space-evenly;
     border-radius: 10px;
-    background-color: rgb(21, 49, 68);
+    background-color: var(--light-dark);
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
     padding: 35px 25px;
     gap: 10px;

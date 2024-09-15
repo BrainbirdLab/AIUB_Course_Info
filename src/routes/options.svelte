@@ -5,7 +5,6 @@
     import { showGrade, updateStatus, isOffline, updateLog, clearData } from "$lib/store";
     import { page } from "$app/stores";
     import { GetData } from "./fetcher";
-    import { goto } from "$app/navigation";
 
     let src: EventSource | null = null;
     
@@ -80,19 +79,28 @@
 					class="field-checkers"
 					transition:fly|global={{ y: 20, delay: 20 }}
 				>
-					<input
-						type="checkbox"
-						id="showGrade"
-						bind:checked={$showGrade}
-					/>
-					<label for="showGrade">
-						<div class="textContainer">Show grades</div>
+					<label>
+						<div class="controller">
+							<div class="textContainer">Show grades</div>
+							<div class="moreInfo">
+								{#if $showGrade}
+								Grades will be shown in the courses
+								{:else}
+								Grades will not be shown in the courses
+								{/if}
+							</div>
+						</div>
+						<input
+							type="checkbox"
+							id="showGrade"
+							bind:checked={$showGrade}
+						/>
 						<span class="toggleButton" />
 					</label>
 				</div>
 			</div>
 			<div
-				class="subsettings btn-grp"
+				class="subsettings row btn-grp"
 				transition:fly|global={{ y: 20, delay: 100 }}
 			>
 				<button id="updateData"
@@ -111,6 +119,15 @@
 
 
 <style lang="scss">
+
+	.moreInfo {
+		width: 100%;
+		color: var(--label-color);
+	}
+
+	.row {
+		flex-direction: row;
+	}
 
 	.wrapper {
 		height: 100%;
@@ -148,21 +165,18 @@
 		justify-content: center;
 		align-items: center;
 		gap: 5px;
-		padding: 10px;
-		padding: 5px 10px;
 		width: 100%;
 		border-radius: 10px;
 		label {
+			padding: 5px;
 			display: flex;
 			flex-direction: row;
-			justify-content: space-between;
+			justify-content: center;
 			align-items: center;
 			gap: 5px;
 			width: 100%;
 			cursor: pointer;
-			padding: 10px;
 			border-radius: 10px;
-
 			&:hover {
 				background: var(--primary);
 			}
@@ -171,14 +185,16 @@
 
 	.settings-options {
 		background: #031826;
-		padding: 10px 25px 20px;
+		padding: 20px 10px;
 		border-radius: 10px;
-		width: max-content;
+		margin: 5px;
+		width: min(400px, 100%);
 		display: flex;
 		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		gap: 15px;
+		
 		filter: drop-shadow(2px 5px 10px black);
 
 		.btn-grp {
@@ -212,21 +228,29 @@
 		flex-direction: row;
 		align-items: center;
 		width: 100%;
-		justify-content: center;
+		justify-content: flex-start;
 		gap: 10px;
-		color: var(--label-color);
-		border-bottom: 2px solid #ffffff1f;
+		color: var(--accent);
 	}
 
 	input {
 		cursor: pointer;
 		display: none;
-		&:checked ~ label .toggleButton {
-			background: rgb(0, 149, 255);
-			&::after {
-				transform: translateX(20px);
-			}
+	}
+
+	input:checked ~ .toggleButton {
+		background: rgb(0, 149, 255);
+		&::after {
+			transform: translateX(20px);
 		}
+	}
+
+	.controller{
+		width: 100%;
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		flex-direction: column;
 	}
 
 	#clearData {

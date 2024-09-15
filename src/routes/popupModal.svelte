@@ -61,12 +61,11 @@
 		align-items: center;
 		background: #031826;
 		border-radius: 10px;
-		width: max-content;
 		font-size: 0.9rem;
 		padding: 30px 20px;
 		gap: 20px;
 		z-index: 30;
-		min-width: 200px;
+		width: min(325px, 98%);
 		filter: drop-shadow(2px 5px 10px black);
 
 		.text {

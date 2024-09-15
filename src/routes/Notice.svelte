@@ -66,6 +66,10 @@
         <button class="refresh button" disabled={$isOffline || fetching} on:click={getNotices}>
             <i class="fa-solid fa-retweet"></i> Refresh
         </button>
+        <a href="https://www.aiub.edu" target="_blank" class="button" class:disabled={$isOffline}>
+            Open AIUB
+            <i class="fa-solid fa-external-link"></i>
+        </a>
     </div>
     {#if fetching}
         <div class="loading" transition:slide={{axis:"y", duration: 100}} class:error={loadingText == "Error fetching notices" ? true : false}>{loadingText}</div>
@@ -95,16 +99,25 @@
     .empty {
         font-size: 0.8rem;
         color: var(--label-color);
-        padding-top: 50%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 
-    button {
+    a.disabled {
+        filter: brightness(0.7);
+        cursor: not-allowed;
+    }
+
+    .button {
         padding: 6px 10px;
         border-radius: 16px;
         border: none;
         cursor: pointer;
         font-size: 0.8rem;
         color: white;
+        background: #2196F3;
         &:disabled{
             filter: brightness(0.7);
             cursor: not-allowed;
@@ -166,7 +179,7 @@
 
     .date {
         font-size: 0.8rem;
-        background: var(--accent-dim);
+        background: var(--accent);
         padding: 20px 10px;
         min-width: 64px;
         min-height: 64px;

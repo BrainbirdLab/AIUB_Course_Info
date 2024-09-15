@@ -12,48 +12,51 @@
 	import Routine from "./Routine.svelte";
 	import Navbar from "./Navbar.svelte";
     import Notice from "./Notice.svelte";
-    import { goto } from "$app/navigation";
     import DataUpdateLog from "./dataUpdateLog.svelte";
     import PopupModal from "./popupModal.svelte";
     import Options from "./options.svelte";
+    import Login from "./Login.svelte";
 
 	let loaded = false;
 
 	onMount(() => {
-		console.log("Page loaded");
+		console.log("+Page loaded");
 		if (!$User) {
-            goto("/login");
-        } else {
-            loaded = true;
+            showLogin.set(true);
         }
+		loaded = true;
 	});
 
 </script>
 
-{#if !$showLogin && loaded}
-<div class="user" in:fade>
-	<i class="fa-solid fa-user"></i> Hello, {$User}!
-</div>
+{#if loaded}
+	{#if $showLogin}
+		<Login />
+	{:else}
+		<div class="user" in:fade>
+			<i class="fa-solid fa-user"></i> Hello, {$User}!
+		</div>
 
-<Navbar />
+		<Navbar />
 
-<DataUpdateLog />
+		<DataUpdateLog />
 
-{#if $tabs == "Routine"}
-	{#if $semesterName}
-		<Routine />
+		{#if $tabs == "Routine"}
+			{#if $semesterName}
+				<Routine />
+			{/if}
+		{:else if $tabs == "Completed"}
+			<CourseCompleted />
+		{:else if $tabs == "Unlocked"}
+			<UnlockedCourses />
+		{:else if $tabs == "Notice"}
+			<Notice />
+		{/if}
+
+		<PopupModal />
+
+		<Options />
 	{/if}
-{:else if $tabs == "Completed"}
-	<CourseCompleted />
-{:else if $tabs == "Unlocked"}
-	<UnlockedCourses />
-{:else if $tabs == "Notice"}
-	<Notice />
-{/if}
-
-<PopupModal />
-
-<Options />
 {/if}
 
 

@@ -1,11 +1,18 @@
-import { goto } from "$app/navigation";
 import { PUBLIC_API_SERVER_URL } from "$env/static/public";
 
-import { allNotices, completedCourses, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User, type NoticeOBJECT } from "$lib/store";
+import { allNotices, completedCourses, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
 
 export async function subscribeToNotice(worker: ServiceWorker | null) {
+    if (!navigator.onLine) {
+        console.error("You are offline");
+        updateStatus.set("error");
+        updateLog.set("You are offline");
+        isSubUnsubRunning.set(false);
+        return;
+    }
     if (!worker) {
         console.error("Service worker not found");
+        isSubUnsubRunning.set(false);
         return;
     }
     console.log("Asking for notification permission");
@@ -26,8 +33,10 @@ export async function subscribeToNotice(worker: ServiceWorker | null) {
 }
 
 export async function unsubscribeFromNotice(worker: ServiceWorker | null) {
+
     if (!worker) {
         console.error("Service worker not found");
+        isSubUnsubRunning.set(false);
         return;
     }
     console.log("Unsubscribing from notifications");
@@ -35,14 +44,15 @@ export async function unsubscribeFromNotice(worker: ServiceWorker | null) {
 }
 
 export function parseNotices(notices: string[]) {
+    allNotices.set([]);
     notices.map((notice) => {
         const parts = notice.split("::");
         const date = parts[0];
         const noticeText = parts[1];
         allNotices.update((notices) => {
             notices.push({ date, notice: noticeText });
-            if (notices.length > 10) {
-                notices.shift(); // remove the first element. first means oldest
+            if (notices.length > 8) {
+                notices.pop(); // remove the first element. first means oldest
             }
             return notices;
         });
@@ -78,7 +88,6 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
             if (data.status === "complete") {
                 updateLog.set('');
                 updateStatus.set('');
-                showLogin.set(false);
                 User.set(data.result.user);
                 semesterClassRoutine.set(data.result.semesterClassRoutine);
                 unlockedCourses.set(data.result.unlockedCourses);
@@ -94,8 +103,8 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
                 localStorage.setItem('UserName', UserName);
                 localStorage.setItem('Password', Password);
                 source.close();
+                showLogin.set(false);
                 done(false);
-                goto('/');
             } else if (data.status == "running") {
                 updateLog.set(data.message);
                 updateStatus.set('loading');

@@ -64,7 +64,7 @@ self.addEventListener('push', async (e) => {
 	if (type != 'aiub') {
 		self.registration.showNotification(title, {
 			body: main,
-			icon: './aiub.png',
+			icon: './favicon.png',
 		});
 		return;
 	}
@@ -199,9 +199,12 @@ self.addEventListener('message', (e) => {
 						console.log('Subscribed');
 						//postMessage to the client
 						sendMessage('subscribed', true);
-					}).catch(err => {
+					}).catch(async (err) => {
 						console.error(err);
 						sendMessage('subscribed', false);
+						// unsubscribe if there is an error
+						await sub.unsubscribe();
+						console.log('Unsubscribed: Could not save subscription to server');
 					});
 				}).catch(err => {
 					console.error(err);
@@ -216,6 +219,7 @@ self.addEventListener('message', (e) => {
 			self.registration.pushManager.getSubscription().then(sub => {
 				if (sub) {
 					sub.unsubscribe().then(() => {
+						sendMessage('unsubscribed', true);
 						fetch(`${API_URL}/unsubscribe`, {
 							method: 'POST',
 							body: JSON.stringify(sub),
@@ -223,12 +227,9 @@ self.addEventListener('message', (e) => {
 								'content-type': 'application/json'
 							}
 						}).then(res => res.json()).then(() => {
-							console.log('Unsubscribed');
-							//postMessage to the client
-							sendMessage('unsubscribed', true);
+							console.log('Deleted Subscription from Server');
 						}).catch(err => {
 							console.error(err);
-							sendMessage('unsubscribed', false);
 						});
 					}).catch(err => console.log(err));
 				} else {

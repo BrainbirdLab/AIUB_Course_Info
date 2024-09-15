@@ -58,19 +58,19 @@
     let unsub: Unsubscriber;
 
     onMount(async () => {
+        window.addEventListener("offline", () => {
+            isOffline.set(true);
+        });
+
+        window.addEventListener("online", () => {
+            isOffline.set(false);
+        });
         try {
             detectSWUpdate();
             const permAllowed = Notification.permission === "granted";
-            localStorage.setItem("isSubscribed", permAllowed ? "true" : "false");
-            isSubscribed.set(false);
-            window.addEventListener("offline", () => {
-                isOffline.set(true);
-            });
-
-            window.addEventListener("online", () => {
-                isOffline.set(false);
-            });
-            
+            const sub = localStorage.getItem("isSubscribed") === "true";
+            isSubscribed.set(permAllowed && sub);
+            localStorage.setItem("isSubscribed", $isSubscribed ? "true" : "false");
             validateUser();
         } catch (error) {
             console.error(error);
@@ -88,9 +88,8 @@
 			const raw = localStorage.getItem("semesterClassRoutine");
 
 			if (raw == null || raw == undefined || raw == "" || raw == "{}") {
-				localStorage.removeItem("semesterClassRoutine");
 				console.log("No data");
-                showLogin.set(true);
+                clearData();
 				return;
 			}
 

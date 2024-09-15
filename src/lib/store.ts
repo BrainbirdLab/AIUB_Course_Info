@@ -1,4 +1,3 @@
-import { goto } from '$app/navigation';
 import { page } from '$app/stores';
 import { get, writable, type Writable } from 'svelte/store';
 import { unsubscribeFromNotice } from '../routes/fetcher';
@@ -218,7 +217,6 @@ export function clearData(){
   tabs.set('Routine');
   unsubscribeFromNotice(navigator.serviceWorker.controller);
   showLogin.set(true);
-  goto("/login");
 }
 
 export function titleCase(str: string) {
