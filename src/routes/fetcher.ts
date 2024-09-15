@@ -45,7 +45,7 @@ export async function unsubscribeFromNotice(worker: ServiceWorker | null) {
 
 export function parseNotices(notices: string[]) {
     allNotices.set([]);
-    notices.map((notice) => {
+    notices.forEach((notice) => {
         const parts = notice.split("::");
         const date = parts[0];
         const noticeText = parts[1];
