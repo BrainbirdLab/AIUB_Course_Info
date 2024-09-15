@@ -57,6 +57,9 @@
 				Submit issues <i class="fa-solid fa-circle-exclamation"></i>
 			</a>
 		</div>
+		<div class="verision">
+			v2.0.1
+		</div>
 	</footer>
 </div>
 

@@ -5,7 +5,6 @@
     import { fly, slide } from "svelte/transition";
     import { checkSubscription, fetchNoticesFromDB, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "./fetcher";
     import { flip } from "svelte/animate";
-    import { PUBLIC_API_SERVER_URL } from "$env/static/public";
 
     let fetching = false;
     let loadingText = "Fetching new notices...";
@@ -22,7 +21,6 @@
             }
             // check subscription status
             checkSubscription(navigator.serviceWorker.controller);
-
         } catch (error) {
             console.error(error);
             fetching = false;
@@ -45,10 +43,18 @@
 
     async function subStatus() {
         isSubUnsubRunning.set(true);
-        if (Notification.permission === "granted" && $isSubscribed) {
+        if ($isSubscribed) {
             await unsubscribeFromNotice(navigator.serviceWorker.controller);
         } else {
-            await subscribeToNotice(navigator.serviceWorker.controller);
+            //ask for permission
+            Notification.requestPermission().then(async (permission) => {
+                if (permission === "granted") {
+                    await subscribeToNotice(navigator.serviceWorker.controller);
+                } else if (permission === "denied") {
+                    subPermissionDenied.set(true);
+                }
+                isSubUnsubRunning.set(false);
+            });
         }
     }
 </script>

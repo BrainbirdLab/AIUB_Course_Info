@@ -188,7 +188,7 @@
 		background: #031826;
 		padding: 20px 10px;
 		border-radius: 10px;
-		margin: 5px;
+		margin: 10px;
 		width: min(400px, 100%);
 		display: flex;
 		flex-direction: column;
