@@ -3,7 +3,7 @@
     import { fade } from "svelte/transition";
     import { tabs, type TABS } from "$lib/store";
 
-    function showOptions() {
+	function showOptions() {
 		pushState("", { options: true });
 	}
 
@@ -53,28 +53,38 @@
             Unlocked <i class="fa-solid fa-unlock"></i>
         </div>
     </li>
-    <li class="options">
-        <button class="content" on:click={showOptions}>
-            Options
-            <i class="fa-solid fa-wrench"></i>
-        </button>
-    </li>
+	<li
+		class="navBtn"
+		id="nav-Notice"
+		class:shown={$tabs == "Notice"}
+	>
+		<div class="content pointer-none">
+			Notice <i class="fa-solid fa-bell"></i>
+		</div>
+	</li>
+	<button class="option" on:click={showOptions}>
+		<i class="fa-solid fa-gear"></i>
+	</button>
 </ul>
 
+
 <style lang="scss">
-    	.options {
-		color: tomato;
-		font-size: 0.7rem;
-		button{
+
+	.option{
+		color: var(--accent);
+		width: 40px;
+    	height: 40px;
+		i {
+			font-size: 1.2rem;
 			color: inherit;
-			font-size: inherit;
 		}
 	}
+
 	.menu {
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
-		gap: 15px;
+		gap: 10px;
 		list-style: none;
 		color: var(--accent);
 		position: sticky;

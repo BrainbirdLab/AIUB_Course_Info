@@ -1,4 +1,6 @@
-import { writable, type Writable } from 'svelte/store';
+import { page } from '$app/stores';
+import { get, writable, type Writable } from 'svelte/store';
+import { unsubscribeFromNotice } from '../routes/fetcher';
 
 
 export type Class = {
@@ -37,7 +39,7 @@ export type CompletedCoursesType = CourseType & {
   };
 };
 
-export type TABS = 'Completed' | 'Unlocked' | 'Routine';
+export type TABS = 'Completed' | 'Unlocked' | 'Routine' | 'Notice';
 
 export const tabs: Writable<TABS> = writable('Routine');
 
@@ -51,6 +53,22 @@ export const preregisteredCourses: Writable<UnlockedCoursesType> = writable({});
 
 export const showLogin = writable(false);
 export const showGrade = writable(false);
+
+export const turnOnNotification = writable(false);
+export const isSubscribed = writable(false);
+export const isSubUnsubRunning = writable(false);
+export const subPermissionDenied = writable(false);
+
+export type NoticeOBJECT = {
+  date: string;
+  notice: string;
+}
+
+export const pageLoaded = writable(false);
+
+export const allNotices: Writable<NoticeOBJECT[]> = writable([]);
+
+export const isOffline = writable(false);
 
 export const updateLog = writable('');
 export const updateStatus: Writable<"loading"|"error"|"success"|""> = writable('');
@@ -69,7 +87,6 @@ const AvailableColors =  [
   "#622e8e",
   "#36a61e",
   "#df9f12",
-  "#363449",
 ];
 
 export function getColors(){
@@ -188,12 +205,17 @@ export function parseCourseId(courseId: string) {
 }
 
 export function clearData(){
+  console.log("Clearing Data");
+  get(page).state.options = false;
   localStorage.clear();
   completedCourses.set({});
   unlockedCourses.set({});
   semesterClassRoutine.set({});
   semesterName.set('');
+  allNotices.set([]);
   User.set('');
+  tabs.set('Routine');
+  unsubscribeFromNotice(navigator.serviceWorker.controller);
   showLogin.set(true);
 }
 
