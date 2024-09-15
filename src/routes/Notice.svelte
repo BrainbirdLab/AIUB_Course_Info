@@ -3,8 +3,9 @@
     import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied } from "$lib/store";
     import { onMount } from "svelte";
     import { fly, slide } from "svelte/transition";
-    import { fetchNoticesFromDB, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "./fetcher";
+    import { checkSubscription, fetchNoticesFromDB, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "./fetcher";
     import { flip } from "svelte/animate";
+    import { PUBLIC_API_SERVER_URL } from "$env/static/public";
 
     let fetching = false;
     let loadingText = "Fetching new notices...";
@@ -19,6 +20,9 @@
                 parseNotices([]);
                 localStorage.removeItem("notices");
             }
+            // check subscription status
+            checkSubscription(navigator.serviceWorker.controller);
+
         } catch (error) {
             console.error(error);
             fetching = false;
@@ -90,9 +94,15 @@
                     <div class="date">
                         {notice.date}
                     </div>
+                    {#if notice.link}
+                    <a class="text" href="{notice.link}" target="_blank">
+                        {notice.notice} <i class="fa-solid fa-external-link"></i>
+                    </a>
+                    {:else}
                     <div class="text">
                         {notice.notice}
                     </div>
+                    {/if}
                 </div>
             {/each}
         </div>
@@ -197,6 +207,11 @@
         align-items: center;
         justify-content: flex-start;
         gap: 12px;
+
+        a {
+            text-decoration: underline;
+            color: inherit;
+        }
     }
 
     .date {

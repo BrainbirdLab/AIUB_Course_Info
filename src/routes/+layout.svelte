@@ -28,19 +28,15 @@
                 if (event.data.type == "subscribed") {
                     isSubUnsubRunning.set(false);
                     if (!event.data.data) {
-                        console.log("Error subscribing to push notifications");
                         return;
                     }
-                    console.log("Subscribed to push notifications");
                     isSubscribed.set(true);
                     localStorage.setItem("isSubscribed", "true");
                 } else if (event.data.type == "unsubscribed") {
                     isSubUnsubRunning.set(false);
                     if (!event.data.data) {
-                        console.log("Error unsubscribing from push notifications");
                         return;
                     }
-                    console.log("Unsubscribed from push notifications");
                     isSubscribed.set(false);
                     localStorage.setItem("isSubscribed", "false");
                 } else if (event.data.type == "notice") {

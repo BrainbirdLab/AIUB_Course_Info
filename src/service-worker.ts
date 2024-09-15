@@ -240,6 +240,39 @@ self.addEventListener('message', (e) => {
 				console.error(err);
 				sendMessage('unsubscribed', false);
 			});
+		} else if (e.data.type === 'CHECK_SUBSCRIPTION') {
+			//if subscription data is deleted from the server, then unsubscribe
+			const API_URL = e.data.api;
+			//make post request to the server to check if the subscription is still valid
+			self.registration.pushManager.getSubscription().then(sub => {
+				if (sub) {
+					fetch(`${API_URL}/subscription-status`, {
+						method: 'POST',
+						body: JSON.stringify(sub),
+						headers: {
+							'content-type': 'application/json'
+						}
+					}).then(res => res.json()).then(data => {
+						if (!data.subscribed) {
+							sub.unsubscribe().then(() => {
+								sendMessage('unsubscribed', true);
+								console.log('Subscription is invalid. Unsubscribed');
+							}).catch(err => console.log(err));
+						} else {
+							sendMessage('subscribed', true);
+							console.log('Subscription is valid');
+						}
+					}).catch(err => {
+						console.error(err);
+					});
+				} else {
+					console.log('No Subscription');
+					sendMessage('subscribed', false);
+				}
+			}).catch(err => {
+				console.error(err);
+				sendMessage('subscribed', false);
+			});
 		}
 	}
 });

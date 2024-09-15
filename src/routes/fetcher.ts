@@ -43,14 +43,25 @@ export async function unsubscribeFromNotice(worker: ServiceWorker | null) {
     worker?.postMessage({ type: "UNSUBSCRIBE", api: PUBLIC_API_SERVER_URL });
 }
 
+export async function checkSubscription(worker: ServiceWorker | null) {
+    if (!worker) {
+        console.error("Service worker not found");
+        isSubUnsubRunning.set(false);
+        return;
+    }
+    console.log("Checking subscription");
+    worker?.postMessage({ type: "CHECK_SUBSCRIPTION", api: PUBLIC_API_SERVER_URL });
+}
+
 export function parseNotices(notices: string[]) {
     allNotices.set([]);
     notices.forEach((notice) => {
         const parts = notice.split("::");
         const date = parts[0];
         const noticeText = parts[1];
+        const link = parts[2];
         allNotices.update((notices) => {
-            notices.push({ date, notice: noticeText });
+            notices.push({ date, notice: noticeText, link });
             if (notices.length > 8) {
                 notices.pop(); // remove the first element. first means oldest
             }

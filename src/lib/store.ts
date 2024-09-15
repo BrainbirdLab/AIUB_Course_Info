@@ -1,5 +1,4 @@
-import { page } from '$app/stores';
-import { get, writable, type Writable } from 'svelte/store';
+import { writable, type Writable } from 'svelte/store';
 import { unsubscribeFromNotice } from '../routes/fetcher';
 
 
@@ -62,6 +61,7 @@ export const subPermissionDenied = writable(false);
 export type NoticeOBJECT = {
   date: string;
   notice: string;
+  link?: string;
 }
 
 export const pageLoaded = writable(false);
