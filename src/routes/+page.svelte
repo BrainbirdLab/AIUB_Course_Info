@@ -20,7 +20,6 @@
 	let loaded = false;
 
 	onMount(() => {
-		console.log("+Page loaded");
 		if (!$User) {
             showLogin.set(true);
         }
