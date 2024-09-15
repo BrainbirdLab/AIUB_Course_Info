@@ -54,7 +54,7 @@
     <div class="btn">
         <button class="permission button {$isSubscribed ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied} on:click={subStatus}>
             {#if $subPermissionDenied}
-                <i class="fa-solid fa-bell-slash"></i> Permission denied
+                <i class="fa-solid fa-bell-slash"></i> Denied
             {:else}
                 {#if Notification.permission === "granted" && $isSubscribed}
                     <i class="fa-solid fa-bell-slash"></i> Unsubscribe
@@ -66,9 +66,18 @@
         <button class="refresh button" disabled={$isOffline || fetching} on:click={getNotices}>
             <i class="fa-solid fa-retweet"></i> Refresh
         </button>
+        <button class="clear button" on:click={() => {
+            localStorage.removeItem("notices");
+            parseNotices([]);
+        }}>
+            <i class="fa-solid fa-trash"></i> Clear
+        </button>
         <a href="https://www.aiub.edu" target="_blank" class="button" class:disabled={$isOffline}>
-            Open AIUB
-            <i class="fa-solid fa-external-link"></i>
+            <i class="fa-solid fa-globe"></i>
+            <div class="txt">
+                AIUB
+                <i class="fa-solid fa-external-link"></i>
+            </div>
         </a>
     </div>
     {#if fetching}
@@ -76,7 +85,6 @@
     {/if}
     {#if $allNotices && $allNotices.length > 0}
         <div class="notices">          
-            {#key $allNotices}
             {#each $allNotices as notice, i (notice)}
                 <div class="notice" animate:flip in:fly|global={{y: 5, delay: (i+1)*100}}>
                     <div class="date">
@@ -87,7 +95,6 @@
                     </div>
                 </div>
             {/each}
-            {/key}
         </div>
     {:else}
         <div class="empty" in:fly|global={{y: 5}}>No notices available</div>
@@ -105,6 +112,14 @@
         align-items: center;
     }
 
+    a {
+        text-decoration: none;
+        color: var(--label-color);
+        .txt {
+            text-decoration: underline;
+        }
+    }
+
     a.disabled {
         filter: brightness(0.7);
         cursor: not-allowed;
@@ -116,12 +131,23 @@
         border: none;
         cursor: pointer;
         font-size: 0.8rem;
-        color: white;
-        background: #2196F3;
+        color: var(--accent);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        i {
+            font-size: 1rem;
+        }
         &:disabled{
             filter: brightness(0.7);
             cursor: not-allowed;
         }
+    }
+
+    .clear {
+        color: #f13c3c;
     }
 
     .btn {
@@ -131,17 +157,13 @@
         margin-bottom: 10px;
     }
 
-    .refresh {
-        background: var(--accent);
-    }
-
     .permission {
-        background: #2196F3;
-        &.unsubscribe {
-            background: #384350;
-        }
+        color: #42a5f3;
     }
 
+    .unsubscribe {
+        color: var(--label-color);
+    }
 
     .container {
         display: flex;

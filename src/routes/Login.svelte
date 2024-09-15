@@ -1,19 +1,17 @@
 <script lang="ts">
     import { fly } from "svelte/transition";
-    import Login from "./LoginForm.svelte";
-    import { showLogin } from "$lib/store";
+    import LoginForm from "./LoginForm.svelte";
     import { onMount } from "svelte";
 
     let loaded = false;
 
     onMount(() => {
-        console.log("Page loaded login");
         loaded = true;
     });
 
 </script>
 
-{#if $showLogin && loaded}
+{#if loaded}
 <div class="moto" in:fly|global={{ y: -10 }}>
     AIUB Course Info
     <div class="sub" in:fly|global={{ x: 10 }}>
@@ -21,11 +19,11 @@
     </div>
 </div>
 
-<Login />
+<LoginForm />
 
 <!-- Say concent before loging in with their password -->
 <div class="concent" in:fly|global={{ y: -10 }}>
-    <div class="t">Please read the following carefully!</div>
+    <div class="t" in:fly|global={{ x: 10, delay: 120 }}>Please read the following carefully!</div>
     <ul in:fly|global={{ x: -10, delay: 200 }}>
         <li>
             We use your User Id and Password only for getting your

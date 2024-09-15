@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
     import Logo from "./Logo.svelte";
     import { fade, fly } from "svelte/transition";
-	import { updateLog, updateStatus } from "$lib/store";
+	import { showLogin, updateLog, updateStatus } from "$lib/store";
     import { GetData } from "./fetcher";
 
 	let usernameLabel = "AIUB ID";

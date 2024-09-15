@@ -1,8 +1,7 @@
-
 <script lang="ts">
 
     import { fly } from "svelte/transition";
-    import { showGrade, updateStatus, isOffline, updateLog, clearData } from "$lib/store";
+    import { showGrade, updateStatus, isOffline, updateLog, clearData, showLogin } from "$lib/store";
     import { page } from "$app/stores";
     import { GetData } from "./fetcher";
 
@@ -14,9 +13,11 @@
 			if (node == target) {
 				history.back();
 			} else if (target.id == "clearData") {
+				history.back();
+				showLogin.set(true);
 				clearData();
                 if (src) {
-                    src.close();
+					src.close();
                 }
 			} else if (target.id == "updateData") {
 				updateData();

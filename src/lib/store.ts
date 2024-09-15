@@ -205,8 +205,8 @@ export function parseCourseId(courseId: string) {
 }
 
 export function clearData(){
+  
   console.log("Clearing Data");
-  get(page).state.options = false;
   localStorage.clear();
   completedCourses.set({});
   unlockedCourses.set({});
@@ -216,7 +216,7 @@ export function clearData(){
   User.set('');
   tabs.set('Routine');
   unsubscribeFromNotice(navigator.serviceWorker.controller);
-  showLogin.set(true);
+  
 }
 
 export function titleCase(str: string) {

@@ -65,6 +65,7 @@
         window.addEventListener("online", () => {
             isOffline.set(false);
         });
+
         try {
             detectSWUpdate();
             const permAllowed = Notification.permission === "granted";
@@ -89,6 +90,7 @@
 
 			if (raw == null || raw == undefined || raw == "" || raw == "{}") {
 				console.log("No data");
+                showLogin.set(true);
                 clearData();
 				return;
 			}
@@ -139,11 +141,13 @@
 				//console.log("Login shown");
 			} else {
 				console.log("Invalid data");
+                showLogin.set(true);
 				clearData();
 			}
 			//console.log("Loaded set to true");
 		} catch (e) {
 			console.log("Error loading data");
+            showLogin.set(true);
 			clearData();
 		}
     }
@@ -157,35 +161,10 @@
 		<Logo />
 	</div>
 {:else}
-	<div class="container">
-        <div class="main">
-            <slot></slot>
-            <footer class="footer">
-                <div class="source">
-                    <a href="https://github.com/BrainbirdLab/AIUB_Course_Info"
-                        >Source code <i class="fa-solid fa-code"></i></a
-                    >
-                </div>
-                ・
-                <div class="support">
-                    <a href="https://github.com/BrainbirdLab/AIUB_Course_Info/issues">
-                        Submit issues <i class="fa-solid fa-circle-exclamation"></i>
-                    </a>
-                </div>
-            </footer>
-        </div>
-	</div>
+    <slot></slot>
 {/if}
 
 <style lang="scss">
-
-    .main{
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        height: 100%;
-    }
 	.preload {
 		position: fixed;
 		display: flex;
@@ -199,38 +178,5 @@
 		color: var(--accent);
 		gap: 10px;
 		z-index: 100;
-	}
-
-	.container {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: flex-start;
-		width: 100%;
-		min-height: 100%;
-        height: 100%;
-	}
-
-    .footer {
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-		padding: 10px;
-		gap: 5px;
-		font-size: 0.6rem;
-		position: relative;
-		margin: auto 0 0;
-		color: var(--label-color);
-
-		a {
-			text-decoration: underline;
-			color: inherit;
-		}
-
-		i {
-			font-size: inherit;
-		}
 	}
 </style>
