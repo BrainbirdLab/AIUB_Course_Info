@@ -59,7 +59,7 @@
 		</div>
 		・
 		<div class="verision">
-			v2.0.1
+			v2.0.3
 		</div>
 	</footer>
 </div>
