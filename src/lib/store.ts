@@ -1,5 +1,6 @@
 import { writable, type Writable } from 'svelte/store';
 import { unsubscribeFromNotice } from '../routes/fetcher';
+import { clearDB } from './db';
 
 
 export type Class = {
@@ -205,8 +206,8 @@ export function parseCourseId(courseId: string) {
 }
 
 export function clearData(){
-  
   console.log("Clearing Data");
+  showLogin.set(true);
   localStorage.clear();
   completedCourses.set({});
   unlockedCourses.set({});
@@ -215,8 +216,8 @@ export function clearData(){
   allNotices.set([]);
   User.set('');
   tabs.set('Routine');
+  clearDB("notices");
   unsubscribeFromNotice(navigator.serviceWorker.controller);
-  
 }
 
 export function titleCase(str: string) {

@@ -1,12 +1,13 @@
 <script lang="ts">
-    import { clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, unlockedCourses, User, type SemesterDataType } from "$lib/store";
+    import { clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subPermissionDenied, unlockedCourses, User, type SemesterDataType } from "$lib/store";
     import "$lib/styles/global.scss";
 
     import { onDestroy, onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
     import type { Unsubscriber } from "svelte/store";
-    import { fetchNoticesFromDB } from "./fetcher";
+    import { parseNotices, unsubscribeFromNotice, updateNotices } from "./fetcher";
     import Logo from "./Logo.svelte";
+    import { readFromDB } from "$lib/db";
 
     async function detectSWUpdate(){
 
@@ -32,6 +33,7 @@
                     }
                     isSubscribed.set(true);
                     localStorage.setItem("isSubscribed", "true");
+                    updateNotices();
                 } else if (event.data.type == "unsubscribed") {
                     isSubUnsubRunning.set(false);
                     if (!event.data.data) {
@@ -41,8 +43,8 @@
                     localStorage.setItem("isSubscribed", "false");
                 } else if (event.data.type == "notice") {
                     console.log("New notice available");
-                    fetchNoticesFromDB().catch((e) => {
-                        console.log("Error fetching notices", e);
+                    readFromDB("notices", "aiub").then((data) => {
+                        parseNotices(data || []);
                     });
                 }
             });
@@ -61,6 +63,23 @@
         window.addEventListener("online", () => {
             isOffline.set(false);
         });
+
+        window.addEventListener("storage", (e) => {
+            clearData();
+        });
+
+        if ('permissions' in navigator) {
+            navigator.permissions.query({ name: 'notifications' }).then(function (notificationPerm) {
+                notificationPerm.onchange = function () {
+                    console.log("User decided to change his seettings. New permission: " + notificationPerm.state);
+                    subPermissionDenied.set(notificationPerm.state === "denied");
+                    if ($subPermissionDenied) {
+                        isSubscribed.set(false);
+                        localStorage.setItem("isSubscribed", "false");
+                    }
+                };
+            });
+        }
 
         try {
             detectSWUpdate();

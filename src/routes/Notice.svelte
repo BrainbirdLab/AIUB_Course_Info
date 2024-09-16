@@ -3,8 +3,9 @@
     import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied } from "$lib/store";
     import { onMount } from "svelte";
     import { fly, slide } from "svelte/transition";
-    import { checkSubscription, fetchNoticesFromDB, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "./fetcher";
+    import { checkSubscription, fetchNoticesFromDB, parseNotices, subscribeToNotice, unsubscribeFromNotice, updateNotices } from "./fetcher";
     import { flip } from "svelte/animate";
+    import { deleteFromDB } from "$lib/db";
 
     let fetching = false;
     let loadingText = "Fetching new notices...";
@@ -13,11 +14,10 @@
         subPermissionDenied.set(Notification.permission === "denied");
         try {
             try {
-                const notices = JSON.parse(localStorage.getItem("notices") || "[]") as string[];
-                parseNotices(notices);
+                updateNotices();
             } catch (error) {
                 parseNotices([]);
-                localStorage.removeItem("notices");
+                deleteFromDB("notices", "aiub");
             }
             // check subscription status
             checkSubscription(navigator.serviceWorker.controller);
@@ -42,7 +42,6 @@
     }
 
     async function subStatus() {
-        isSubUnsubRunning.set(true);
         if ($isSubscribed) {
             await unsubscribeFromNotice(navigator.serviceWorker.controller);
         } else {
@@ -50,10 +49,7 @@
             Notification.requestPermission().then(async (permission) => {
                 if (permission === "granted") {
                     await subscribeToNotice(navigator.serviceWorker.controller);
-                } else if (permission === "denied") {
-                    subPermissionDenied.set(true);
                 }
-                isSubUnsubRunning.set(false);
             });
         }
     }
@@ -62,7 +58,7 @@
 
 <div class="container" in:fly|global={{x: 10}}>
     <div class="btn">
-        <button class="permission button {$isSubscribed ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied} on:click={subStatus}>
+        <button class="permission button {$isSubscribed && !$subPermissionDenied ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied} on:click={subStatus}>
             {#if $subPermissionDenied}
                 <i class="fa-solid fa-bell-slash"></i> Denied
             {:else}
@@ -77,7 +73,7 @@
             <i class="fa-solid fa-retweet"></i> Refresh
         </button>
         <button class="clear button" on:click={() => {
-            localStorage.removeItem("notices");
+            deleteFromDB("notices", "aiub");
             parseNotices([]);
         }}>
             <i class="fa-solid fa-trash"></i> Clear
@@ -95,7 +91,7 @@
     {/if}
     {#if $allNotices && $allNotices.length > 0}
         <div class="notices">          
-            {#each $allNotices as notice, i (notice)}
+            {#each $allNotices as notice, i (notice.notice)}
                 <div class="notice" animate:flip in:fly|global={{y: 5, delay: (i+1)*100}}>
                     <div class="date">
                         {notice.date}

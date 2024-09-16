@@ -3,6 +3,7 @@
 /// <reference types="svelte" />
 
 import { build, files, version } from '$service-worker';
+import { writeToDB } from "./lib/db";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -57,26 +58,34 @@ self.addEventListener('push', async (e) => {
 
 	const jsonObj = e.data.json();
 
-	const main = jsonObj.data;
+	const body = jsonObj.body;
 	const title = jsonObj.title;
 	const type = jsonObj.type;
+	const notices = jsonObj.data;
 
+	if (notices) {
+		await writeToDB('notices', 'aiub', notices);
+	}
+	
 	if (type != 'aiub') {
+		await writeToDB('notices', 'dev', { title, body, type });
 		self.registration.showNotification(title, {
-			body: main,
+			body: body,
 			icon: './favicon.png',
+			badge: './badge-icon-mini.png',
 		});
 		return;
 	}
 
+
 	
-    const parts = main.split('::');
+    const parts = body.split('::');
 	const data = parts[1];
-    console.log('Service Worker: Push Received: ', data);
     
     self.registration.showNotification(title, {
 		body: data,
         icon: './aiub.png',
+		badge: './badge-icon-mini.png',
     });
 	
 	sendMessage('notice', null);

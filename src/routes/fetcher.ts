@@ -1,8 +1,10 @@
 import { PUBLIC_API_SERVER_URL } from "$env/static/public";
+import { readFromDB, writeToDB } from "$lib/db";
 
 import { allNotices, completedCourses, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
 
 export async function subscribeToNotice(worker: ServiceWorker | null) {
+    isSubUnsubRunning.set(true);
     if (!navigator.onLine) {
         console.error("You are offline");
         updateStatus.set("error");
@@ -33,7 +35,7 @@ export async function subscribeToNotice(worker: ServiceWorker | null) {
 }
 
 export async function unsubscribeFromNotice(worker: ServiceWorker | null) {
-
+    isSubUnsubRunning.set(true);
     if (!worker) {
         console.error("Service worker not found");
         isSubUnsubRunning.set(false);
@@ -70,12 +72,18 @@ export function parseNotices(notices: string[]) {
     });
 }
 
+export async function updateNotices() {
+    readFromDB("notices", "aiub").then((data) => {
+        parseNotices(data || []);
+    });
+}
+
 export async function fetchNoticesFromDB() {
     const data = await fetch(`${PUBLIC_API_SERVER_URL}/notices`);
     const json = await data.json();
     const notices = json.notices;
-    localStorage.setItem("notices", JSON.stringify(notices));
-    parseNotices(notices);
+    writeToDB("notices", "aiub", notices);
+    updateNotices();
 }
 
 export function GetData(UserName: string, Password: string, done: (error: boolean) => void) {

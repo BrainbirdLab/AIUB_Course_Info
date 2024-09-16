@@ -14,7 +14,6 @@
 				history.back();
 			} else if (target.id == "clearData") {
 				history.back();
-				showLogin.set(true);
 				clearData();
                 if (src) {
 					src.close();
