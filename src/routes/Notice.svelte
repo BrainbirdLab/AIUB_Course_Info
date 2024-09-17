@@ -3,7 +3,7 @@
     import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied } from "$lib/store";
     import { onMount } from "svelte";
     import { fly, slide } from "svelte/transition";
-    import { checkSubscription, fetchNoticesFromDB, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "../lib/fetcher";
+    import { checkSubscription, fetchNoticesFromServer, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "../lib/fetcher";
     import { flip } from "svelte/animate";
     import { deleteFromDB } from "$lib/db";
 
@@ -24,12 +24,10 @@
     function getNotices() {
         fetching = true;
         loadingText = "Fetching new notices...";
-        fetchNoticesFromDB().then((notices) => {
+        fetchNoticesFromServer().then((notices) => {
             fetching = false;
             loadingText = "";
-            if (notices !== null && notices instanceof Array && notices.length > 0) {
-                parseNotices(notices);
-            }
+            parseNotices(notices);
         }).catch((e) => {
             loadingText = "Error fetching notices";
             setTimeout(() => {

@@ -4,6 +4,7 @@
     import { showGrade, updateStatus, isOffline, updateLog, clearData, showLogin } from "$lib/store";
     import { page } from "$app/stores";
     import { GetData } from "../lib/fetcher";
+    import Footer from "./Footer.svelte";
 
     let src: EventSource | null = null;
     
@@ -77,9 +78,9 @@
 				<!-- Enable/disable button sounds -->
 				<div
 					class="field-checkers"
-					transition:fly|global={{ y: 20, delay: 20 }}
+					in:fly|global={{ y: 10, delay: 20 }}
 				>
-					<label>
+					<label class="hoverHighlight">
 						<div class="controller">
 							<div class="textContainer">Show grades</div>
 							<div class="moreInfo">
@@ -101,7 +102,7 @@
 			</div>
 			<div
 				class="subsettings row btn-grp"
-				transition:fly|global={{ y: 20, delay: 100 }}
+				in:fly|global={{ y: 10, delay: 100 }}
 			>
 				<button id="updateData"
 					disabled={$updateStatus == "loading" || $isOffline}
@@ -112,6 +113,9 @@
 					>Clear Data <i class="fa-solid fa-trash"
 					></i></button
 				>
+			</div>
+			<div class="ft" in:fly|global={{ y: 10, delay: 200}}>
+				<Footer />
 			</div>
 		</div>
 	</div>
@@ -177,15 +181,17 @@
 			width: 100%;
 			cursor: pointer;
 			border-radius: 10px;
-			&:hover {
-				background: var(--primary);
-			}
 		}
 	}
-
+	
+	.hoverHighlight {
+		&:hover {
+			background: var(--primary);
+		}
+	}
 	.settings-options {
 		background: #031826;
-		padding: 20px 10px;
+		padding: 20px;
 		border-radius: 10px;
 		margin: 10px;
 		width: min(400px, 100%);
@@ -199,21 +205,21 @@
 
 		.btn-grp {
 			display: flex;
-			flex-direction: row;
-			align-items: center;
+			flex-direction: column;
+			align-items: flex-start;
 			justify-content: center;
-			gap: 15px;
 		}
 
 		button {
 			border: none;
 			outline: none;
 			border-radius: 10px;
-			padding: 10px 15px;
-			color: ghostwhite;
+			padding: 15px 0;
 			font-size: 0.8rem;
 			background: var(--accent);
+			color: white;
 			cursor: pointer;
+			width: 100%;
 			&:hover {
 				filter: brightness(0.9);
 			}
@@ -254,7 +260,7 @@
 	}
 
 	#clearData {
-		background: red;
+		background: rgb(245, 51, 51);
 	}
     
 	#updateData:disabled{

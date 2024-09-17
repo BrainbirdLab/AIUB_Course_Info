@@ -60,30 +60,40 @@ export async function checkSubscription(worker: ServiceWorker | null) {
     worker?.postMessage({ type: "CHECK_SUBSCRIPTION", api: PUBLIC_API_SERVER_URL });
 }
 
-export function parseNotices(notices: string[]) {
-    allNotices.set([]);
-    notices.forEach((notice) => {
-        const parts = notice.split("::");
-        const date = parts[0];
-        const noticeText = parts[1];
-        const link = parts[2];
-        allNotices.update((notices) => {
-            notices.push({ date, notice: noticeText, link });
-            if (notices.length > 8) {
-                notices.pop(); // remove the first element. first means oldest
-            }
-            return notices;
+export function parseNotices(notices: string[] | null) {
+    if (notices !== null && notices instanceof Array) {
+        allNotices.set([]);
+        notices.forEach((notice) => {
+            const parts = notice.split("::");
+            const date = parts[0];
+            const noticeText = parts[1];
+            const link = parts[2];
+            allNotices.update((notices) => {
+                notices.push({ date, notice: noticeText, link });
+                if (notices.length > 8) {
+                    notices.pop(); // remove the first element. first means oldest
+                }
+                return notices;
+            });
         });
-    });
+    }
 }
 
-export async function updateNotices() {
+export async function updateNoticesLocally() {
     readFromDB("notices", "aiub").then((data) => {
         parseNotices(data || []);
     });
 }
 
-export async function fetchNoticesFromDB() {
+export async function initNotices() {
+    updateNoticesLocally().then(() => {
+        fetchNoticesFromServer().then((notices) => {
+            parseNotices(notices);
+        });
+    });
+}
+
+export async function fetchNoticesFromServer() {
     try {
         const response = await fetch(`${PUBLIC_API_SERVER_URL}/notices`);
         const json = await response.json();
@@ -118,6 +128,7 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
         source.onmessage = (evt) => {
             const data = JSON.parse(evt.data);
             if (data.status === "complete") {
+                initNotices();
                 updateLog.set('');
                 updateStatus.set('');
                 User.set(data.result.user);

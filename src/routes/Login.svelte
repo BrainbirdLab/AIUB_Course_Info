@@ -2,6 +2,7 @@
     import { fly } from "svelte/transition";
     import LoginForm from "./LoginForm.svelte";
     import { onMount } from "svelte";
+    import Footer from "./Footer.svelte";
 
     let loaded = false;
 
@@ -37,6 +38,7 @@
         <li>Use this site with your concent</li>
     </ul>
 </div>
+<Footer padding={"10px"}/>
 {/if}
 
 <style lang="scss">

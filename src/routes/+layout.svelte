@@ -8,7 +8,7 @@
     import type { Unsubscriber } from "svelte/store";
     import { showToastMessage } from "@itsfuad/domtoastmessage";
     import Logo from "./Logo.svelte";
-    import { checkSubscription, fetchNoticesFromDB, parseNotices, updateNotices } from "$lib/fetcher";
+    import { checkSubscription, fetchNoticesFromServer, initNotices, parseNotices, updateNoticesLocally } from "$lib/fetcher";
     import { deleteFromDB } from "$lib/db";
 
     async function detectSWUpdate(){
@@ -34,7 +34,7 @@
                     if (!event.data.data) {
                         return;
                     }
-                    updateNotices();
+                    updateNoticesLocally();
                     isSubscribed.set(true);
                     localStorage.setItem("isSubscribed", "true");
                 } else if (event.data.type == "unsubscribed") {
@@ -88,13 +88,7 @@
             validateUser();
             checkSubscription(navigator.serviceWorker.controller);
             try {
-                updateNotices().then(() => {
-                    fetchNoticesFromDB().then((notices) => {
-                        if (notices !== null && notices instanceof Array && notices.length > 0) {
-                            parseNotices(notices);
-                        }
-                    });
-                });
+                initNotices();
             } catch (error) {
                 console.log("Error updating notices", error);
                 parseNotices([]);

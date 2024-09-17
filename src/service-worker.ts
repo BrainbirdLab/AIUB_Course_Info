@@ -4,7 +4,7 @@
 
 import { build, files, version } from '$service-worker';
 import { writeToDB } from "./lib/db";
-import { fetchNoticesFromDB } from "./lib/fetcher";
+import { fetchNoticesFromServer } from "./lib/fetcher";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -201,7 +201,7 @@ self.addEventListener('message', (e) => {
 					}).then(res => res.json()).then(() => {
 						console.log('Subscribed');
 						// Get the notices from server
-						fetchNoticesFromDB().then(() => {
+						fetchNoticesFromServer().then(() => {
 							//postMessage to the client
 							sendMessage('subscribed', true);
 						});
