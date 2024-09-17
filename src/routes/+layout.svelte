@@ -2,13 +2,13 @@
     
     import "$lib/styles/global.scss";
 
-    import { clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subPermissionDenied, unlockedCourses, User, type SemesterDataType } from "$lib/store";
+    import { allCourses, clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subPermissionDenied, unlockedCourses, User, type SemesterDataType } from "$lib/store";
     import { onDestroy, onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
     import type { Unsubscriber } from "svelte/store";
     import { showToastMessage } from "@itsfuad/domtoastmessage";
     import Logo from "./Logo.svelte";
-    import { checkSubscription, fetchNoticesFromServer, initNotices, parseNotices, updateNoticesLocally } from "$lib/fetcher";
+    import { checkSubscription, initNotices, parseNotices, updateNoticesLocally } from "$lib/fetcher";
     import { deleteFromDB } from "$lib/db";
 
     async function detectSWUpdate(){
@@ -131,6 +131,8 @@
 			);
 			const rawUnlockedCourses = localStorage.getItem("unlockedCourses");
 
+            const rawAllCourses = localStorage.getItem("allCourses");
+
 			const parsedCompletedCourses = rawCompletedCourses
 				? JSON.parse(rawCompletedCourses)
 				: {};
@@ -143,9 +145,16 @@
 				? JSON.parse(rawUnlockedCourses)
 				: {};
 
-			completedCourses.set(parsedCompletedCourses);
-			preregisteredCourses.set(parsedPreregisteredCourses);
-			unlockedCourses.set(parsedUnlockedCourses);
+            const parsedAllCourses = rawAllCourses
+                ? JSON.parse(rawAllCourses)
+                : {};
+
+                
+                
+            completedCourses.set(parsedCompletedCourses);
+            preregisteredCourses.set(parsedPreregisteredCourses);
+            unlockedCourses.set(parsedUnlockedCourses);
+            allCourses.set(parsedAllCourses);
 
 			const gradeshow = localStorage.getItem("showGrade") as string;
 			if (gradeshow == "true") {

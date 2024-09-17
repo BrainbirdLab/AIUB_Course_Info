@@ -260,32 +260,6 @@
         display: none;
     }
 
-    .toolTip{
-        position: absolute;
-        background: rgba(0, 0, 0, 0.7803921569);
-        padding: 5px;
-        border-radius: 5px;
-        width: 100%;
-        font-size: 0.7rem;
-        top: -10px;
-        z-index: 50;
-        transition: 200ms ease-in-out;
-        visibility: hidden;
-        opacity: 0;
-        text-align: center;
-
-        &::after{
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -5px;
-            border-width: 5px;
-            border-style: solid;
-            border-color: #000000c7 transparent transparent transparent;
-        }
-    }
-
     .class{
         display: flex;
         flex-direction: column;

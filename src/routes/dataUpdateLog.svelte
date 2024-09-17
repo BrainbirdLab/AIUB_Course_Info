@@ -1,5 +1,5 @@
 <script lang="ts">
-    import {fly } from "svelte/transition";
+    import { fly } from "svelte/transition";
     import { updateLog, updateStatus } from "$lib/store";
 </script>
 

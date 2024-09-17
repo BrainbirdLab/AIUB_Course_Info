@@ -1,7 +1,7 @@
 import { PUBLIC_API_SERVER_URL } from "$env/static/public";
 import { readFromDB, writeToDB } from "$lib/db";
 
-import { allNotices, completedCourses, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
+import { allCourses, allNotices, completedCourses, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
 import { showToastMessage } from "@itsfuad/domtoastmessage";
 
 export async function subscribeToNotice(worker: ServiceWorker | null) {
@@ -137,6 +137,7 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
                 preregisteredCourses.set(data.result.preregisteredCourses);
                 completedCourses.set(data.result.completedCourses);
                 semesterName.set(data.result.currentSemester);
+                allCourses.set(data.result.curriculumncourses);
                 localStorage.setItem('user', data.result.user);
                 localStorage.setItem('semesterClassRoutine', JSON.stringify(data.result.semesterClassRoutine));
                 localStorage.setItem('unlockedCourses', JSON.stringify(data.result.unlockedCourses));
@@ -145,6 +146,7 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
                 localStorage.setItem('semester', data.result.currentSemester);
                 localStorage.setItem('UserName', UserName);
                 localStorage.setItem('Password', Password);
+                localStorage.setItem('allCourses', JSON.stringify(data.result.curriculumncourses));
                 source.close();
                 showLogin.set(false);
                 done(false);

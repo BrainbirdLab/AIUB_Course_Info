@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { unlockedCourses, parseCourseId, creditsPrerequisitesObj, completedCourses, preregisteredCourses, getIconColor, getIcon } from '$lib/store';
+    import { unlockedCourses, parseCourseId, creditsPrerequisitesObj, completedCourses, preregisteredCourses, getIconColor, getIcon, allCourses } from '$lib/store';
     import { flip } from 'svelte/animate';
     import { fade, fly } from 'svelte/transition';
 
@@ -78,7 +78,14 @@
                     Prerequisites
                     {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
                         {#each courseInfo.prerequisites as prerequisite}
-                            <div class="prerequisite tag" style:background={getIconColor(parseCourseId(prerequisite))}>{@html getIcon(parseCourseId(prerequisite))} {prerequisite}</div>
+                        <div class="prerequisite tag" data-prereq={prerequisite} style:background={getIconColor(parseCourseId(prerequisite))}>
+                            {#if $allCourses[prerequisite]}
+                                <div class="prerequisiteInfo">
+                                    {$allCourses[prerequisite].course_name}
+                                </div>
+                            {/if}
+                            {@html getIcon(parseCourseId(prerequisite))} {prerequisite}
+                        </div>
                         {/each}
                     {:else}
                         <div class="prerequisite tag" style:background={"#398982"}>None</div>
@@ -93,6 +100,37 @@
 {/if}
 
 <style lang="scss">
+
+    .prerequisite:hover .prerequisiteInfo{
+        visibility: visible;
+        opacity: 1;
+        bottom: 24px;
+    }
+    
+    .prerequisiteInfo {
+        position: absolute;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.9);
+        border-radius: 8px;
+        bottom: 23px;
+        width: min-content;
+        visibility: hidden;
+        opacity: 0;
+        transition: 200ms ease-in-out;
+        bottom: 20px;
+        left: 0;
+
+        &::after {
+            content: "";
+            position: absolute;
+            top: 100%;
+            left: 15px;
+            margin-left: -5px;
+            border-width: 5px;
+            border-style: solid;
+            border-color: rgba(0, 0, 0, 0.7803921569) transparent transparent transparent;
+        }
+    }
 
     .registered{
         background: #09bc65;
