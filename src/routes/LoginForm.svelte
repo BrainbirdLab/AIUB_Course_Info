@@ -3,7 +3,7 @@
     import Logo from "./Logo.svelte";
     import { fade, fly } from "svelte/transition";
 	import { showLogin, updateLog, updateStatus } from "$lib/store";
-    import { GetData } from "./fetcher";
+    import { GetData } from "../lib/fetcher";
 
 	let usernameLabel = "AIUB ID";
 	let passwordLabel = "Password";

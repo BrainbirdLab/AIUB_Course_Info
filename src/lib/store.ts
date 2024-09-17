@@ -1,5 +1,5 @@
 import { writable, type Writable } from 'svelte/store';
-import { unsubscribeFromNotice } from '../routes/fetcher';
+import { unsubscribeFromNotice } from './fetcher';
 import { clearDB } from './db';
 
 

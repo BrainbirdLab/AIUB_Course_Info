@@ -10,6 +10,7 @@ declare global {
 			options: boolean;
 		}
 	}
+	const __VERSION__: string;
 }
 
 export {};

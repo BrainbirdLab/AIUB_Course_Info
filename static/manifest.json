@@ -6,6 +6,7 @@
   "background_color": "#111d2a",
   "theme_color": "#111d2a",
   "scope": "./",
+  "version": "13.0.1",
   "description": "This app allows users to easily keep track of their class schedule, Completed courses, Available courses for next semester and visualize it.",
   "icons": [
       {

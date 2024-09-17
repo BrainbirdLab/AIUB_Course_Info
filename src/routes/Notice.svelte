@@ -3,7 +3,7 @@
     import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied } from "$lib/store";
     import { onMount } from "svelte";
     import { fly, slide } from "svelte/transition";
-    import { checkSubscription, fetchNoticesFromDB, parseNotices, subscribeToNotice, unsubscribeFromNotice, updateNotices } from "./fetcher";
+    import { checkSubscription, fetchNoticesFromDB, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "../lib/fetcher";
     import { flip } from "svelte/animate";
     import { deleteFromDB } from "$lib/db";
 
@@ -13,12 +13,6 @@
     onMount(() => {
         subPermissionDenied.set(Notification.permission === "denied");
         try {
-            try {
-                updateNotices();
-            } catch (error) {
-                parseNotices([]);
-                deleteFromDB("notices", "aiub");
-            }
             // check subscription status
             checkSubscription(navigator.serviceWorker.controller);
         } catch (error) {
@@ -27,12 +21,15 @@
         }
     });
 
-    async function getNotices() {
+    function getNotices() {
         fetching = true;
         loadingText = "Fetching new notices...";
-        fetchNoticesFromDB().then(() => {
+        fetchNoticesFromDB().then((notices) => {
             fetching = false;
-            loadingText = "New notices fetched";
+            loadingText = "";
+            if (notices !== null && notices instanceof Array && notices.length > 0) {
+                parseNotices(notices);
+            }
         }).catch((e) => {
             loadingText = "Error fetching notices";
             setTimeout(() => {
@@ -63,9 +60,9 @@
                 <i class="fa-solid fa-bell-slash"></i> Denied
             {:else}
                 {#if Notification.permission === "granted" && $isSubscribed}
-                    <i class="fa-solid fa-bell-slash"></i> Unsubscribe
+                    <i class="fa-solid fa-bell-slash"></i> {#if $isSubUnsubRunning} Unsubscribing... {:else} Unsubscribe {/if}
                 {:else}
-                    <i class="fa-solid fa-bell"></i> Subscribe
+                    <i class="fa-solid fa-bell"></i> {#if $isSubUnsubRunning} Subscribing... {:else} Subscribe {/if}
                 {/if}
             {/if}
         </button>

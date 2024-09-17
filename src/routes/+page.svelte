@@ -16,6 +16,8 @@
     import Options from "./options.svelte";
 	import Login from "./Login.svelte";
 
+	const version = __VERSION__;
+
 </script>
 
 <div class="container">
@@ -59,7 +61,7 @@
 		</div>
 		・
 		<div class="verision">
-			v2.0.5
+			v{version}
 		</div>
 	</footer>
 </div>

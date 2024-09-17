@@ -2,18 +2,21 @@ import { PUBLIC_API_SERVER_URL } from "$env/static/public";
 import { readFromDB, writeToDB } from "$lib/db";
 
 import { allNotices, completedCourses, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
+import { showToastMessage } from "@itsfuad/domtoastmessage";
 
 export async function subscribeToNotice(worker: ServiceWorker | null) {
     isSubUnsubRunning.set(true);
     if (!navigator.onLine) {
-        console.error("You are offline");
+        console.log("You are offline");
         updateStatus.set("error");
         updateLog.set("You are offline");
         isSubUnsubRunning.set(false);
+        showToastMessage("You are offline");
         return;
     }
     if (!worker) {
-        console.error("Service worker not found");
+        console.log("Service worker not found");
+        showToastMessage("Service worker not found");
         isSubUnsubRunning.set(false);
         return;
     }
@@ -37,7 +40,8 @@ export async function subscribeToNotice(worker: ServiceWorker | null) {
 export async function unsubscribeFromNotice(worker: ServiceWorker | null) {
     isSubUnsubRunning.set(true);
     if (!worker) {
-        console.error("Service worker not found");
+        console.log("Service worker not found");
+        showToastMessage("Service worker not found");
         isSubUnsubRunning.set(false);
         return;
     }
@@ -47,7 +51,8 @@ export async function unsubscribeFromNotice(worker: ServiceWorker | null) {
 
 export async function checkSubscription(worker: ServiceWorker | null) {
     if (!worker) {
-        console.error("Service worker not found");
+        console.log("Service worker not found");
+        showToastMessage("Service worker not found");
         isSubUnsubRunning.set(false);
         return;
     }
@@ -79,11 +84,19 @@ export async function updateNotices() {
 }
 
 export async function fetchNoticesFromDB() {
-    const data = await fetch(`${PUBLIC_API_SERVER_URL}/notices`);
-    const json = await data.json();
-    const notices = json.notices;
-    writeToDB("notices", "aiub", notices);
-    updateNotices();
+    try {
+        const response = await fetch(`${PUBLIC_API_SERVER_URL}/notices`);
+        const json = await response.json();
+        const notices = json.notices;
+        if (!notices || notices instanceof Array === false || notices.length === 0) {
+            return null;
+        }
+        await writeToDB("notices", "aiub", notices);
+        return notices;
+    } catch (err) {
+        console.error(err);
+        return null;
+    }   
 }
 
 export function GetData(UserName: string, Password: string, done: (error: boolean) => void) {

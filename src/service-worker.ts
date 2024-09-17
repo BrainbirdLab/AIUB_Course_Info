@@ -4,6 +4,7 @@
 
 import { build, files, version } from '$service-worker';
 import { writeToDB } from "./lib/db";
+import { fetchNoticesFromDB } from "./lib/fetcher";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -61,11 +62,6 @@ self.addEventListener('push', async (e) => {
 	const body = jsonObj.body;
 	const title = jsonObj.title;
 	const type = jsonObj.type;
-	const notices = jsonObj.data;
-
-	if (notices) {
-		await writeToDB('notices', 'aiub', notices);
-	}
 	
 	if (type != 'aiub') {
 		await writeToDB('notices', 'dev', { title, body, type });
@@ -76,8 +72,6 @@ self.addEventListener('push', async (e) => {
 		});
 		return;
 	}
-
-
 	
     const parts = body.split('::');
 	const data = parts[1];
@@ -206,8 +200,11 @@ self.addEventListener('message', (e) => {
 						}
 					}).then(res => res.json()).then(() => {
 						console.log('Subscribed');
-						//postMessage to the client
-						sendMessage('subscribed', true);
+						// Get the notices from server
+						fetchNoticesFromDB().then(() => {
+							//postMessage to the client
+							sendMessage('subscribed', true);
+						});
 					}).catch(async (err) => {
 						console.error(err);
 						sendMessage('subscribed', false);

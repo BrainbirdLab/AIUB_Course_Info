@@ -1,14 +1,15 @@
 <script lang="ts">
-    import { clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subPermissionDenied, unlockedCourses, User, type SemesterDataType } from "$lib/store";
+    
     import "$lib/styles/global.scss";
 
+    import { clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subPermissionDenied, unlockedCourses, User, type SemesterDataType } from "$lib/store";
     import { onDestroy, onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
     import type { Unsubscriber } from "svelte/store";
-    import { parseNotices, updateNotices } from "./fetcher";
     import { showToastMessage } from "@itsfuad/domtoastmessage";
     import Logo from "./Logo.svelte";
-    import { readFromDB } from "$lib/db";
+    import { checkSubscription, fetchNoticesFromDB, parseNotices, updateNotices } from "$lib/fetcher";
+    import { deleteFromDB } from "$lib/db";
 
     async function detectSWUpdate(){
 
@@ -33,9 +34,9 @@
                     if (!event.data.data) {
                         return;
                     }
+                    updateNotices();
                     isSubscribed.set(true);
                     localStorage.setItem("isSubscribed", "true");
-                    updateNotices();
                 } else if (event.data.type == "unsubscribed") {
                     isSubUnsubRunning.set(false);
                     if (!event.data.data) {
@@ -43,11 +44,6 @@
                     }
                     isSubscribed.set(false);
                     localStorage.setItem("isSubscribed", "false");
-                } else if (event.data.type == "notice") {
-                    console.log("New notice available");
-                    readFromDB("notices", "aiub").then((data) => {
-                        parseNotices(data || []);
-                    });
                 }
             });
         } else {
@@ -90,6 +86,20 @@
             isSubscribed.set(permAllowed && sub);
             localStorage.setItem("isSubscribed", $isSubscribed ? "true" : "false");
             validateUser();
+            checkSubscription(navigator.serviceWorker.controller);
+            try {
+                updateNotices().then(() => {
+                    fetchNoticesFromDB().then((notices) => {
+                        if (notices !== null && notices instanceof Array && notices.length > 0) {
+                            parseNotices(notices);
+                        }
+                    });
+                });
+            } catch (error) {
+                console.log("Error updating notices", error);
+                parseNotices([]);
+                deleteFromDB("notices", "aiub");
+            }
         } catch (error) {
             console.error(error);
         }
