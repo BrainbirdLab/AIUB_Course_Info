@@ -5,7 +5,8 @@
     import { onDestroy, onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
     import type { Unsubscriber } from "svelte/store";
-    import { parseNotices, unsubscribeFromNotice, updateNotices } from "./fetcher";
+    import { parseNotices, updateNotices } from "./fetcher";
+    import { showToastMessage } from "@itsfuad/domtoastmessage";
     import Logo from "./Logo.svelte";
     import { readFromDB } from "$lib/db";
 
@@ -19,6 +20,7 @@
                 if (newWorker.state === "installed") {
                     newWorker.postMessage({ type: "SKIP_WAITING" });
                     console.log("New update available");
+                    showToastMessage("App Updated. Re-launch to see changes.", 1500);
                 }
             });
         });
