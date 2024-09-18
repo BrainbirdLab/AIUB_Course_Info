@@ -98,6 +98,10 @@ select:-webkit-autofill:focus {
     transform: translate(-50%, -50%);
 }
 
+::placeholder {
+    color: #ffffff33;
+}
+
 .search {
     background: var(--light-dark);
     outline: none;
