@@ -1,7 +1,7 @@
 import { PUBLIC_API_SERVER_URL } from "$env/static/public";
 import { readFromDB, writeToDB } from "$lib/db";
 
-import { allCourses, allNotices, completedCourses, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
+import { allCourses, allNotices, completedCourses, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
 import { showToastMessage } from "@itsfuad/domtoastmessage";
 
 export async function subscribeToNotice(worker: ServiceWorker | null) {
@@ -50,13 +50,13 @@ export async function unsubscribeFromNotice(worker: ServiceWorker | null) {
 }
 
 export async function checkSubscription(worker: ServiceWorker | null) {
+    subCheckingDone.set(false);
     if (!worker) {
         console.log("Service worker not found");
         showToastMessage("Service worker not found");
         isSubUnsubRunning.set(false);
         return;
     }
-    console.log("Checking subscription");
     worker?.postMessage({ type: "CHECK_SUBSCRIPTION", api: PUBLIC_API_SERVER_URL });
 }
 

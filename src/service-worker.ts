@@ -13,7 +13,12 @@ const CACHE = `cache-${version}`;
 const ASSETS = [
 	...build,
 	...files,
-]
+];
+
+let subcheckController: AbortController | null = null;
+let getKeysController: AbortController | null = null;
+let subscribeController: AbortController | null = null;
+let unsubscribeController: AbortController | null = null;
 
 //Call Install Event
 self.addEventListener('install', (e) => {
@@ -81,8 +86,6 @@ self.addEventListener('push', async (e) => {
         icon: './aiub.png',
 		badge: './badge-icon-mini.png',
     });
-	
-	sendMessage('notice', null);
 });
 
 self.addEventListener('notificationclick', (e) => {
@@ -174,114 +177,144 @@ self.addEventListener('message', (e) => {
 			console.log('%cService Worker: Updated', 'color: orange');
 			self.skipWaiting();
 		} else if (e.data.type === 'SUBSCRIBE') {
-			const API_URL = e.data.api;
-			// check push notification support
-			if (!self.registration.showNotification) {
-				console.log('Service Worker: Push Not Supported');
-				return;
-			}
-			//check permission
-			if (Notification.permission !== 'granted') {
-				console.log('Service Worker: Push Not Permitted');
-				return;
-			}
-			console.log('getting subscription');
-			//get the public key from the server
-			fetch(`${API_URL}/getkey`).then(res => res.json()).then(data => {
-				self.registration.pushManager.subscribe({
-					userVisibleOnly: true,
-					applicationServerKey: base64UrlToArrayBuffer(data.publicKey)
-				}).then(sub => {
-					fetch(`${API_URL}/subscribe`, {
-						method: 'POST',
-						body: JSON.stringify(sub),
-						headers: {
-							'content-type': 'application/json'
-						}
-					}).then(res => res.json()).then(() => {
-						console.log('Subscribed');
-						// Get the notices from server
-						fetchNoticesFromServer().then(() => {
-							//postMessage to the client
-							sendMessage('subscribed', true);
-						});
-					}).catch(async (err) => {
-						console.error(err);
-						sendMessage('subscribed', false);
-						// unsubscribe if there is an error
-						await sub.unsubscribe();
-						console.log('Unsubscribed: Could not save subscription to server');
-					});
-				}).catch(err => {
-					console.error(err);
-					sendMessage('subscribed', false);
-				});
-			}).catch(err => {
-				console.error(err);
-				sendMessage('subscribed', false);
-			});
+			subscribe(e);
 		} else if (e.data.type === 'UNSUBSCRIBE') {
-			const API_URL = e.data.api;
-			self.registration.pushManager.getSubscription().then(sub => {
-				if (sub) {
-					sub.unsubscribe().then(() => {
-						sendMessage('unsubscribed', true);
-						fetch(`${API_URL}/unsubscribe`, {
-							method: 'POST',
-							body: JSON.stringify(sub),
-							headers: {
-								'content-type': 'application/json'
-							}
-						}).then(res => res.json()).then(() => {
-							console.log('Deleted Subscription from Server');
-						}).catch(err => {
-							console.error(err);
-						});
-					}).catch(err => console.log(err));
-				} else {
-					console.log('No Subscription');
-					sendMessage('unsubscribed', true);
-				}
-			}).catch(err => {
-				console.error(err);
-				sendMessage('unsubscribed', false);
-			});
+			unsubscribe(e);
 		} else if (e.data.type === 'CHECK_SUBSCRIPTION') {
-			//if subscription data is deleted from the server, then unsubscribe
-			const API_URL = e.data.api;
-			//make post request to the server to check if the subscription is still valid
-			self.registration.pushManager.getSubscription().then(sub => {
-				if (sub) {
-					fetch(`${API_URL}/subscription-status`, {
-						method: 'POST',
-						body: JSON.stringify(sub),
-						headers: {
-							'content-type': 'application/json'
-						}
-					}).then(res => res.json()).then(data => {
-						if (!data.subscribed) {
-							sub.unsubscribe().then(() => {
-								sendMessage('unsubscribed', true);
-								console.log('Subscription is invalid. Unsubscribed');
-							}).catch(err => console.log(err));
-						} else {
-							sendMessage('subscribed', true);
-							console.log('Subscription is valid');
-						}
-					}).catch(err => {
-						console.error(err);
-					});
-				} else {
-					console.log('No Subscription');
-					sendMessage('subscribed', false);
-				}
-			}).catch(err => {
-				console.error(err);
-				sendMessage('subscribed', false);
-			});
+			checkSub(e);
 		}
 	}
 });
+
+function subscribe(e: ExtendableMessageEvent) {
+	const API_URL = e.data.api;
+	// check push notification support
+	if (!self.registration.showNotification) {
+		console.log('Service Worker: Push Not Supported');
+		return;
+	}
+	//check permission
+	if (Notification.permission !== 'granted') {
+		console.log('Service Worker: Push Not Permitted');
+		return;
+	}
+	console.log('getting subscription');
+	if (getKeysController) {
+		getKeysController.abort();
+	}
+	getKeysController = new AbortController();
+	//get the public key from the server
+	fetch(`${API_URL}/getkey`, { signal: getKeysController.signal }).then(res => res.json()).then(data => {
+		self.registration.pushManager.subscribe({
+			userVisibleOnly: true,
+			applicationServerKey: base64UrlToArrayBuffer(data.publicKey)
+		}).then(sub => {
+			if (subscribeController) {
+				subscribeController.abort();
+			}
+			subscribeController = new AbortController();
+			fetch(`${API_URL}/subscribe`, {
+				method: 'POST',
+				body: JSON.stringify(sub),
+				headers: {
+					'content-type': 'application/json'
+				},
+				signal: subscribeController.signal,
+			}).then(res => res.json()).then( async () => {
+				console.log('Subscribed');
+				// Get the notices from server
+				await fetchNoticesFromServer();
+				//postMessage to the client
+				sendMessage('subscribed', true);
+			}).catch(async (err) => {
+				console.error(err);
+				sendMessage('subscribed', false);
+				// unsubscribe if there is an error
+				await sub.unsubscribe();
+				console.log('Unsubscribed: Could not save subscription to server');
+			});
+		}).catch(err => {
+			console.error(err);
+			sendMessage('subscribed', false);
+		});
+	}).catch(err => {
+		console.error(err);
+		sendMessage('subscribed', false);
+	});
+}
+
+function unsubscribe(e: ExtendableMessageEvent) {
+	const API_URL = e.data.api;
+	self.registration.pushManager.getSubscription().then(sub => {
+		if (sub) {
+			sub.unsubscribe().then(() => {
+				sendMessage('unsubscribed', true);
+				if (unsubscribeController) {
+					unsubscribeController.abort();
+				}
+				unsubscribeController = new AbortController();
+				fetch(`${API_URL}/unsubscribe`, {
+					method: 'POST',
+					body: JSON.stringify(sub),
+					headers: {
+						'content-type': 'application/json'
+					},
+					signal: unsubscribeController.signal,
+				}).then(res => res.json()).then(() => {
+					console.log('Deleted Subscription from Server');
+				}).catch(err => {
+					console.error(err);
+				});
+			}).catch(err => console.log(err));
+		} else {
+			console.log('No Subscription');
+			sendMessage('unsubscribed', true);
+		}
+	}).catch(err => {
+		console.error(err);
+		sendMessage('unsubscribed', false);
+	});
+}
+
+function checkSub(e: ExtendableMessageEvent) {
+	//if subscription data is deleted from the server, then unsubscribe
+	const API_URL = e.data.api;
+	//make post request to the server to check if the subscription is still valid
+	self.registration.pushManager.getSubscription().then(sub => {
+		if (sub) {
+			if (subcheckController) {
+				subcheckController.abort();
+			}
+			subcheckController = new AbortController();
+			fetch(`${API_URL}/subscription-status`, {
+				method: 'POST',
+				body: JSON.stringify(sub),
+				headers: {
+					'content-type': 'application/json'
+				},
+				signal: subcheckController.signal,
+			}).then(res => res.json()).then(data => {
+				if (!data.subscribed) {
+					sub.unsubscribe().then(() => {
+						sendMessage('unsubscribed', true);
+						console.log('Subscription is invalid. Unsubscribed');
+					}).catch(err => console.log(err));
+				} else {
+					sendMessage('subscribed', true);
+					console.log('Subscription is valid');
+				}
+			}).catch(err => {
+				console.error(err);
+			});
+		} else {
+			console.log('No Subscription');
+			sendMessage('subscribed', false);
+		}
+	}).catch(err => {
+		console.error(err);
+		sendMessage('subscribed', false);
+	});
+}
 
 async function sendMessage(type: string, msg: any): Promise<void> {
 	try {
@@ -294,7 +327,7 @@ async function sendMessage(type: string, msg: any): Promise<void> {
 				console.error("Failed to post message to client:", error);
 			}
 		});
-	} catch (error_1) {
-		console.error("Failed to match clients:", error_1);
+	} catch (e) {
+		console.error("Failed to match clients:", e);
 	}
 }

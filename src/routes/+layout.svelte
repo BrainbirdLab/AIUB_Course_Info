@@ -2,7 +2,7 @@
     
     import "$lib/styles/global.scss";
 
-    import { allCourses, clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subPermissionDenied, unlockedCourses, User, type SemesterDataType } from "$lib/store";
+    import { allCourses, clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, User, type SemesterDataType } from "$lib/store";
     import { onDestroy, onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
     import type { Unsubscriber } from "svelte/store";
@@ -37,6 +37,7 @@
                     updateNoticesLocally();
                     isSubscribed.set(true);
                     localStorage.setItem("isSubscribed", "true");
+                    subCheckingDone.set(true);
                 } else if (event.data.type == "unsubscribed") {
                     isSubUnsubRunning.set(false);
                     if (!event.data.data) {
@@ -44,6 +45,7 @@
                     }
                     isSubscribed.set(false);
                     localStorage.setItem("isSubscribed", "false");
+                    subCheckingDone.set(true);
                 }
             });
         } else {

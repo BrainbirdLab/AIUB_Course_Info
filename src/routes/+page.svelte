@@ -18,10 +18,11 @@
 
 </script>
 
+<PopupModal />
+<Options />
+
 <div class="container">
-	<PopupModal />
 	
-	<Options />
 	{#if $showLogin}
 		<Login />
 	{:else}

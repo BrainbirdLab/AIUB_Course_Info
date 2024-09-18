@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied } from "$lib/store";
+    import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied, subCheckingDone } from "$lib/store";
     import { onMount } from "svelte";
     import { fly, slide } from "svelte/transition";
     import { checkSubscription, fetchNoticesFromServer, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "../lib/fetcher";
@@ -53,7 +53,7 @@
 
 <div class="container" in:fly|global={{x: 10}}>
     <div class="btn">
-        <button class="permission button {$isSubscribed && !$subPermissionDenied ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied} on:click={subStatus}>
+        <button class="permission button {$isSubscribed && !$subPermissionDenied ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied || !$subCheckingDone} on:click={subStatus}>
             {#if $subPermissionDenied}
                 <i class="fa-solid fa-bell-slash"></i> Denied
             {:else}

@@ -58,6 +58,7 @@ export const showGrade = writable(false);
 export const turnOnNotification = writable(false);
 export const isSubscribed = writable(false);
 export const isSubUnsubRunning = writable(false);
+export const subCheckingDone = writable(false);
 export const subPermissionDenied = writable(false);
 
 export type NoticeOBJECT = {
