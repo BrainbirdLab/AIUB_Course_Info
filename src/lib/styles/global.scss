@@ -147,6 +147,9 @@ select:-webkit-autofill:focus {
         z-index: 0;
         border-top-right-radius: 23px;
         border-bottom-right-radius: 23px;
+        &:hover {
+            background: #ff0000f1;
+        }
         i {
             display: flex;
             align-items: center;
