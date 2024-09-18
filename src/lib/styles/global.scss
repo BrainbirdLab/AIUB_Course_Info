@@ -86,6 +86,7 @@ select:-webkit-autofill:focus {
     gap: 1rem;
     justify-content: center;
     padding: 20px;
+    height: 100%;
 }
 
 .no-course{
@@ -97,18 +98,60 @@ select:-webkit-autofill:focus {
     transform: translate(-50%, -50%);
 }
 
+.search {
+    background: var(--light-dark);
+    outline: none;
+    border: none;
+    border-radius: 24px;
+    font-size: 0.8rem;
+    color: white;
+    position: relative;
+    width: min(85%, 295px);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    
+    input {
+        padding: 10px 15px;
+        display: flex;
+        border: none;
+        color: inherit;
+        outline: none;
+        font-size: inherit;
+        width: 100%;
+        background: transparent;
+        z-index: 2;
+        position: relative;
+        align-items: center;
+        justify-content: center;    
+    }
+
+    button {
+        background: red;
+        color: white;
+        height: 100%;
+        width: 54px;
+        z-index: 0;
+        border-top-right-radius: 23px;
+        border-bottom-right-radius: 23px;
+    
+    }
+}
+
 .course {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: center;
     border-radius: 10px;
     background-color: var(--light-dark);
     box-shadow: 0 0 1rem rgba(0, 0, 0, 0.2);
     padding: 35px 25px;
-    gap: 10px;
+    gap: 15px;
     aspect-ratio: 1/0.7;
     width: min(300px, 90vw);
+    height: max-content;
     position: relative;
 }
 
@@ -173,6 +216,15 @@ select:-webkit-autofill:focus {
     gap: 4px;
     font-size: 0.8rem;
     z-index: 2;
+}
+
+.empty {
+    font-size: 0.8rem;
+    color: var(--label-color);
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .toolTip{

@@ -24,6 +24,7 @@
 		justify-content: center;
 		gap: 3px;
 		height: 10px;
+		min-height: 10px;
 		i {
 			font-size: inherit;
 		}

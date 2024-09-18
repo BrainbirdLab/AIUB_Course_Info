@@ -1,8 +1,23 @@
 <script lang="ts">
-    import { completedCourses, getIcon, getIconColor, parseCourseId, showGrade } from '$lib/store';
+    import { completedCourses, getIcon, getIconColor, parseCourseId, showGrade, type CourseType } from '$lib/store';
     import { fly } from 'svelte/transition';
+    import { flip } from 'svelte/animate';
 
     $: creditsCompleted = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
+
+    let filteredCourses = Object.entries($completedCourses);
+
+    let filterValue = '';
+
+    $: {
+        if (filterValue) {
+            filteredCourses = Object.entries($completedCourses).filter(([courseId, courseInfo]) => {
+                return courseInfo.course_name.toLowerCase().includes(filterValue.toLowerCase());
+            });
+        } else {
+            filteredCourses = Object.entries($completedCourses);
+        }
+    }
 
 </script>
 
@@ -11,9 +26,18 @@
     <div class="title" in:fly|global={{x: -10}}>{Object.keys($completedCourses).length} Courses {
         creditsCompleted > 0 && `(${creditsCompleted} Credits)`
     } </div>
+    <div class="search">
+        <input type="text" autocomplete="off" placeholder="Search courses" bind:value={filterValue}/>
+        <button class="clear" on:click={() => filterValue = ''}>
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
     <div class="courses">
-        {#each Object.entries($completedCourses) as [courseId, courseInfo], i}
-            <div class="course" in:fly|global={{y: 10, delay: 50 * (i+1)}}>
+        {#if filteredCourses.length == 0}
+            <div class="empty">No courses found</div>
+        {:else}
+        {#each filteredCourses as [courseId, courseInfo], i (courseId)}
+            <div class="course" animate:flip={{duration: 300}} in:fly|global={{y: 10, delay: 50 * (i+1)}}>
                 <div class="courseid tag bookmark" style:background={getIconColor(parseCourseId(courseId))}>
                     {@html getIcon(parseCourseId(courseId))} {courseId}
                 </div>
@@ -24,6 +48,7 @@
                 <div class="grade">Grade: {$showGrade ? courseInfo.grade : '🙈'}</div>
             </div>
         {/each}
+        {/if}
     </div>
 </div>
 {:else}
@@ -36,6 +61,9 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
+        height: 100%;
+        width: 100%;
     }
+
 </style>

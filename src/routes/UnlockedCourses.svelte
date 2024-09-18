@@ -34,6 +34,20 @@
         }
     }
 
+    let filteredCourses = Object.entries($unlockedCourses);
+
+    let filterValue = '';
+
+    $: {
+        if (filterValue) {
+            filteredCourses = Object.entries($unlockedCourses).filter(([courseId, courseInfo]) => {
+                return courseInfo.course_name.toLowerCase().includes(filterValue.toLowerCase());
+            });
+        } else {
+            filteredCourses = Object.entries($unlockedCourses);
+        }
+    }
+
 </script>
 
 <div class="filter">
@@ -51,48 +65,58 @@
 {#if unlockedCoursesArray && unlockedCoursesArray.length > 0}
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>{Object.keys($unlockedCourses).length} Courses available</div>
+    <div class="search">
+        <input type="text" autocomplete="off" placeholder="Search courses" bind:value={filterValue} />
+        <button class="clear" on:click={() => filterValue = ''}>
+            <i class="fa-solid fa-times"></i>
+        </button>
+    </div>
     <div class="note" in:fade|global>Note: You may have to complete certain credits to take some courses</div>
     <div class="courses">
-        {#each unlockedCoursesArray as [courseId, courseInfo], i (courseId)}
-            <div animate:flip={{duration: 300}} class="course" in:fly|global={{y: 10, delay: 50*(i+1)}}>
-                <div class="courseid tag bookmark" style:background={getIconColor(parseCourseId(courseId))}>
-                    {@html getIcon(parseCourseId(courseId))} {courseId}
-                </div>
-                <div class="name">
-                    {courseInfo.course_name} 
-                    {#if courseInfo.retake}
-                    <div class="retake">
-                        (Retake)
-                    </div>
-                    {/if}
-                    {#if $preregisteredCourses[courseId]}
-                        <span class="registered tag">
-                            Registered <i class="fa-solid fa-circle-check"></i>
-                        </span>
-                    {/if}
-                </div>
-                <div class="credit" title="{courseInfo.credit || '-'} credits">
-                    {courseInfo.credit || '-'}
-                </div>
-                <span class="prerequisites">
-                    Prerequisites
-                    {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
-                        {#each courseInfo.prerequisites as prerequisite}
-                        <div class="prerequisite tag" data-prereq={prerequisite} style:background={getIconColor(parseCourseId(prerequisite))}>
-                            {#if $allCourses[prerequisite]}
-                                <div class="prerequisiteInfo">
-                                    {$allCourses[prerequisite].course_name}
-                                </div>
-                            {/if}
-                            {@html getIcon(parseCourseId(prerequisite))} {prerequisite}
-                        </div>
-                        {/each}
-                    {:else}
-                        <div class="prerequisite tag" style:background={"#398982"}>None</div>
-                    {/if}
-                </span>
+        {#if filteredCourses.length == 0}
+            <div class="empty">No courses found</div>
+        {:else}
+        {#each filteredCourses as [courseId, courseInfo], i (courseId)}
+        <div animate:flip={{duration: 300}} class="course" in:fly|global={{y: 10, delay: 50*(i+1)}}>
+            <div class="courseid tag bookmark" style:background={getIconColor(parseCourseId(courseId))}>
+                {@html getIcon(parseCourseId(courseId))} {courseId}
             </div>
+            <div class="name">
+                {courseInfo.course_name} 
+                {#if courseInfo.retake}
+                <div class="retake">
+                    (Retake)
+                </div>
+                {/if}
+                {#if $preregisteredCourses[courseId]}
+                    <span class="registered tag">
+                        Registered <i class="fa-solid fa-circle-check"></i>
+                    </span>
+                {/if}
+            </div>
+            <div class="credit" title="{courseInfo.credit || '-'} credits">
+                {courseInfo.credit || '-'}
+            </div>
+            <span class="prerequisites">
+                Prerequisites
+                {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
+                    {#each courseInfo.prerequisites as prerequisite}
+                    <div class="prerequisite tag" data-prereq={prerequisite} style:background={getIconColor(parseCourseId(prerequisite))}>
+                        {#if $allCourses[prerequisite]}
+                            <div class="prerequisiteInfo">
+                                {$allCourses[prerequisite].course_name}
+                            </div>
+                        {/if}
+                        {@html getIcon(parseCourseId(prerequisite))} {prerequisite}
+                    </div>
+                    {/each}
+                {:else}
+                    <div class="prerequisite tag" style:background={"#398982"}>None</div>
+                {/if}
+            </span>
+        </div>
         {/each}
+        {/if}
     </div>
 </div>
 {:else}
@@ -174,7 +198,9 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
+        width: 100%;
+        height: 100%;
     }
 
     .note{

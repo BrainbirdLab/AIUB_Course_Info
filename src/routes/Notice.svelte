@@ -110,15 +110,6 @@
 
 <style lang="scss">
 
-    .empty {
-        font-size: 0.8rem;
-        color: var(--label-color);
-        height: 100%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
     a {
         text-decoration: none;
         color: var(--label-color);
