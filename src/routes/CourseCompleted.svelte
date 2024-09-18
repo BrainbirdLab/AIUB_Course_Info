@@ -28,7 +28,7 @@
     } </div>
     <div class="search" in:fly|global={{x: 10}}>
         <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" autocomplete="off" placeholder="Search courses" bind:value={filterValue}/>
+        <input type="text" autocomplete="off" placeholder="Search courses..." bind:value={filterValue}/>
         <button class="clear" on:click={() => filterValue = ''}>
             <i class="fa-solid fa-times"></i>
         </button>

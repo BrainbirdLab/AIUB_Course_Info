@@ -117,8 +117,10 @@ select:-webkit-autofill:focus {
     justify-content: space-between;
 
     .fa-magnifying-glass{
-        padding: 15px 6px 10px 16px;
+        padding: 12px 6px 10px 16px;
         color: var(--label-color);
+        caret-color: var(--label-color);
+        font-size: 1rem;
     }
     
     input {
@@ -144,7 +146,11 @@ select:-webkit-autofill:focus {
         z-index: 0;
         border-top-right-radius: 23px;
         border-bottom-right-radius: 23px;
-    
+        i {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
     }
 }
 
