@@ -26,7 +26,7 @@
     <div class="title" in:fly|global={{x: -10}}>{Object.keys($completedCourses).length} Courses {
         creditsCompleted > 0 && `(${creditsCompleted} Credits)`
     } </div>
-    <div class="search">
+    <div class="search" in:fly|global={{x: 10}}>
         <input type="text" autocomplete="off" placeholder="Search courses" bind:value={filterValue}/>
         <button class="clear" on:click={() => filterValue = ''}>
             <i class="fa-solid fa-times"></i>
