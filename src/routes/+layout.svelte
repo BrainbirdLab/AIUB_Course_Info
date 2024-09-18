@@ -31,21 +31,23 @@
             navigator.serviceWorker.addEventListener("message", (event: any) => {
                 if (event.data.type == "subscribed") {
                     isSubUnsubRunning.set(false);
+                    subCheckingDone.set(true);
                     if (!event.data.data) {
                         return;
                     }
                     updateNoticesLocally();
                     isSubscribed.set(true);
                     localStorage.setItem("isSubscribed", "true");
-                    subCheckingDone.set(true);
+                    console.log("Subscribed");
                 } else if (event.data.type == "unsubscribed") {
                     isSubUnsubRunning.set(false);
+                    subCheckingDone.set(true);
                     if (!event.data.data) {
                         return;
                     }
                     isSubscribed.set(false);
                     localStorage.setItem("isSubscribed", "false");
-                    subCheckingDone.set(true);
+                    console.log("Unsubscribed");
                 }
             });
         } else {
