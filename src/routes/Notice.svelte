@@ -53,7 +53,7 @@
 
 <div class="container" in:fly|global={{x: 10}}>
     <div class="btn">
-        <button class="permission button {$isSubscribed && !$subPermissionDenied ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied || !$subCheckingDone} on:click={subStatus}>
+        <button in:fly|global={{y: 5, delay: 100}} class="permission button {$isSubscribed && !$subPermissionDenied ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied || !$subCheckingDone} on:click={subStatus}>
             {#if $subPermissionDenied}
                 <i class="fa-solid fa-bell-slash"></i> Denied
             {:else}
@@ -64,16 +64,16 @@
                 {/if}
             {/if}
         </button>
-        <button class="refresh button" disabled={$isOffline || fetching} on:click={getNotices}>
+        <button in:fly|global={{y: 5, delay: 150}} class="refresh button" disabled={$isOffline || fetching} on:click={getNotices}>
             <i class="fa-solid fa-retweet"></i> Refresh
         </button>
-        <button class="clear button" on:click={() => {
+        <button in:fly|global={{y: 5, delay: 200}} class="clear button" on:click={() => {
             deleteFromDB("notices", "aiub");
             parseNotices([]);
         }}>
             <i class="fa-solid fa-trash"></i> Clear
         </button>
-        <a href="https://www.aiub.edu" target="_blank" class="button" class:disabled={$isOffline}>
+        <a in:fly|global={{y: 5, delay: 250}} href="https://www.aiub.edu" target="_blank" class="button" class:disabled={$isOffline}>
             <i class="fa-solid fa-globe"></i>
             <div class="txt">
                 AIUB
@@ -84,10 +84,10 @@
     {#if fetching}
         <div class="loading" transition:slide={{axis:"y", duration: 100}} class:error={loadingText == "Error fetching notices" ? true : false}>{loadingText}</div>
     {/if}
-    {#if $allNotices && $allNotices.length > 0}
-        <div class="notices">          
+    <div class="notices">      
+        {#if $allNotices && $allNotices.length > 0}
             {#each $allNotices as notice, i (notice.notice)}
-                <div class="notice" animate:flip in:fly|global={{y: 5, delay: (i+1)*100}}>
+                <div class="notice" animate:flip in:fly|global={{x: 5, delay: (i+1)*100}}>
                     <div class="date">
                         {notice.date}
                     </div>
@@ -102,10 +102,10 @@
                     {/if}
                 </div>
             {/each}
-        </div>
-    {:else}
-        <div class="empty" in:fly|global={{y: 5}}>No notices available</div>
-    {/if}
+        {:else if !fetching}
+            <div class="empty" in:fly|global={{y: 5}}>No notices available</div>
+        {/if}
+    </div>
 </div>
 
 <style lang="scss">

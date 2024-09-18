@@ -53,8 +53,8 @@
 
 <div class="filter">
     <!-- radio button -->
-    {#each filterOptions as option}
-        <div class="form-field">
+    {#each filterOptions as option, i}
+        <div class="form-field" in:fly|global={{y: 5, delay: (i+1) * 50}}>
             <input type="radio" name="filter" id="{option}" value="{option}" bind:group={selectedGroup} />
             <label for="{option}" class="tag">
                 {option}
@@ -67,6 +67,7 @@
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>{Object.keys($unlockedCourses).length} Courses available</div>
     <div class="search" in:fly|global={{x: 10}}>
+        <i class="fa-solid fa-magnifying-glass"></i>
         <input type="text" autocomplete="off" placeholder="Search courses" bind:value={filterValue} />
         <button class="clear" on:click={() => filterValue = ''}>
             <i class="fa-solid fa-times"></i>
@@ -95,7 +96,7 @@
                     </span>
                 {/if}
             </div>
-            <div class="credit" title="{courseInfo.credit || '-'} credits">
+            <div class="credit" title="{courseInfo.credit || '-'} credit{courseInfo.credit > 1 ? "s" : ""}">
                 {courseInfo.credit || '-'}
             </div>
             <span class="prerequisites">
@@ -208,6 +209,6 @@
         font-size: 0.7rem;
         text-align: center;
         padding: 10px;
-        color: tomato;
+        color: var(--label-color);
     }
 </style>

@@ -221,6 +221,7 @@
                     padding: 1px;
                     position: relative;
                     top: -28px;
+                    color: var(--label-color);
                 }
             }
         }
@@ -250,6 +251,7 @@
                 position: relative;
                 left: 0;
                 margin-top: -15px;
+                color: var(--label-color);
                 background: var(--primary);
                 padding: 5px;
             }

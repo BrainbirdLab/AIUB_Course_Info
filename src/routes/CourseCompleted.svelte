@@ -27,6 +27,7 @@
         creditsCompleted > 0 && `(${creditsCompleted} Credits)`
     } </div>
     <div class="search" in:fly|global={{x: 10}}>
+        <i class="fa-solid fa-magnifying-glass"></i>
         <input type="text" autocomplete="off" placeholder="Search courses" bind:value={filterValue}/>
         <button class="clear" on:click={() => filterValue = ''}>
             <i class="fa-solid fa-times"></i>
@@ -42,7 +43,7 @@
                     {@html getIcon(parseCourseId(courseId))} {courseId}
                 </div>
                 <div class="name">{courseInfo.course_name}</div>
-                <div class="credit" title="{courseInfo.credit || '-'} credits">
+                <div class="credit" title="{courseInfo.credit || '-'} credit{courseInfo.credit > 1 ? "s" : ""}">
                     {courseInfo.credit || '-'}
                 </div>
                 <div class="grade">Grade: {$showGrade ? courseInfo.grade : '🙈'}</div>
