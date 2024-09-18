@@ -20,31 +20,32 @@
 
     let selectedGroup = "All";
 
-    let unlockedCoursesArray = Object.entries($unlockedCourses);
+    $: observeables = Object.entries($unlockedCourses);
 
-    $: {
-        if (selectedGroup) {
-            if (selectedGroup === 'Registered') {
-                unlockedCoursesArray = Object.entries($unlockedCourses).filter(([courseId, courseInfo]) => $preregisteredCourses[courseId]);
-            } else if (selectedGroup === 'Unregistered') {
-                unlockedCoursesArray = Object.entries($unlockedCourses).filter(([courseId, courseInfo]) => !$preregisteredCourses[courseId]);
-            } else {
-                unlockedCoursesArray = Object.entries($unlockedCourses);
-            }
-        }
-    }
-
-    let filteredCourses = Object.entries($unlockedCourses);
+    $: filteredCourses = observeables;
 
     let filterValue = '';
 
     $: {
+        if (selectedGroup) {
+            if (selectedGroup === 'Registered') {
+                observeables = Object.entries($unlockedCourses).filter(([courseId, courseInfo]) => $preregisteredCourses[courseId]);
+            } else if (selectedGroup === 'Unregistered') {
+                observeables = Object.entries($unlockedCourses).filter(([courseId, courseInfo]) => !$preregisteredCourses[courseId]);
+            } else {
+                observeables = Object.entries($unlockedCourses);
+            }
+        }
+    }
+
+
+    $: {
         if (filterValue) {
-            filteredCourses = Object.entries($unlockedCourses).filter(([courseId, courseInfo]) => {
+            filteredCourses = observeables.filter(([courseId, courseInfo]) => {
                 return courseInfo.course_name.toLowerCase().includes(filterValue.toLowerCase());
             });
         } else {
-            filteredCourses = Object.entries($unlockedCourses);
+            filteredCourses = observeables;
         }
     }
 
@@ -62,7 +63,7 @@
     {/each}
 </div>
 
-{#if unlockedCoursesArray && unlockedCoursesArray.length > 0}
+{#if observeables && observeables.length > 0}
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>{Object.keys($unlockedCourses).length} Courses available</div>
     <div class="search" in:fly|global={{x: 10}}>
