@@ -69,7 +69,7 @@ self.addEventListener('push', async (e) => {
 	const type = jsonObj.type;
 	
 	if (type != 'aiub') {
-		await writeToDB('notices', 'dev', { title, body, type });
+		await writeToDB('notices', type, { title, body });
 		self.registration.showNotification(title, {
 			body: body,
 			icon: './favicon.png',
@@ -224,18 +224,18 @@ function subscribe(e: ExtendableMessageEvent) {
 				//postMessage to the client
 				sendMessage('subscribed', true);
 			}).catch(async (err) => {
-				console.error(err);
+				console.log(err);
 				sendMessage('subscribed', false);
 				// unsubscribe if there is an error
-				await sub.unsubscribe();
+				sub.unsubscribe();
 				console.log('Unsubscribed: Could not save subscription to server');
 			});
 		}).catch(err => {
-			console.error(err);
+			console.log(err);
 			sendMessage('subscribed', false);
 		});
 	}).catch(err => {
-		console.error(err);
+		console.log(err);
 		sendMessage('subscribed', false);
 	});
 }
@@ -260,7 +260,7 @@ function unsubscribe(e: ExtendableMessageEvent) {
 				}).then(res => res.json()).then(() => {
 					console.log('Deleted Subscription from Server');
 				}).catch(err => {
-					console.error(err);
+					console.log(err);
 				});
 			}).catch(err => console.log(err));
 		} else {
@@ -268,7 +268,7 @@ function unsubscribe(e: ExtendableMessageEvent) {
 			sendMessage('unsubscribed', true);
 		}
 	}).catch(err => {
-		console.error(err);
+		console.log(err);
 		sendMessage('unsubscribed', false);
 	});
 }
@@ -301,14 +301,14 @@ function checkSub(e: ExtendableMessageEvent) {
 					console.log('Subscription is valid');
 				}
 			}).catch(err => {
-				console.error(err);
+				console.log(err);
 			});
 		} else {
 			console.log('No Subscription');
 			sendMessage('subscribed', false);
 		}
 	}).catch(err => {
-		console.error(err);
+		console.log(err);
 		sendMessage('subscribed', false);
 	});
 }
@@ -321,10 +321,10 @@ async function sendMessage(type: string, msg: any): Promise<void> {
 			try {
 				client.postMessage({ type, data: msg });
 			} catch (error) {
-				console.error("Failed to post message to client:", error);
+				console.log("Failed to post message to client:", error);
 			}
 		});
 	} catch (e) {
-		console.error("Failed to match clients:", e);
+		console.log("Failed to match clients:", e);
 	}
 }

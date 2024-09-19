@@ -53,7 +53,7 @@
                 }
             });
         } else {
-            console.error("No active service worker to listen to messages from.");
+            console.log("No active service worker to listen to messages from.");
         }
     }
 
