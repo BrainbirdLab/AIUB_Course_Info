@@ -38,7 +38,7 @@
                     updateNoticesLocally();
                     isSubscribed.set(true);
                     localStorage.setItem("isSubscribed", "true");
-                    console.log("Subscribed");
+                    console.log("Subscribed to push notifications");
                 } else if (event.data.type == "unsubscribed") {
                     isSubUnsubRunning.set(false);
                     subCheckingDone.set(true);
@@ -47,7 +47,9 @@
                     }
                     isSubscribed.set(false);
                     localStorage.setItem("isSubscribed", "false");
-                    console.log("Unsubscribed");
+                    console.log("Unsubscribed from push notifications");
+                } else if (event.data.type == "notice-update") {
+                    updateNoticesLocally();
                 }
             });
         } else {

@@ -59,7 +59,7 @@ self.addEventListener('activate', async (e) => {
 });
 
 self.addEventListener('push', async (e) => {
-    console.log('Service Worker: Push Received: ', e.data?.json());
+
     if (!e.data) return;
 
 	const jsonObj = e.data.json();
@@ -77,6 +77,7 @@ self.addEventListener('push', async (e) => {
 		});
 		return;
 	}
+
 	
     const parts = body.split('::');
 	const data = parts[1];
@@ -86,6 +87,9 @@ self.addEventListener('push', async (e) => {
         icon: './aiub.png',
 		badge: './badge-icon-mini.png',
     });
+
+	await fetchNoticesFromServer();
+	await sendMessage('notice-update', null);
 });
 
 self.addEventListener('notificationclick', (e) => {
@@ -110,13 +114,6 @@ self.addEventListener('notificationclick', (e) => {
         })
     );
 });
-
-
-// Public Key:
-// BBwqk_aVSALofg9Is2HyjhpGqwUnYhqfnGXbjSIHm-yufTH8f6LziNt02RTj1iZc-XlVrZAIuyB4_vFY0oC6RmU
-
-// Private Key:
-// 7z75k9Cste-iJs2gcH4b8I5CNGVNtzZifnNC01h5J40
 
 //Call Fetch Event
 self.addEventListener('fetch', (e) => {
