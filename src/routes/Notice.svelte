@@ -82,7 +82,7 @@
         </a>
     </div>
     {#if !$isSubscribed}
-        <div class="note nopad acc" transition:slide={{axis:"y", duration: 100}}>
+        <div class="note acc" transition:slide={{axis:"y", duration: 100}}>
             <i class="fa-solid fa-info-circle"></i> Subscribe to stay updated on important notice from AIUB and us.
         </div>
     {/if}
@@ -114,6 +114,10 @@
 </div>
 
 <style lang="scss">
+
+    .note {
+        padding: 0 0 10px 0;
+    }
 
     a {
         text-decoration: none;
