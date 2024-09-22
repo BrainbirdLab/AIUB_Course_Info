@@ -11,7 +11,12 @@
     let loadingText = "Fetching new notices...";
 
     onMount(() => {
-        subPermissionDenied.set(Notification.permission === "denied");
+
+        if (!window.Notification) {
+            return;
+        }
+
+        subPermissionDenied.set(window.Notification.permission === "denied");
         try {
             // check subscription status
             checkSubscription(navigator.serviceWorker.controller);
@@ -40,8 +45,11 @@
         if ($isSubscribed) {
             await unsubscribeFromNotice(navigator.serviceWorker.controller);
         } else {
+            if (!window.Notification) {
+                return;
+            }
             //ask for permission
-            Notification.requestPermission().then(async (permission) => {
+            window.Notification.requestPermission().then(async (permission) => {
                 if (permission === "granted") {
                     await subscribeToNotice(navigator.serviceWorker.controller);
                 }
@@ -53,14 +61,18 @@
 
 <div class="container" in:fly|global={{x: 10}}>
     <div class="btn">
-        <button in:fly|global={{y: 5, delay: 100}} class="permission button {$isSubscribed && !$subPermissionDenied ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied || !$subCheckingDone} on:click={subStatus}>
+        <button in:fly|global={{y: 5, delay: 100}} class="permission button {$isSubscribed && !$subPermissionDenied ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied || !$subCheckingDone || !window.Notification} on:click={subStatus}>
             {#if $subPermissionDenied}
                 <i class="fa-solid fa-bell-slash"></i> Denied
             {:else}
-                {#if Notification.permission === "granted" && $isSubscribed}
+                {#if window.Notification}
+                {#if window.Notification.permission === "granted" && $isSubscribed}
                     <i class="fa-solid fa-bell-slash"></i> {#if $isSubUnsubRunning} Unsubscribing... {:else} Unsubscribe {/if}
                 {:else}
                     <i class="fa-solid fa-bell"></i> {#if $isSubUnsubRunning} Subscribing... {:else} Subscribe {/if}
+                {/if}
+                {:else}
+                    <i class="fa-solid fa-bell-slash"></i> Not Supported
                 {/if}
             {/if}
         </button>

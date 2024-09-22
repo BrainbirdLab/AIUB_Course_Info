@@ -88,11 +88,20 @@
 
         try {
             detectSWUpdate();
-            const permAllowed = Notification.permission === "granted";
+            validateUser();
+
+            if (!window.Notification) {
+                console.log("Notification not supported");
+                subPermissionDenied.set(true);
+                isSubscribed.set(false);
+                localStorage.setItem("isSubscribed", "false");
+                return;
+            }
+
+            const permAllowed = window.Notification.permission === "granted";
             const sub = localStorage.getItem("isSubscribed") === "true";
             isSubscribed.set(permAllowed && sub);
             localStorage.setItem("isSubscribed", $isSubscribed ? "true" : "false");
-            validateUser();
             checkSubscription(navigator.serviceWorker.controller);
             try {
                 initNotices();

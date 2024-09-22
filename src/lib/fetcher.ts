@@ -20,8 +20,16 @@ export async function subscribeToNotice(worker: ServiceWorker | null) {
         isSubUnsubRunning.set(false);
         return;
     }
+
+    if (!window.Notification) {
+        console.log("Notifications not supported");
+        showToastMessage("Notifications not supported");
+        isSubUnsubRunning.set(false);
+        return;
+    }
+
     console.log("Asking for notification permission");
-    const permission = await Notification.requestPermission();
+    const permission = await window.Notification.requestPermission();
     if (permission === "granted") {
         console.log("Notification permission granted");
         subPermissionDenied.set(false);

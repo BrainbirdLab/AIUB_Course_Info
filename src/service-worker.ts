@@ -3,6 +3,7 @@
 /// <reference types="svelte" />
 
 import { build, files, version } from '$service-worker';
+import { showToastMessage } from '@itsfuad/domtoastmessage';
 import { writeToDB } from "./lib/db";
 import { fetchNoticesFromServer } from "./lib/fetcher";
 
@@ -190,8 +191,14 @@ function subscribe(e: ExtendableMessageEvent) {
 		console.log('Service Worker: Push Not Supported');
 		return;
 	}
+
+	if (!window.Notification) {
+		showToastMessage('Notifications not supported');
+		return;
+	}
+
 	//check permission
-	if (Notification.permission !== 'granted') {
+	if (window.Notification.permission !== 'granted') {
 		console.log('Service Worker: Push Not Permitted');
 		return;
 	}
