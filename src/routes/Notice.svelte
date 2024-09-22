@@ -188,6 +188,7 @@
         width: 100%;
         overflow-y: scroll;
         scroll-padding: 10px;
+        padding: 10px 0;
     }
 
     .notice {
