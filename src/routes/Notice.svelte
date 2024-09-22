@@ -81,6 +81,11 @@
             </div>
         </a>
     </div>
+    {#if !$isSubscribed}
+        <div class="note nopad acc" transition:slide={{axis:"y", duration: 100}}>
+            <i class="fa-solid fa-info-circle"></i> Subscribe to stay updated on important notice from AIUB and us.
+        </div>
+    {/if}
     {#if fetching}
         <div class="loading" transition:slide={{axis:"y", duration: 100}} class:error={loadingText == "Error fetching notices" ? true : false}>{loadingText}</div>
     {/if}

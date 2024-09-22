@@ -66,6 +66,7 @@
 
         window.addEventListener("online", () => {
             isOffline.set(false);
+            checkSubscription(navigator.serviceWorker.controller);
         });
 
         window.addEventListener("storage", (e) => {

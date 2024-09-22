@@ -79,6 +79,21 @@ select:-webkit-autofill:focus {
     font-size: 1.3rem;
 }
 
+.note{
+    font-size: 0.7rem;
+    text-align: center;
+    padding: 10px;
+    color: var(--label-color);
+}
+
+.nopad {
+    padding: 0;
+}
+
+.acc {
+    color: var(--accent);
+}
+
 .courses{
     display: flex;
     flex-direction: row;

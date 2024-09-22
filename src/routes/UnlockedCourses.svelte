@@ -204,11 +204,4 @@
         width: 100%;
         height: 100%;
     }
-
-    .note{
-        font-size: 0.7rem;
-        text-align: center;
-        padding: 10px;
-        color: var(--label-color);
-    }
 </style>
