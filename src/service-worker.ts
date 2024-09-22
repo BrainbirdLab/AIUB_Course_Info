@@ -185,66 +185,72 @@ self.addEventListener('message', (e) => {
 });
 
 function subscribe(e: ExtendableMessageEvent) {
-	const API_URL = e.data.api;
-	// check push notification support
-	if (!self.registration.showNotification) {
-		console.log('Service Worker: Push Not Supported');
-		return;
-	}
+	try {
 
-	if (!window.Notification) {
-		showToastMessage('Notifications not supported');
-		return;
-	}
-
-	//check permission
-	if (window.Notification.permission !== 'granted') {
-		console.log('Service Worker: Push Not Permitted');
-		return;
-	}
-	console.log('getting subscription');
-	if (getKeysController) {
-		getKeysController.abort();
-	}
-	getKeysController = new AbortController();
-	//get the public key from the server
-	fetch(`${API_URL}/getkey`, { signal: getKeysController.signal }).then(res => res.json()).then(data => {
-		self.registration.pushManager.subscribe({
-			userVisibleOnly: true,
-			applicationServerKey: base64UrlToArrayBuffer(data.publicKey)
-		}).then(sub => {
-			if (subscribeController) {
-				subscribeController.abort();
-			}
-			subscribeController = new AbortController();
-			fetch(`${API_URL}/subscribe`, {
-				method: 'POST',
-				body: JSON.stringify(sub),
-				headers: {
-					'content-type': 'application/json'
-				},
-				signal: subscribeController.signal,
-			}).then(res => res.json()).then( async () => {
-				console.log('Subscribed');
-				// Get the notices from server
-				await fetchNoticesFromServer();
-				//postMessage to the client
-				sendMessage('subscribed', true);
-			}).catch(async (err) => {
+		const API_URL = e.data.api;
+		// check push notification support
+		if (!self.registration.showNotification) {
+			console.log('Service Worker: Push Not Supported');
+			return;
+		}
+	
+		if (!Notification) {
+			showToastMessage('Notifications not supported');
+			return;
+		}
+	
+		//check permission
+		if (Notification.permission !== 'granted') {
+			console.log('Service Worker: Push Not Permitted');
+			return;
+		}
+		console.log('getting subscription');
+		if (getKeysController) {
+			getKeysController.abort();
+		}
+		getKeysController = new AbortController();
+		//get the public key from the server
+		fetch(`${API_URL}/getkey`, { signal: getKeysController.signal }).then(res => res.json()).then(data => {
+			self.registration.pushManager.subscribe({
+				userVisibleOnly: true,
+				applicationServerKey: base64UrlToArrayBuffer(data.publicKey)
+			}).then(sub => {
+				if (subscribeController) {
+					subscribeController.abort();
+				}
+				subscribeController = new AbortController();
+				fetch(`${API_URL}/subscribe`, {
+					method: 'POST',
+					body: JSON.stringify(sub),
+					headers: {
+						'content-type': 'application/json'
+					},
+					signal: subscribeController.signal,
+				}).then(res => res.json()).then( async () => {
+					console.log('Subscribed');
+					// Get the notices from server
+					await fetchNoticesFromServer();
+					//postMessage to the client
+					sendMessage('subscribed', true);
+				}).catch(async (err) => {
+					console.log(err);
+					sendMessage('subscribed', false);
+					// unsubscribe if there is an error
+					sub.unsubscribe();
+					console.log('Unsubscribed: Could not save subscription to server');
+				});
+			}).catch(err => {
 				console.log(err);
 				sendMessage('subscribed', false);
-				// unsubscribe if there is an error
-				sub.unsubscribe();
-				console.log('Unsubscribed: Could not save subscription to server');
 			});
 		}).catch(err => {
 			console.log(err);
 			sendMessage('subscribed', false);
 		});
-	}).catch(err => {
+	} catch (err) {
 		console.log(err);
 		sendMessage('subscribed', false);
-	});
+	}
 }
 
 function unsubscribe(e: ExtendableMessageEvent) {
