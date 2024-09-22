@@ -95,6 +95,7 @@
                 subPermissionDenied.set(true);
                 isSubscribed.set(false);
                 localStorage.setItem("isSubscribed", "false");
+                pageLoaded.set(true);
                 return;
             }
 
