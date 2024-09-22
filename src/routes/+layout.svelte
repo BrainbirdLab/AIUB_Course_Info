@@ -92,7 +92,6 @@
 
             if (!window.Notification) {
                 console.log("Notification not supported");
-                subPermissionDenied.set(true);
                 isSubscribed.set(false);
                 localStorage.setItem("isSubscribed", "false");
                 pageLoaded.set(true);
