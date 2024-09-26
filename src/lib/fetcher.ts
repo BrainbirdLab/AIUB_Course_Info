@@ -78,7 +78,7 @@ export function parseNotices(notices: string[] | null) {
             const link = parts[2];
             allNotices.update((notices) => {
                 notices.push({ date, notice: noticeText, link });
-                if (notices.length > 8) {
+                if (notices.length > 10) {
                     notices.pop(); // remove the first element. first means oldest
                 }
                 return notices;

@@ -4,7 +4,7 @@
 
 import { build, files, version } from '$service-worker';
 import { showToastMessage } from '@itsfuad/domtoastmessage';
-import { writeToDB } from "./lib/db";
+import { readFromDB, writeToDB } from "./lib/db";
 import { fetchNoticesFromServer } from "./lib/fetcher";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -79,6 +79,12 @@ self.addEventListener('push', async (e) => {
 		return;
 	}
 
+	//if the data already exists in the cache, don't show the notification
+	const existingData = (await readFromDB('notices', 'aiub') || []) as string[];
+	if (existingData?.includes(body)) {
+		console.log("skipping notification, already exists in cache");
+		return;
+	}
 	
     const parts = body.split('::');
 	const data = parts[1];
