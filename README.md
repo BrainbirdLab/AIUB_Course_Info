@@ -1,6 +1,6 @@
 # AIUB Solution
 
-This application shows AIUB student their class rotines, course progress and pre registration available courses. It also notifies users all new notices from their university via push notification. Simply login with the AIUB id and password and the app will gather all data to generate all UI. You only need to login once just to fetch data. We do not store any of your information
+This application shows AIUB student their class routines, course progress and pre registration available courses. It also notifies users all new notices from their university via push notification. Simply login with the AIUB id and password and the app will gather all data to generate all UI. You only need to login once just to fetch data. We do not store any of your information
 
 ![Cover photo](./cover.png)
 
