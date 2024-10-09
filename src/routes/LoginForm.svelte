@@ -9,6 +9,12 @@
 	let passwordLabel = "Password";
 	let username: HTMLInputElement;
 	let password: HTMLInputElement;
+	let agree: HTMLInputElement;
+
+	let agreeChecked = false;
+
+	let uncheckedError = "";
+	
 
 	let submitting = false;
 
@@ -37,6 +43,12 @@
 			console.log("Password is empty");
 			passwordLabel = `<span style="color: orangered;">Please provide your password</span>`
 			password.focus();
+			return;
+		}
+
+		if (agreeChecked == false) {
+			uncheckedError = "Please agree to the terms of service";
+			agree.focus();
 			return;
 		}
 
@@ -73,14 +85,30 @@
 			<input on:input={()=> {usernameLabel = 'AIUB ID'}}  placeholder="dd" type="text" bind:this={username} id="userid" name="UserName" />
 			<label for="UserName">{@html usernameLabel}</label>
 		</div>
-		<div class="formfield" in:fly|global={{y: 10, delay: 300}}>
+		<div class="formfield mb-5" in:fly|global={{y: 10, delay: 300}}>
 			<input on:input={() => {passwordLabel = 'Password'}} placeholder="99" type="{showPassword ? "text" : "password"}" bind:this={password} id="password" name="Password" />
 			<label for="Password">{@html passwordLabel}</label>
 			<button in:fade|global={{delay: 500}} class="eye" type="button" on:click={()=> {showPassword = !showPassword}}>
 				<i class="fa-solid {showPassword ? "fa-eye-slash" : "fa-eye"}"></i>
 			</button>
 		</div>
-		<button type="submit" in:fly|global={{y: 10, delay: 350}}>Login <i class="fa-solid fa-sign-in"></i></button>
+		{#if uncheckedError && agreeChecked == false}
+		<div class="concent-error">
+			{uncheckedError}
+		</div>
+		{/if}
+		<label class="concent" in:fly|global={{x: 10, delay: 330}}>
+			<input type="checkbox" name="agree" bind:this={agree} bind:checked={agreeChecked}>
+			<div class="tick">
+				{#if agreeChecked}
+				<i class="fa-regular fa-check-square"></i>
+				{:else}
+				<i class="fa-regular fa-square"></i>
+				{/if}
+			</div>
+			By logging in, you agree to our <a href="/terms" class="t">Terms & Privacy</a>
+		</label>
+		<button type="submit" in:fly|global={{y: 10, delay: 380}}>Login <i class="fa-solid fa-sign-in"></i></button>
 		{/if}
 		{#if $updateLog}
 		<div class="log" class:submitting={submitting} class:error={$updateStatus === "error"}>
@@ -96,6 +124,35 @@
 
 
 <style lang="scss">
+
+	.mb-5{
+		margin-bottom: 5px;
+	}
+
+	.concent-error {
+		font-size: 0.7rem;
+		color: orangered;
+	}
+	.concent {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: flex-start;
+		color: whitesmoke;
+        font-size: 0.7rem;
+		width: 100%;
+        gap: 5px;
+		cursor: pointer;
+		input {
+			display: none;
+		}
+        a {
+            color: var(--accent);
+            &:hover {
+                filter: brightness(0.95);
+            }
+        }
+	}
 
 	.eye {
 		background: none;
@@ -134,7 +191,7 @@
 		justify-content: center;
 		max-width: 90vw;
 		width: 350px;
-		height: 400px;
+		height: 450px;
 		position: relative;
 	}
 

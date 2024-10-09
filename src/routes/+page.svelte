@@ -18,14 +18,16 @@
 
 </script>
 
-<PopupModal />
-<Options />
 
 <div class="container">
 	
 	{#if $showLogin}
-		<Login />
+	<Login />
 	{:else}
+	
+		<Options />
+		<PopupModal />
+
 		<div class="user" in:fade>
 			<i class="fa-solid fa-user"></i> Hello, {$User}!
 		</div>
