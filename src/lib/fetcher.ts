@@ -101,6 +101,42 @@ export async function initNotices() {
     });
 }
 
+export async function getCalendarData() {
+
+    try {
+        const res = await fetch("/api/calendar")
+        const text = await res.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(text, "text/html");
+        const table = doc.querySelector("table");
+        // title -> article h1 [ex: ACADEMIC CALENDAR  2024-2025]
+        // article h2 -> article h2 [ex: Fall 2024-25]
+        // table tbody tr -> each tr has 3 td [month, day, blank], [data, data, data], [data, data, data]
+
+        const title = doc.querySelector("article h1");
+        const h2 = doc.querySelector("article h2");
+
+        if (!title || !h2 || !table) {
+            return;
+        }
+
+        let titleText = title.textContent + ", " + h2.textContent;
+
+        localStorage.setItem("calendar", JSON.stringify({ title: titleText, table: table.innerHTML }));
+
+        return {
+            title: titleText,
+            table: table.innerHTML,
+        }
+
+    } catch (e) {
+        if (window.navigator?.onLine === false) {
+            throw new Error("offline");
+        }
+        throw e;
+    }
+}
+
 export async function fetchNoticesFromServer() {
     try {
         const response = await fetch(`${PUBLIC_API_SERVER_URL}/notices`);
@@ -137,6 +173,7 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
             const data = JSON.parse(evt.data);
             if (data.status === "complete") {
                 initNotices();
+                getCalendarData();
                 updateLog.set('');
                 updateStatus.set('');
                 User.set(data.result.user);
