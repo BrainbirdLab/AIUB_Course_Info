@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-    import Logo from "./Logo.svelte";
+    import Logo from "$lib/components/Logo.svelte";
     import { fade, fly } from "svelte/transition";
 	import { updateLog, updateStatus } from "$lib/store";
-    import { GetData } from "../lib/fetcher";
+    import { GetData } from "$lib/fetcher";
 
 	let usernameLabel = "AIUB ID";
 	let passwordLabel = "Password";

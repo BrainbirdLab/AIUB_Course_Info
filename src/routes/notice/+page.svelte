@@ -1,16 +1,25 @@
 <script lang="ts">
 
-    import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied, subCheckingDone } from "$lib/store";
+    import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied, subCheckingDone, showLogin } from "$lib/store";
     import { onMount } from "svelte";
     import { fly, slide } from "svelte/transition";
-    import { checkSubscription, fetchNoticesFromServer, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "../lib/fetcher";
+    import { checkSubscription, fetchNoticesFromServer, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "$lib/fetcher";
     import { flip } from "svelte/animate";
     import { deleteFromDB } from "$lib/db";
+    import { goto } from "$app/navigation";
 
     let fetching = false;
     let loadingText = "Fetching new notices...";
 
+    let loaded = false;
+
+    
     onMount(() => {
+        
+        if ($showLogin){
+            goto("/login");
+        }
+        loaded = true;
 
         if (!window.Notification) {
             return;
@@ -58,7 +67,7 @@
     }
 </script>
 
-
+{#if loaded}
 <div class="container" in:fly|global={{x: 10}}>
     <div class="btn">
         <button in:fly|global={{y: 5, delay: 100}} class="permission button {$isSubscribed && !$subPermissionDenied ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied || !$subCheckingDone || !window.Notification} on:click={subStatus}>
@@ -124,6 +133,7 @@
         {/if}
     </div>
 </div>
+{/if}
 
 <style lang="scss">
 

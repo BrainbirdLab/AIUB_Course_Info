@@ -288,3 +288,21 @@ select:-webkit-autofill:focus {
         border-color: #000000c7 transparent transparent transparent;
     }
 }
+
+table {
+    all: inherit;
+    //show the table row border
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    font-size: 0.9rem;
+    p {
+        text-align: left;
+    }
+    td {
+        padding: 10px;
+        border: 1px solid var(--label-color);
+        border-collapse: collapse;
+        text-align: center;
+    }
+}

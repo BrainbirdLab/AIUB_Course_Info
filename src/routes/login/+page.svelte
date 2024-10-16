@@ -2,17 +2,22 @@
     import { fly } from "svelte/transition";
     import LoginForm from "./LoginForm.svelte";
     import { onMount } from "svelte";
-    import Footer from "./Footer.svelte";
+    import Footer from "$lib/components/Footer.svelte";
+    import { showLogin } from "$lib/store";
+    import { goto } from "$app/navigation";
 
     let loaded = false;
 
     onMount(() => {
+        if (!$showLogin){
+            goto("/");
+        }
         loaded = true;
     });
 
 </script>
 
-{#if loaded}
+{#if loaded && $showLogin}
 <div class="moto" in:fly|global={{ y: -10 }}>
     AIUB Course Info
     <div class="sub" in:fly|global={{ x: 10 }}>

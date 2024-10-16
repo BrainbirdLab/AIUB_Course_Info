@@ -41,8 +41,6 @@ export type CompletedCoursesType = CourseType & {
 
 export type TABS = 'Completed' | 'Unlocked' | 'Routine' | 'Notice';
 
-export const tabs: Writable<TABS> = writable('Routine');
-
 
 export const User = writable('');
 export const semesterName = writable('');
@@ -217,7 +215,6 @@ export function clearData(){
   semesterName.set('');
   allNotices.set([]);
   User.set('');
-  tabs.set('Routine');
   clearDB("notices");
   unsubscribeFromNotice(navigator.serviceWorker.controller);
 }
@@ -229,3 +226,5 @@ export function titleCase(str: string) {
   }
   return temp.join(' ');
 }
+
+export const currentPage = writable('/');

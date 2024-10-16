@@ -1,7 +1,11 @@
 <script lang="ts">
-    import { completedCourses, getIcon, getIconColor, parseCourseId, showGrade, type CourseType } from '$lib/store';
+    import { completedCourses, getIcon, getIconColor, parseCourseId, showGrade, showLogin } from '$lib/store';
     import { fly } from 'svelte/transition';
     import { flip } from 'svelte/animate';
+    import { goto } from '$app/navigation';
+    import { onMount } from 'svelte';
+
+    let loaded = false;
 
     $: creditsCompleted = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
 
@@ -19,8 +23,15 @@
         }
     }
 
-</script>
+    onMount(() => {
+        if ($showLogin){
+            goto("/login");
+        }
+        loaded = true;
+    });
 
+</script>
+{#if loaded}
 {#if $completedCourses && Object.keys($completedCourses).length > 0}
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>{Object.keys($completedCourses).length} Courses {
@@ -54,6 +65,7 @@
 </div>
 {:else}
     <div class="info no-course">No courses completed yet</div>
+{/if}
 {/if}
 
 <style lang="scss">

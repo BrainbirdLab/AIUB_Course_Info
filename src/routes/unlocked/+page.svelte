@@ -1,7 +1,11 @@
 <script lang="ts">
-    import { unlockedCourses, parseCourseId, creditsPrerequisitesObj, completedCourses, preregisteredCourses, getIconColor, getIcon, allCourses } from '$lib/store';
+    import { goto } from '$app/navigation';
+    import { unlockedCourses, parseCourseId, creditsPrerequisitesObj, completedCourses, preregisteredCourses, getIconColor, getIcon, allCourses, showLogin } from '$lib/store';
+    import { onMount } from 'svelte';
     import { flip } from 'svelte/animate';
     import { fade, fly } from 'svelte/transition';
+
+    let loaded = false;
 
     $: creditsCompleted = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
 
@@ -49,8 +53,16 @@
         }
     }
 
+    onMount(() => {
+        if ($showLogin){
+            goto("/login");
+        }
+        loaded = true;
+    });
+
 </script>
 
+{#if loaded && observeables && observeables.length > 0}
 <div class="filter">
     <!-- radio button -->
     {#each filterOptions as option, i}
@@ -62,8 +74,6 @@
         </div>
     {/each}
 </div>
-
-{#if observeables && observeables.length > 0}
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>{Object.keys($unlockedCourses).length} Courses available</div>
     <div class="search" in:fly|global={{x: 10}}>

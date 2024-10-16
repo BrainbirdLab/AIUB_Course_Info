@@ -2,14 +2,23 @@
     
     import "$lib/styles/global.scss";
 
-    import { allCourses, clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, User, type SemesterDataType } from "$lib/store";
+    import { allCourses, clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, currentPage, User, type SemesterDataType } from "$lib/store";
     import { onDestroy, onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
     import type { Unsubscriber } from "svelte/store";
     import { showToastMessage } from "@itsfuad/domtoastmessage";
-    import Logo from "./Logo.svelte";
+    import Logo from "$lib/components/Logo.svelte";
     import { checkSubscription, initNotices, parseNotices, updateNoticesLocally } from "$lib/fetcher";
     import { deleteFromDB } from "$lib/db";
+    import DataUpdateLog from "$lib/components/dataUpdateLog.svelte";
+    import Navbar from "$lib/components/Navbar.svelte";
+    import Options from "$lib/components/options.svelte";
+    import PopupModal from "$lib/components/popupModal.svelte";
+    import { goto, onNavigate } from "$app/navigation";
+
+    onNavigate(() => {
+        $currentPage = (window.location.pathname.at(-1) === '/' && window.location.pathname != '/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
+    });
 
     async function detectSWUpdate(){
 
@@ -59,7 +68,18 @@
 
     let unsub: Unsubscriber;
 
+    let unsubLoginState: Unsubscriber;
+
     onMount(async () => {
+
+        unsubLoginState = showLogin.subscribe((value) => {
+            if (value) {
+                goto("/login");
+            } else {
+                goto("/");
+            }
+        });
+
         window.addEventListener("offline", () => {
             isOffline.set(true);
         });
@@ -119,6 +139,7 @@
 
     onDestroy(() => {
         unsub?.();
+        unsubLoginState?.();
     });
 
     function validateUser() {
@@ -207,10 +228,38 @@
 		<Logo />
 	</div>
 {:else}
-    <slot></slot>
+    <div class="container">
+        {#if !$showLogin}
+        <Options />
+        <PopupModal />
+
+        <div class="user" in:fade>
+            <i class="fa-solid fa-user"></i> Hello, {$User}!
+        </div>
+
+        <Navbar />
+
+        <DataUpdateLog />
+        {/if}
+        <slot></slot>
+    </div>
 {/if}
 
 <style lang="scss">
+    .user {
+		display: flex;
+		flex-direction: row;
+		align-items: center;
+		justify-content: center;
+		font-size: 1.2rem;
+		padding: 30px 10px 10px 10px;
+		gap: 10px;
+	}
+
+	i {
+		font-size: 1rem;
+		pointer-events: none;
+	}
 	.preload {
 		position: fixed;
 		display: flex;
@@ -224,5 +273,14 @@
 		color: var(--accent);
 		gap: 10px;
 		z-index: 100;
+	}
+
+    .container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: flex-start;
+		width: 100%;
+		min-height: 100%;
 	}
 </style>

@@ -3,7 +3,7 @@
     import { fly } from "svelte/transition";
     import { showGrade, updateStatus, isOffline, updateLog, clearData, showLogin } from "$lib/store";
     import { page } from "$app/stores";
-    import { GetData } from "../lib/fetcher";
+    import { GetData } from "$lib/fetcher";
     import Footer from "./Footer.svelte";
 
     let src: EventSource | null = null;

@@ -1,71 +1,72 @@
 <script lang="ts">
     import { pushState } from "$app/navigation";
+    import { page } from "$app/stores";
+    import { currentPage } from "$lib/store";
     import { fade } from "svelte/transition";
-    import { tabs, type TABS } from "$lib/store";
+
+	let tabs = "Routine";
 
 	function showOptions() {
 		pushState("", { options: true });
 	}
 
-    function handleNav(node: HTMLElement) {
-		node.onclick = (e: Event) => {
-			const target = e.target as HTMLElement;
-			if (target.classList.contains("navBtn")) {
-				const id = target.id;
-				tabs.set(id.split("-")[1] as TABS);
-				localStorage.setItem("tabs", $tabs);
-			}
-		};
-
-		return {
-			destroy() {
-				node.onclick = null;
-			},
-		};
-	}
 </script>
 
-<ul class="menu" use:handleNav in:fade>
-    <li
+<div class="menu" in:fade>
+    <a
         class="navBtn"
         id="nav-Routine"
-        class:shown={$tabs == "Routine"}
+		href="/"
+        class:shown={$currentPage == "/"}
     >
         <div class="content pointer-none">
             Routine <i class="fa-regular fa-calendar-days"></i>
         </div>
-    </li>
-    <li
+    </a>
+    <a
         class="navBtn"
         id="nav-Completed"
-        class:shown={$tabs == "Completed"}
+		href="/complete"
+        class:shown={$currentPage == "/complete"}
     >
-        <div class="content pointer-none">
+        <div class="content pointer-none" >
             Completed <i class="fa-solid fa-circle-check"></i>
         </div>
-    </li>
-    <li
+    </a>
+    <a
         class="navBtn"
         id="nav-Unlocked"
-        class:shown={$tabs == "Unlocked"}
+		href="/unlocked"
+        class:shown={$currentPage == "/unlocked"}
     >
         <div class="content pointer-none">
             Unlocked <i class="fa-solid fa-unlock"></i>
         </div>
-    </li>
-	<li
+    </a>
+	<a
 		class="navBtn"
 		id="nav-Notice"
-		class:shown={$tabs == "Notice"}
+		href="/notice"
+		class:shown={$currentPage == "/notice"}
 	>
 		<div class="content pointer-none">
 			Notice <i class="fa-solid fa-bell"></i>
 		</div>
-	</li>
+	</a>
+	<a
+		class="navBtn"
+		id="nav-calendar"
+		href="/calendar"
+		class:shown={$currentPage == "/calendar"}
+	>
+		<div class="content pointer-none">
+			Calendar <i class="fa-solid fa-calendar"></i>
+		</div>
+	</a>
 	<button class="option" on:click={showOptions}>
 		<i class="fa-solid fa-gear"></i>
 	</button>
-</ul>
+</div>
 
 
 <style lang="scss">
@@ -84,26 +85,28 @@
 		display: flex;
 		flex-direction: row;
 		flex-wrap: wrap;
-		gap: 10px;
+		gap: 8px;
 		list-style: none;
 		color: var(--accent);
 		position: sticky;
 		top: 0;
-		padding: 10px;
+		padding: 5px;
 		background: var(--primary);
 		justify-content: center;
 		align-items: center;
 		width: 100%;
 		z-index: 20;
-		li {
+		a {
 			cursor: pointer;
 			text-align: center;
-			font-size: 0.7rem;
+			font-size: 0.65rem;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
 			justify-content: center;
 			gap: 5px;
+			text-decoration: none;
+			color: inherit;
 
 			.content {
 				display: flex;
@@ -133,7 +136,7 @@
 			}
 		}
 
-		li.shown {
+		a.shown {
 			&::after {
 				transform: scaleX(1);
 			}
