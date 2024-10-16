@@ -84,18 +84,18 @@
 	.menu {
 		display: flex;
 		flex-direction: row;
-		flex-wrap: wrap;
 		gap: 8px;
 		list-style: none;
 		color: var(--accent);
 		position: sticky;
 		top: 0;
-		padding: 5px;
+		padding: 5px 15px;
 		background: var(--primary);
-		justify-content: center;
+		justify-content: safe center;
 		align-items: center;
 		width: 100%;
 		z-index: 20;
+		overflow-x: scroll;
 		a {
 			cursor: pointer;
 			text-align: center;
