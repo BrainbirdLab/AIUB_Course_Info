@@ -49,6 +49,7 @@ export const completedCourses: Writable<CompletedCoursesType> = writable({});
 export const unlockedCourses: Writable<UnlockedCoursesType> = writable({});
 export const preregisteredCourses: Writable<UnlockedCoursesType> = writable({});
 export const allCourses: Writable<CourseType> = writable({});
+export const calendarData = writable({title: "", table: ""});
 
 export const showLogin = writable(false);
 export const showGrade = writable(false);
@@ -73,6 +74,7 @@ export const isOffline = writable(false);
 
 export const updateLog = writable('');
 export const updateStatus: Writable<"loading"|"error"|"success"|""> = writable('');
+export const calenderFetching = writable(false);
 
 const AvailableColors =  [
   "#405b91",

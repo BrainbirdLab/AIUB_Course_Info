@@ -4,18 +4,18 @@
 </script>
 
 <footer class="footer" style:padding={padding}>
+	<div class="discord">
+		<a href="https://discord.gg/7CFzy28y"
+			>Join our Discord <i class="fa-brands fa-discord"></i></a
+		>
+	</div>
+	•
     <div class="source">
         <a href="https://github.com/BrainbirdLab/AIUB_Course_Info"
             >Source code <i class="fa-solid fa-code"></i></a
         >
     </div>
-    ・
-    <div class="support">
-        <a href="https://github.com/BrainbirdLab/AIUB_Course_Info/issues">
-            Submit issues <i class="fa-solid fa-circle-exclamation"></i>
-        </a>
-    </div>
-    ・
+    •
     <div class="verision">
         v{version}
     </div>

@@ -30,7 +30,7 @@
     --primary: #041e2f;
     --light-dark: #313d4a75;
     --hover-light-dark: #123050;
-    --accent: #31cac0;
+    --accent: #2cbac0;
     --accent-dim: #1031545e;
     --label-color: #708192;
 }
@@ -255,7 +255,7 @@ select:-webkit-autofill:focus {
 
 .empty {
     font-size: 0.8rem;
-    color: var(--label-color);
+    color: var(--label-color) !important;
     height: 100%;
     display: flex;
     justify-content: center;

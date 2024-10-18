@@ -1,7 +1,7 @@
 import { PUBLIC_API_SERVER_URL } from "$env/static/public";
 import { readFromDB, writeToDB } from "$lib/db";
 
-import { allCourses, allNotices, completedCourses, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
+import { allCourses, allNotices, calendarData, calenderFetching, completedCourses, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
 import { showToastMessage } from "@itsfuad/domtoastmessage";
 
 export async function subscribeToNotice(worker: ServiceWorker | null) {
@@ -104,6 +104,9 @@ export async function initNotices() {
 export async function getCalendarData() {
 
     try {
+
+        calenderFetching.set(true);
+
         const res = await fetch("/api/calendar")
         const text = await res.text();
         const parser = new DOMParser();
@@ -117,6 +120,7 @@ export async function getCalendarData() {
         const h2 = doc.querySelector("article h2");
 
         if (!title || !h2 || !table) {
+            calenderFetching.set(false);
             return;
         }
 
@@ -124,15 +128,16 @@ export async function getCalendarData() {
 
         localStorage.setItem("calendar", JSON.stringify({ title: titleText, table: table.innerHTML }));
 
-        return {
-            title: titleText,
-            table: table.innerHTML,
-        }
+        //update store
+        calendarData.set({ title: titleText, table: table.innerHTML });
+
+        calenderFetching.set(false);
 
     } catch (e) {
         if (window.navigator?.onLine === false) {
             throw new Error("offline");
         }
+        calenderFetching.set(false);
         throw e;
     }
 }

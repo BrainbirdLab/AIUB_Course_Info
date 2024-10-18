@@ -1,9 +1,9 @@
 <script lang="ts">
 
     import { fly } from "svelte/transition";
-    import { showGrade, updateStatus, isOffline, updateLog, clearData, showLogin } from "$lib/store";
+    import { showGrade, updateStatus, isOffline, updateLog, clearData, calenderFetching } from "$lib/store";
     import { page } from "$app/stores";
-    import { GetData } from "$lib/fetcher";
+    import { getCalendarData, GetData } from "$lib/fetcher";
     import Footer from "./Footer.svelte";
 
     let src: EventSource | null = null;
@@ -22,6 +22,9 @@
 			} else if (target.id == "updateData") {
 				updateData();
 				history.back();
+			} else if (target.id == "updateCalendar") {
+				history.back();
+				getCalendarData();
 			} else if (target.id == "showGrade") {
 				const value = (target as HTMLInputElement).checked;
 				if (!value) {
@@ -108,6 +111,12 @@
 					disabled={$updateStatus == "loading" || $isOffline}
 					>Sync with portal <i class="fa-solid fa-rotate"
 					></i></button
+				>
+				<button id="updateCalendar"
+					disabled={$calenderFetching || $isOffline}
+					>
+					Update Calendar <i class="fa-solid fa-calendar"></i>
+					</button
 				>
 				<button id="clearData"
 					>Clear Data <i class="fa-solid fa-trash"

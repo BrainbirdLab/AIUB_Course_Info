@@ -1,9 +1,8 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { getCalendarData } from "$lib/fetcher";
-    import { showLogin } from "$lib/store";
+    import { showLogin, calendarData, calenderFetching } from "$lib/store";
     import { onMount } from "svelte";
-    import { fly } from "svelte/transition";
+    import { fly, slide } from "svelte/transition";
 
     let loaded = false;
 
@@ -11,52 +10,41 @@
 
     let tbl: HTMLTableElement;
 
-    let state = "Loading...";
-
-    try {
-        // if offline, use localstorage data
-        if (window.navigator?.onLine === false) {
-            throw new Error("offline");
-        }
-
-        getCalendarData().then((data) => {
-            if (!data || !data.title || !data.table) {
-                throw new Error("No data");
-            }
-            titleText = data.title;
-            tbl.innerHTML = data.table;
-            state = "";
-        });
-
-    } catch (e) {
-        if (window.navigator?.onLine === false) {
-            state = "You are Offline. Please connect to the internet to get the latest data";
-        } else {
-            state = "Failed to get data. Please try again later.";
-        }
-    }
-
     onMount(() => {
+
         if ($showLogin) {
             goto("/login");
         }
+
+        tbl = document.createElement("table");
+
         loaded = true;
+
+        titleText = $calendarData.title;
+        tbl.innerHTML = $calendarData.table;
     });
 </script>
 
 {#if loaded}
-    {#if !titleText}
-        <div class="content" in:fly={{ y: 10 }}>
+    {#if $calenderFetching}
+        <div class="content" in:slide={{ axis: "y" }}>
             <div class="mid">
-                {state}
+                Getting data...
             </div>
+        </div>
+    {/if}
+    {#if !$calendarData.table}
+        <div class="empty">
+            No data avaliable
         </div>
     {/if}
     <div class="content" in:fly={{ y: 10 }}>
         <div class="title" in:fly={{ x: 5, delay: 100 }}>
             {titleText}
         </div>
-        <table bind:this={tbl} in:fly={{ y: 10, delay: 150 }}></table>
+        <table in:fly={{ y: 10, delay: 150 }}>
+            {@html tbl.innerHTML}
+        </table>
     </div>
 {/if}
 
