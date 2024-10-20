@@ -27,7 +27,7 @@
 
 {#if loaded}
     {#if $calenderFetching}
-        <div class="content" in:slide={{ axis: "y" }}>
+        <div class="content" transition:slide={{ axis: "y" }}>
             <div class="mid">
                 Getting data...
             </div>
