@@ -35,7 +35,8 @@
         align-items: center;
         justify-content: center;
         font-size: 1.2rem;
-        padding: 50px 0 35px;
+        padding: 10px 0 35px;
+        margin-top: auto;
         .sub {
             font-size: 0.7rem;
             color: var(--label-color);

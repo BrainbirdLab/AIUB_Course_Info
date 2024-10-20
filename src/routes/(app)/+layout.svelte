@@ -72,6 +72,8 @@
 
     onMount(async () => {
 
+        console.log("Mounted")
+
         unsubLoginState = showLogin.subscribe((value) => {
             if (value) {
                 goto("/login");

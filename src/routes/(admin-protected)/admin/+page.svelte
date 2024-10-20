@@ -149,6 +149,7 @@
         display: flex;
         justify-content: center;
         align-items: safe center;
+        margin: auto;
     }
     
     .eye {
@@ -189,6 +190,8 @@
 		max-width: 90vw;
 		width: 350px;
 		position: relative;
+        margin: auto 0;
+        padding: 20px 0;
 	}
 
 	.form{
