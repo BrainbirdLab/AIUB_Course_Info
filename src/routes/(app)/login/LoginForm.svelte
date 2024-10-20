@@ -193,6 +193,7 @@
 		width: 350px;
 		height: 450px;
 		position: relative;
+		margin-bottom: 30px;
 	}
 
 	.form{
