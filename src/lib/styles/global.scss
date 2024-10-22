@@ -222,6 +222,36 @@ select:-webkit-autofill:focus {
 }
 
 
+.prerequisite:hover .prerequisiteInfo{
+    visibility: visible;
+    opacity: 1;
+    bottom: 24px;
+}
+
+.prerequisiteInfo {
+    position: absolute;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.9);
+    border-radius: 8px;
+    width: min-content;
+    visibility: hidden;
+    opacity: 0;
+    transition: 200ms ease-in-out;
+    bottom: 20px;
+    left: 0;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 15px;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+    }
+}
+
 .credit{
     position: absolute;
     font-size: 3rem;

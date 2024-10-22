@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { completedCourses, getIcon, getIconColor, parseCourseId, showGrade, showLogin } from '$lib/store';
+    import { allCourses, completedCourses, getIcon, getIconColor, parseCourseId, showGrade, showLogin } from '$lib/store';
     import { fly } from 'svelte/transition';
     import { flip } from 'svelte/animate';
     import { goto } from '$app/navigation';
@@ -58,6 +58,23 @@
                     {courseInfo.credit || '-'}
                 </div>
                 <div class="grade">Grade: {$showGrade ? courseInfo.grade : '🙈'}</div>
+                <span class="prerequisites">
+                    Prerequisites
+                    {#if $allCourses[courseId].prerequisites && $allCourses[courseId].prerequisites.length > 0}
+                        {#each $allCourses[courseId].prerequisites as prerequisite}
+                        <div class="prerequisite tag" data-prereq={prerequisite} style:background={getIconColor(parseCourseId(prerequisite))}>
+                            {#if $allCourses[prerequisite]}
+                                <div class="prerequisiteInfo">
+                                    {$allCourses[prerequisite].course_name}
+                                </div>
+                            {/if}
+                            {@html getIcon(parseCourseId(prerequisite))} {prerequisite}
+                        </div>
+                        {/each}
+                    {:else}
+                        <div class="prerequisite tag" style:background={"#398982"}>None</div>
+                    {/if}
+                </span>
             </div>
         {/each}
         {/if}

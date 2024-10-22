@@ -124,7 +124,7 @@
 				<button id="updateFaculties"
 					disabled={$facultiesIsFetching || $isOffline}
 				>
-					Update Faculties <i class="fa-solid fa-user"></i>
+					Update Faculties <i class="fa-solid fa-chalkboard-user"></i>
 				</button>
 				<button id="clearData"
 					>Clear Data <i class="fa-solid fa-trash"

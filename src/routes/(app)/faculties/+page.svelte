@@ -139,9 +139,11 @@
                         alt={faculty.CvPersonal.Name}
                     />
                     <div class="about">
-                        <div
+                        <a
+                            href="https://www.aiub.edu/faculty-list/faculty-profile#{faculty.CvPersonal.Email}"
+                            target="_blank"
                             class="faculty-name"
-                            >{faculty.CvPersonal.Name}</div
+                            >{faculty.CvPersonal.Name}</a
                         >
                         <div class="proffesion">
                             {faculty.Position}, {faculty.Designation}

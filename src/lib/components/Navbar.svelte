@@ -63,7 +63,7 @@
 		class:shown={$currentPage == "/faculties"}
 	>
 		<div class="content pointer-none">
-			Faculties <i class="fa-solid fa-user"></i>
+			Faculties <i class="fa-solid fa-chalkboard-user"></i>
 		</div>
 	</a>
 </div>
@@ -89,7 +89,7 @@
 		a {
 			cursor: pointer;
 			text-align: center;
-			font-size: 0.65rem;
+			font-size: 0.75rem;
 			display: flex;
 			flex-direction: column;
 			align-items: center;
