@@ -5,6 +5,7 @@
     import { page } from "$app/stores";
     import { getCalendarData, GetData, getFaculties } from "$lib/fetcher";
     import Footer from "./Footer.svelte";
+    import { goto } from "$app/navigation";
 
     let src: EventSource | null = null;
     
@@ -19,6 +20,7 @@
                 if (src) {
 					src.close();
                 }
+				goto("/login");
 			} else if (target.id == "updateData") {
 				updateData();
 				history.back();
