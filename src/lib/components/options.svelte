@@ -112,8 +112,7 @@
 			>
 				<button id="updateData"
 					disabled={$updateStatus == "loading" || $isOffline}
-					>Sync with portal <i class="fa-solid fa-rotate"
-					></i></button
+					>Update courses <i class="fa-solid fa-book"></i></button
 				>
 				<button id="updateCalendar"
 					disabled={$calenderFetching || $isOffline}
