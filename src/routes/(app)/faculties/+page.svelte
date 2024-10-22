@@ -192,8 +192,9 @@
         justify-content: center;
         gap: 10px;
         padding: 10px;
+        align-items: center;
         .number {
-            width: 50px;
+            width: 75px;
             text-align: center;
         }
         button {
