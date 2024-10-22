@@ -12,6 +12,8 @@
 
     let loaded = false;
 
+    console.log($faculties.length);
+
     $: filterOptions = $faculties
         .map((faculty: FacultyType) => faculty.Faculty)
         .filter((value, index, self) => self.indexOf(value) === index && value);
@@ -55,6 +57,7 @@
             <div class="mid">Getting data...</div>
         </div>
     {/if}
+    {#if $faculties.length > 0}
     <div class="search" in:fly|global={{ x: 10 }}>
         <i class="fa-solid fa-magnifying-glass"></i>
         <input
@@ -97,6 +100,7 @@
             </div>
         {/each}
     </div>
+    {/if}
     <ul>
         {#if filteredFaculties.length == 0}
             <div class="empty" in:fly|global={{y: 10}}>No data avaliable</div>

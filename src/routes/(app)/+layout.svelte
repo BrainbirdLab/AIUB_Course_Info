@@ -99,7 +99,7 @@
         });
 
         window.addEventListener("storage", (e) => {
-            clearData();
+            //clearData();
         });
 
         if ('permissions' in navigator) {
@@ -203,7 +203,7 @@
                 ? JSON.parse(rawCalendar)
                 : {title: "", table: ""};
                 
-            const parsedFaculties = JSON.parse(rawFaculties || "{}");
+            const parsedFaculties = JSON.parse(rawFaculties || "[]");
                 
             completedCourses.set(parsedCompletedCourses);
             preregisteredCourses.set(parsedPreregisteredCourses);

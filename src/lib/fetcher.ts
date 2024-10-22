@@ -196,6 +196,7 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
             if (data.status === "complete") {
                 initNotices();
                 getCalendarData();
+                getFaculties();
                 updateLog.set('');
                 updateStatus.set('');
                 User.set(data.result.user);
