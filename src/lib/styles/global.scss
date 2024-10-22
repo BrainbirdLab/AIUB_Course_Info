@@ -33,6 +33,7 @@
     --accent: #2cbac0;
     --accent-dim: #1031545e;
     --label-color: #708192;
+    --button-color: #35a9f7;
 }
 
 body{
@@ -304,5 +305,50 @@ table {
         border: 1px solid var(--label-color);
         border-collapse: collapse;
         text-align: center;
+    }
+}
+
+.mid {
+    font-size: 0.7rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--accent);
+    margin: 0 0 10px 0;
+}
+
+.filter{
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 10px;
+    flex-wrap: wrap;
+
+    .form-field{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+
+    .tag{
+        background: var(--light-dark);
+        color: #ffffff5a;
+        cursor: pointer; 
+    }
+
+    input{
+        display: none;
+    }
+
+    input:checked + label{
+        background: var(--accent-dim);
+        color: var(--accent);
+    }
+
+    input:not(:checked) + label:hover{
+        background: var(--hover-light-dark);
     }
 }

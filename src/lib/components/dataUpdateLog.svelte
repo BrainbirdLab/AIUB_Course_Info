@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { fly } from "svelte/transition";
+    import { slide } from "svelte/transition";
     import { updateLog, updateStatus } from "$lib/store";
 </script>
 
 <div class="log">
 	{#if $updateStatus == "loading" || $updateStatus == "success"}
-		<div class="content" transition:fly={{ y: 10 }}>
+		<div class="content" transition:slide={{ axis: "y" }}>
 			{$updateLog}
 			{#if $updateStatus == "success"}
 				<i class="fa-solid fa-check"></i>

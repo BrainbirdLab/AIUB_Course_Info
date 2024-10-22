@@ -2,7 +2,7 @@
     
     import "$lib/styles/global.scss";
 
-    import { allCourses, clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, currentPage, User, type SemesterDataType, calendarData } from "$lib/store";
+    import { allCourses, clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, currentPage, User, type SemesterDataType, calendarData, faculties } from "$lib/store";
     import { onDestroy, onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
     import type { Unsubscriber } from "svelte/store";
@@ -14,11 +14,18 @@
     import Navbar from "$lib/components/Navbar.svelte";
     import Options from "$lib/components/options.svelte";
     import PopupModal from "$lib/components/popupModal.svelte";
-    import { goto, onNavigate } from "$app/navigation";
+    import { goto, onNavigate, pushState } from "$app/navigation";
+    import NavigationIndicator from "$lib/components/NavigationIndicator.svelte";
 
     onNavigate(() => {
         $currentPage = (window.location.pathname.at(-1) === '/' && window.location.pathname != '/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
     });
+
+    
+	function showOptions() {
+		pushState("", { options: true });
+	}
+
 
     async function detectSWUpdate(){
 
@@ -72,13 +79,13 @@
 
     onMount(async () => {
 
+        $currentPage = (window.location.pathname.at(-1) === '/' && window.location.pathname != '/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
+
         console.log("Mounted")
 
         unsubLoginState = showLogin.subscribe((value) => {
             if (value) {
                 goto("/login");
-            } else {
-                goto("/");
             }
         });
 
@@ -174,6 +181,8 @@
 
             const rawCalendar = localStorage.getItem("calendar");
 
+            const rawFaculties = localStorage.getItem("faculties");
+
 			const parsedCompletedCourses = rawCompletedCourses
 				? JSON.parse(rawCompletedCourses)
 				: {};
@@ -194,12 +203,14 @@
                 ? JSON.parse(rawCalendar)
                 : {title: "", table: ""};
                 
+            const parsedFaculties = JSON.parse(rawFaculties || "{}");
                 
             completedCourses.set(parsedCompletedCourses);
             preregisteredCourses.set(parsedPreregisteredCourses);
             unlockedCourses.set(parsedUnlockedCourses);
             allCourses.set(parsedAllCourses);
             calendarData.set(parsedCalendar);
+            faculties.set(parsedFaculties);
 
 			const gradeshow = localStorage.getItem("showGrade") as string;
 			if (gradeshow == "true") {
@@ -236,13 +247,16 @@
 		<Logo />
 	</div>
 {:else}
+    <NavigationIndicator />
     <div class="container">
         {#if !$showLogin}
         <Options />
         <PopupModal />
 
         <div class="user" in:fade>
-            <i class="fa-solid fa-user"></i> Hello, {$User}!
+            <i class="fa-solid fa-user"></i> Hello, {$User}! <button class="option" on:click={showOptions}>
+                <i class="fa-solid fa-gear"></i>
+            </button>
         </div>
 
         <Navbar />
@@ -261,13 +275,23 @@
 		justify-content: center;
 		font-size: 1.2rem;
 		padding: 30px 10px 10px 10px;
-		gap: 10px;
+        i {
+            font-size: 1rem;
+            pointer-events: none;
+            padding-right: 10px;
+        }
 	}
 
-	i {
-		font-size: 1rem;
-		pointer-events: none;
+    .option{
+		color: var(--accent);
+		width: 40px;
+    	height: 40px;
+		i {
+			font-size: 1.2rem;
+			color: inherit;
+		}
 	}
+
 	.preload {
 		position: fixed;
 		display: flex;

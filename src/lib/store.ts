@@ -3,6 +3,57 @@ import { unsubscribeFromNotice } from './fetcher';
 import { clearDB } from './db';
 
 
+const data = [
+    {
+        "IsShowProfileDetails": true,
+        "CvPersonal": {
+            "ID": 7256,
+            "UserId": 60989,
+            "Name": "MD. ANWARUL KABIR",
+            "Email": "kabir@aiub.edu"
+        },
+        "Faculty": "FACULTY OF SCIENCE & TECHNOLOGY",
+        "Designation": "Faculty",
+        "Position": "ASSOCIATE PROFESSOR",
+        "PositionID": 137,
+        "HrDepartment": "DEPARTMENT OF COMPUTER SCIENCE",
+        "PersonalOtherInfo": {
+            "ID": 0,
+            "UserId": 0,
+            "AcademicInterests": "",
+            "ResearchInterests": "",
+            "RoomNo": "",
+            "BuildingNo": "",
+            "SecondProfilePhoto": "/Files/Uploads/public-employee-profiles/profile-pictures/60989.jpg"
+        }
+    },
+];
+
+
+export type FacultyType = {
+  "IsShowProfileDetails": boolean;
+  "CvPersonal": {
+      "ID": number;
+      "UserId": number;
+      "Name": string;
+      "Email": string;
+  };
+  "Faculty": string;
+  "Designation": string;
+  "Position": string;
+  "PositionID": number;
+  "HrDepartment": string;
+  "PersonalOtherInfo": {  
+      "ID": number;
+      "UserId": number;
+      "AcademicInterests": string;
+      "ResearchInterests": string;
+      "RoomNo": string;
+      "BuildingNo": string;
+      "SecondProfilePhoto": string;
+  };
+};
+
 export type Class = {
     class_id: string;
     course_name: string;
@@ -50,6 +101,7 @@ export const unlockedCourses: Writable<UnlockedCoursesType> = writable({});
 export const preregisteredCourses: Writable<UnlockedCoursesType> = writable({});
 export const allCourses: Writable<CourseType> = writable({});
 export const calendarData = writable({title: "", table: ""});
+export const faculties = writable<FacultyType[]>([]);
 
 export const showLogin = writable(false);
 export const showGrade = writable(false);
@@ -75,6 +127,7 @@ export const isOffline = writable(false);
 export const updateLog = writable('');
 export const updateStatus: Writable<"loading"|"error"|"success"|""> = writable('');
 export const calenderFetching = writable(false);
+export const facultiesIsFetching = writable(false);
 
 const AvailableColors =  [
   "#405b91",

@@ -1,7 +1,7 @@
 import { PUBLIC_API_SERVER_URL } from "$env/static/public";
 import { readFromDB, writeToDB } from "$lib/db";
 
-import { allCourses, allNotices, calendarData, calenderFetching, completedCourses, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
+import { allCourses, allNotices, calendarData, calenderFetching, completedCourses, faculties, facultiesIsFetching, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
 import { showToastMessage } from "@itsfuad/domtoastmessage";
 
 export async function subscribeToNotice(worker: ServiceWorker | null) {
@@ -139,6 +139,23 @@ export async function getCalendarData() {
         }
         calenderFetching.set(false);
         throw e;
+    }
+}
+
+export async function getFaculties() {
+    try {
+        facultiesIsFetching.set(true);
+        const response = await fetch('/api/faculties');
+        const json = await response.json() as {"EmployeeProfileLightList": any[]};
+        console.log(json);
+        const list = json?.EmployeeProfileLightList || [];
+        faculties.set(list);
+        //write to local storage
+        localStorage.setItem("faculties", JSON.stringify(list));
+    } catch (err) {
+        console.error(err);
+    } finally {
+        facultiesIsFetching.set(false);
     }
 }
 

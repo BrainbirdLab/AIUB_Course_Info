@@ -33,9 +33,9 @@
     $: {
         if (selectedGroup) {
             if (selectedGroup === 'Registered') {
-                observeables = Object.entries($unlockedCourses).filter(([courseId, courseInfo]) => $preregisteredCourses[courseId]);
+                observeables = Object.entries($unlockedCourses).filter(([courseId, _]) => $preregisteredCourses[courseId]);
             } else if (selectedGroup === 'Unregistered') {
-                observeables = Object.entries($unlockedCourses).filter(([courseId, courseInfo]) => !$preregisteredCourses[courseId]);
+                observeables = Object.entries($unlockedCourses).filter(([courseId, _]) => !$preregisteredCourses[courseId]);
             } else {
                 observeables = Object.entries($unlockedCourses);
             }
@@ -45,7 +45,7 @@
 
     $: {
         if (filterValue) {
-            filteredCourses = observeables.filter(([courseId, courseInfo]) => {
+            filteredCourses = observeables.filter(([_, courseInfo]) => {
                 return courseInfo.course_name.toLowerCase().includes(filterValue.toLowerCase());
             });
         } else {
@@ -170,40 +170,6 @@
 
     .registered{
         background: #09bc65;
-    }
-
-    .filter{
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin: 10px;
-
-        .form-field{
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 5px;
-            cursor: pointer;
-        }
-
-        .tag{
-            background: var(--light-dark);
-            color: #ffffff5a;
-            cursor: pointer; 
-        }
-
-        input{
-            display: none;
-        }
-
-        input:checked + label{
-            background: var(--accent-dim);
-            color: var(--accent);
-        }
-
-        input:not(:checked) + label:hover{
-            background: var(--hover-light-dark);
-        }
     }
   
     .container{

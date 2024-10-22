@@ -1,14 +1,7 @@
 <script lang="ts">
-    import { pushState } from "$app/navigation";
-    import { page } from "$app/stores";
+
     import { currentPage } from "$lib/store";
     import { fade } from "svelte/transition";
-
-	let tabs = "Routine";
-
-	function showOptions() {
-		pushState("", { options: true });
-	}
 
 </script>
 
@@ -63,23 +56,20 @@
 			Calendar <i class="fa-solid fa-calendar"></i>
 		</div>
 	</a>
-	<button class="option" on:click={showOptions}>
-		<i class="fa-solid fa-gear"></i>
-	</button>
+	<a
+		class="navBtn"
+		id="nav-faculties"
+		href="/faculties"
+		class:shown={$currentPage == "/faculties"}
+	>
+		<div class="content pointer-none">
+			Faculties <i class="fa-solid fa-user"></i>
+		</div>
+	</a>
 </div>
 
 
 <style lang="scss">
-
-	.option{
-		color: var(--accent);
-		width: 40px;
-    	height: 40px;
-		i {
-			font-size: 1.2rem;
-			color: inherit;
-		}
-	}
 
 	.menu {
 		display: flex;

@@ -56,12 +56,4 @@
             padding: 0 0 10px 0;
         }
     }
-    .mid {
-        font-size: 0.7rem;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--accent);
-    }
 </style>
