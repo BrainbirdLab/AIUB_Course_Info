@@ -51,10 +51,14 @@
         //update total page
         totalPage = Math.ceil(filteredFaculties.length / facultiesPerPage);
         //update current page
-        currentPage = totalPage < currentPage ? totalPage : 1;
+        currentPage = 1;
+        if (totalPage == 0) {
+            currentPage = 0;
+        }
     }
 
     function paginate(page: number) {
+        console.log(page);
         currentPage = page;
         let start = (page - 1) * facultiesPerPage;
         let end = start + facultiesPerPage;
