@@ -4,6 +4,7 @@
     import { fade, fly } from "svelte/transition";
 	import { updateLog, updateStatus } from "$lib/store";
     import { GetData } from "$lib/fetcher";
+    import { goto } from "$app/navigation";
 
 	let usernameLabel = "AIUB ID";
 	let passwordLabel = "Password";
@@ -61,7 +62,8 @@
 			submitting = false;
 			if (!err) {
 				loaded = false;
-			} 
+				goto("/");
+			}
 		});
 	}
 

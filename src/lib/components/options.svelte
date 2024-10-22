@@ -15,7 +15,6 @@
 			if (node == target) {
 				history.back();
 			} else if (target.id == "clearData") {
-				history.back();
 				clearData();
                 if (src) {
 					src.close();

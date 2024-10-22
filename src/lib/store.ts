@@ -1,6 +1,7 @@
 import { writable, type Writable } from 'svelte/store';
 import { unsubscribeFromNotice } from './fetcher';
 import { clearDB } from './db';
+import { goto } from '$app/navigation';
 
 
 const data = [
