@@ -21,6 +21,12 @@
     let filterValue = "";
 
     let filteredFaculties: FacultyType[] = [];
+    let result: FacultyType[] = [];
+
+    //pagination
+    let currentPage = 1;
+    let facultiesPerPage = 9;
+    let totalPage = Math.ceil($faculties.length / facultiesPerPage);
 
     $: {
         filteredFaculties = $faculties.filter((faculty: FacultyType) => {
@@ -38,7 +44,21 @@
                     );
                 },
             );
-        }
+        } 
+
+        //show max 10 faculties in one page
+        result = filteredFaculties.slice(0, facultiesPerPage);
+        //update total page
+        totalPage = Math.ceil(filteredFaculties.length / facultiesPerPage);
+        //update current page
+        currentPage = 1;
+    }
+
+    function paginate(page: number) {
+        currentPage = page;
+        let start = (page - 1) * facultiesPerPage;
+        let end = start + facultiesPerPage;
+        result = filteredFaculties.slice(start, end);
     }
 
     onMount(() => {
@@ -100,10 +120,10 @@
     </div>
     {/if}
     <ul>
-        {#if filteredFaculties.length == 0}
+        {#if result.length == 0}
             <div class="empty" in:fly|global={{y: 10}}>No data avaliable</div>
         {:else}
-            {#each filteredFaculties as faculty, i (i)}
+            {#each result as faculty, i (i)}
                 <li class="faculty-info" in:fly|global={{y: 10, delay: 1+i * 10}}>
                     <img
                         src={faculty.PersonalOtherInfo.SecondProfilePhoto.startsWith(
@@ -138,6 +158,21 @@
             {/each}
         {/if}
     </ul>
+    <div class="pagination">
+        <button class="pagination-button" on:click={() => {
+            if (currentPage > 1) {
+                paginate(currentPage - 1);
+            }
+        }}>Prev</button> 
+            <div class="number">
+                {currentPage} of {totalPage} 
+            </div>
+        <button class="pagination-button" on:click={() => {
+            if (currentPage < totalPage) {
+                paginate(currentPage + 1);
+            }
+        }}>Next</button>
+    </div>
 {/if}
 
 <style lang="scss">
@@ -149,6 +184,29 @@
         list-style: none;
         max-width: min(100%, 900px);
         padding: 8px;
+    }
+
+    .pagination {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px;
+        .number {
+            width: 50px;
+            text-align: center;
+        }
+        button {
+            padding: 5px 10px;
+            border-radius: 5px;
+            background: var(--light-dark);
+            color: var(--accent);
+            border: 2px solid var(--accent);
+            cursor: pointer;
+            &:hover {
+                filter: brightness(0.9);
+            }
+        }
     }
 
     .faculty-info {
