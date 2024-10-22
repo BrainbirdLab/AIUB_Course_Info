@@ -39,8 +39,8 @@
         if (filterValue) {
             filteredFaculties = filteredFaculties.filter(
                 (faculty: FacultyType) => {
-                    return faculty.CvPersonal.Name.toLowerCase().includes(
-                        filterValue.toLowerCase(),
+                    return faculty.CvPersonal.Name.split(" ").join("").toLowerCase().includes(
+                        filterValue.split(" ").join("").toLowerCase(),
                     );
                 },
             );
@@ -51,7 +51,7 @@
         //update total page
         totalPage = Math.ceil(filteredFaculties.length / facultiesPerPage);
         //update current page
-        currentPage = 1;
+        currentPage = totalPage < currentPage ? totalPage : 1;
     }
 
     function paginate(page: number) {
