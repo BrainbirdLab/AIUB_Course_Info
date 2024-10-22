@@ -12,8 +12,6 @@
 
     let loaded = false;
 
-    console.log($faculties.length);
-
     $: filterOptions = $faculties
         .map((faculty: FacultyType) => faculty.Faculty)
         .filter((value, index, self) => self.indexOf(value) === index && value);
