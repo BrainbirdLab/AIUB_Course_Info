@@ -62,7 +62,7 @@
 
 </script>
 
-{#if loaded && observeables && observeables.length > 0}
+{#if loaded}
 <div class="filter">
     <!-- radio button -->
     {#each filterOptions as option, i}
@@ -74,6 +74,7 @@
         </div>
     {/each}
 </div>
+{#if observeables && observeables.length > 0} 
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>{Object.keys($unlockedCourses).length} Courses available</div>
     <div class="search" in:fly|global={{x: 10}}>
@@ -133,6 +134,7 @@
 </div>
 {:else}
     <div class="info no-course">No courses available</div>
+{/if}
 {/if}
 
 <style lang="scss">
