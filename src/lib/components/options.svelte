@@ -280,7 +280,7 @@
 		background: rgb(245, 51, 51);
 	}
     
-	#updateData:disabled{
+	button:disabled{
 		filter: brightness(0.7);
 		cursor: not-allowed;
 	}
