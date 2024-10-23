@@ -256,6 +256,18 @@ export function getIcon(courseId: string){
 export const creditsPrerequisitesObj: {[key:string]: number} = {
   'CSC4197': 100,
 };
+/*
+    --fass: #e62727;
+    --fst: cornflowerblue;
+    --fe: darkorange;
+    --fba: #3ed21d;
+    */
+export const facultyColorsMap: {[key:string]: string} = {
+  "FACULTY OF SCIENCE & TECHNOLOGY": "cornflowerblue",
+  "FACULTY OF BUSINESS ADMINISTRATION": "#3ed21d",
+  "FACULTY OF ARTS AND SOCIAL SCIENCES": "#e62727",
+  "FACULTY OF ENGINEERING": "darkorange",
+}
 
 export function parseCourseId(courseId: string) {
   return RegExp(/[A-Z]+/).exec(courseId)![0] as keyof typeof CourseIconColors;

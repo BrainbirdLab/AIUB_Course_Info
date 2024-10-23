@@ -5,6 +5,7 @@
         faculties,
         showLogin,
         facultiesIsFetching,
+        facultyColorsMap,
     } from "$lib/store";
     import { onMount } from "svelte";
     //import { flip } from "svelte/animate";
@@ -129,15 +130,14 @@
         {:else}
             {#each result as faculty, i (i)}
                 <li class="faculty-info" in:fly|global={{y: 10, delay: 1+i * 10}}>
-                    <img
-                        src={faculty.PersonalOtherInfo.SecondProfilePhoto.startsWith(
-                            "https://",
-                        )
-                            ? faculty.PersonalOtherInfo.SecondProfilePhoto
-                            : "https://www.aiub.edu/" +
-                              faculty.PersonalOtherInfo.SecondProfilePhoto}
-                        alt={faculty.CvPersonal.Name}
-                    />
+                    <object title="Faculty photo" data={faculty.PersonalOtherInfo.SecondProfilePhoto.startsWith(
+                        "https://",
+                    )
+                        ? faculty.PersonalOtherInfo.SecondProfilePhoto
+                        : "https://www.aiub.edu/" +
+                          faculty.PersonalOtherInfo.SecondProfilePhoto} type="image/jpeg">
+                        <img src="/fallback-image.png" alt="{faculty.CvPersonal.Name}" />
+                    </object>
                     <div class="about">
                         <a
                             href="https://www.aiub.edu/faculty-list/faculty-profile#{faculty.CvPersonal.Email}"
@@ -158,7 +158,7 @@
                                 Email: {faculty.CvPersonal.Email}
                             </div>
                         {/if}
-                        <div class="faculty">{faculty.Faculty}</div>
+                        <div class="faculty" style="color:{facultyColorsMap[faculty.Faculty]}">{faculty.Faculty}</div>
                     </div>
                 </li>
             {/each}
@@ -227,7 +227,7 @@
         width: min(100%, 250px);
         overflow: hidden;
         height: auto;
-        img {
+        img, object {
             width: 100%;
             aspect-ratio: 1 / 1;
             object-fit: cover;
@@ -237,6 +237,11 @@
         .about {
             padding: 10px;
             width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: flex-start;
         }
 
         .faculty-name {
@@ -251,6 +256,7 @@
         .faculty {
             font-size: 0.6rem;
             color: var(--label-color);
+            margin-top: auto;
         }
 
         .room,
