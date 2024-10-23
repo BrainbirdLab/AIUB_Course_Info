@@ -254,14 +254,9 @@ export function getIcon(courseId: string){
 export const creditsPrerequisitesObj: {[key:string]: number} = {
   'CSC4197': 100,
 };
-/*
-    --fass: #e62727;
-    --fst: cornflowerblue;
-    --fe: darkorange;
-    --fba: #3ed21d;
-    */
+
 export const facultyColorsMap: {[key:string]: string} = {
-  "FACULTY OF SCIENCE & TECHNOLOGY": "cornflowerblue",
+  "FACULTY OF SCIENCE & TECHNOLOGY": "#3290de",
   "FACULTY OF BUSINESS ADMINISTRATION": "#3ed21d",
   "FACULTY OF ARTS AND SOCIAL SCIENCES": "#e62727",
   "FACULTY OF ENGINEERING": "darkorange",
