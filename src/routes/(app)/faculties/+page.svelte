@@ -11,26 +11,26 @@
     //import { flip } from "svelte/animate";
     import { fly, slide } from "svelte/transition";
 
-    let loaded = false;
+    let loaded = $state(false);
 
-    $: filterOptions = $faculties
+    let filterOptions = $derived($faculties
         .map((faculty: FacultyType) => faculty.Faculty)
-        .filter((value, index, self) => self.indexOf(value) === index && value);
+        .filter((value, index, self) => self.indexOf(value) === index && value));
 
-    let selectedGroup = "All";
+    let selectedGroup = $state("All");
 
-    let filterValue = "";
+    let filterValue = $state("");
 
-    let filteredFaculties: FacultyType[] = [];
-    let result: FacultyType[] = [];
-
+    
     //pagination
-    let currentPage = 1;
-    let facultiesPerPage = 9;
-    let totalPage = Math.ceil($faculties.length / facultiesPerPage);
+    let currentPage = $state(1);
+    const facultiesPerPage = 9;
+    let result: FacultyType[] = $state([]);
+    let filteredFaculties: FacultyType[] = $state([]);
+    
+    $effect(() => {
 
-    $: {
-        filteredFaculties = $faculties.filter((faculty: FacultyType) => {
+        let filtered = $faculties.filter((faculty: FacultyType) => {
             if (selectedGroup === "All") {
                 return true;
             }
@@ -38,7 +38,7 @@
         });
 
         if (filterValue) {
-            filteredFaculties = filteredFaculties.filter(
+            filtered = filtered.filter(
                 (faculty: FacultyType) => {
                     return faculty.CvPersonal.Name.split(" ").join("").toLowerCase().includes(
                         filterValue.split(" ").join("").toLowerCase(),
@@ -46,20 +46,21 @@
                 },
             );
         } 
+        
+        filteredFaculties = filtered;
+    });
+    
+    let totalPage = $derived(Math.ceil(filteredFaculties.length / facultiesPerPage));
 
-        //show max 10 faculties in one page
+    $effect(() => {
+        currentPage = totalPage > 0 ? 1 : 0;
+    })
+
+    $effect(() => {
         result = filteredFaculties.slice(0, facultiesPerPage);
-        //update total page
-        totalPage = Math.ceil(filteredFaculties.length / facultiesPerPage);
-        //update current page
-        currentPage = 1;
-        if (totalPage == 0) {
-            currentPage = 0;
-        }
-    }
+    })
 
     function paginate(page: number) {
-        console.log(page);
         currentPage = page;
         let start = (page - 1) * facultiesPerPage;
         let end = start + facultiesPerPage;
@@ -75,11 +76,6 @@
 </script>
 
 {#if loaded}
-    {#if $facultiesIsFetching}
-        <div class="content" transition:slide={{ axis: "y" }}>
-            <div class="mid">Getting data...</div>
-        </div>
-    {/if}
     {#if $faculties.length > 0}
     <div class="search" in:fly|global={{ x: 10 }}>
         <i class="fa-solid fa-magnifying-glass"></i>
@@ -89,7 +85,7 @@
             placeholder="Search..."
             bind:value={filterValue}
         />
-        <button class="clear" on:click={() => (filterValue = "")}>
+        <button class="clear" aria-label="clear" onclick={() => (filterValue = "")}>
             <i class="fa-solid fa-times"></i>
         </button>
     </div>
@@ -148,6 +144,9 @@
                         <div class="proffesion">
                             {faculty.Position}, {faculty.Designation}
                         </div>
+                        <div class="hr">
+                            {faculty.HrDepartment}
+                        </div>
                         {#if faculty.PersonalOtherInfo.RoomNo}
                             <div class="room">
                                 Room: {faculty.PersonalOtherInfo.RoomNo}
@@ -165,7 +164,7 @@
         {/if}
     </ul>
     <div class="pagination">
-        <button class="pagination-button" on:click={() => {
+        <button class="pagination-button" onclick={() => {
             if (currentPage > 1) {
                 paginate(currentPage - 1);
             }
@@ -173,7 +172,7 @@
             <div class="number">
                 {currentPage} of {totalPage} 
             </div>
-        <button class="pagination-button" on:click={() => {
+        <button class="pagination-button" onclick={() => {
             if (currentPage < totalPage) {
                 paginate(currentPage + 1);
             }
@@ -249,7 +248,7 @@
             color: var(--accent);
         }
 
-        .proffesion {
+        .proffesion, .hr {
             font-size: 0.8rem;
         }
 

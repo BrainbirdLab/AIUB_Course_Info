@@ -3,43 +3,44 @@
     import { onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
 
-    let mounted = false;
+    let mounted = $state(false);
 
-    let classData: {[day: string]: {
-        [timeslot: string]: {
-            class_id: string,
-            course_name: string,
-            section: string,
-            room: string
-        }
-    }} = $semesterClassRoutine[$semesterName];
-
-    let range: number[] = [];
-
-    //Day name today. Eg: Saturday
-    const today = new Date().toLocaleString('en-us', {  weekday: 'long' });
-
-    let longestTimeEnd = 0;
-
-    $: {
-        classData = $semesterClassRoutine[$semesterName];
-        //find the longest time end and make the range accordingly
-        if (classData) {
-            longestTimeEnd = 0;
-            for (const day in classData) {
-                for (const time in classData[day]) {
-                    const timeEnd = timeParser(time)[1];
-                    if (timeEnd > longestTimeEnd) {
-                        longestTimeEnd = timeEnd;
-                    }
-                }
+    interface ClassData {
+        [day: string]: {
+            [timeslot: string]: {
+                class_id: string,
+                course_name: string,
+                section: string,
+                room: string
             }
-            longestTimeEnd = Math.ceil((longestTimeEnd - 480) / 90) + 1;
-            range = Array.from(Array(longestTimeEnd).keys());
-            //console.log(longestTimeEnd);
         }
     }
 
+    let classData: ClassData = $derived($semesterClassRoutine[$semesterName]);
+
+    
+    //Day name today. Eg: Saturday
+    const today = new Date().toLocaleString('en-us', {  weekday: 'long' });
+    
+    let longestTimeEnd = $derived(getLongestTime(classData));
+    let range: number[] = $derived(Array.from(Array(getLongestTime(classData)).keys()))
+
+    function getLongestTime(classData: ClassData) {
+        if (!classData) {
+            return 0;
+        }
+        let longestTime = 0;
+        for (const day in classData) {
+            for (const time in classData[day]) {
+                const timeEnd = timeParser(time)[1];
+                if (timeEnd > longestTime) {
+                    longestTime = timeEnd;
+                }
+            }
+        }
+        longestTime = Math.ceil((longestTime - 480) / 90) + 1;
+        return longestTime;
+    }
 
     function getDayNumber(day: string) {
 		const daysOfWeek = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];

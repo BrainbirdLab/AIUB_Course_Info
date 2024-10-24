@@ -8,17 +8,16 @@
     import { deleteFromDB } from "$lib/db";
     import { goto } from "$app/navigation";
 
-    let fetching = false;
-    let loadingText = "Fetching new notices...";
-
-    let loaded = false;
-
+    let fetching = $state(false);
+    let loadingText = $state("Fetching new notices...");
+    let loaded = $state(false);
     
     onMount(() => {
         
         if ($showLogin){
             goto("/login");
         }
+
         loaded = true;
 
         if (!window.Notification) {
@@ -70,7 +69,7 @@
 {#if loaded}
 <div class="container" in:fly|global={{x: 10}}>
     <div class="btn">
-        <button in:fly|global={{y: 5, delay: 100}} class="permission button {$isSubscribed && !$subPermissionDenied ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied || !$subCheckingDone || !window.Notification} on:click={subStatus}>
+        <button in:fly|global={{y: 5, delay: 100}} class="permission button {$isSubscribed && !$subPermissionDenied ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied || !$subCheckingDone || !window.Notification} onclick={subStatus}>
             {#if $subPermissionDenied}
                 <i class="fa-solid fa-bell-slash"></i> Denied
             {:else}
@@ -85,10 +84,10 @@
                 {/if}
             {/if}
         </button>
-        <button in:fly|global={{y: 5, delay: 150}} class="refresh button" disabled={$isOffline || fetching} on:click={getNotices}>
+        <button in:fly|global={{y: 5, delay: 150}} class="refresh button" disabled={$isOffline || fetching} onclick={getNotices}>
             <i class="fa-solid fa-retweet"></i> Refresh
         </button>
-        <button in:fly|global={{y: 5, delay: 200}} class="clear button" on:click={() => {
+        <button in:fly|global={{y: 5, delay: 200}} class="clear button" onclick={() => {
             deleteFromDB("notices", "aiub");
             parseNotices([]);
         }}>

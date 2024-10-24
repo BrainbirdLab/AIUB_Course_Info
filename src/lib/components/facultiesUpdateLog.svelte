@@ -1,0 +1,10 @@
+<script lang="ts">
+    import { slide } from "svelte/transition";
+    import { facultiesIsFetching } from "$lib/store";
+</script>
+
+{#if $facultiesIsFetching}
+<div class="update-log" transition:slide={{ axis: "y" }}>
+    <div class="mid">Getting faculty data...</div>
+</div>
+{/if}

@@ -6,7 +6,7 @@
     import { showLogin } from "$lib/store";
     import { goto } from "$app/navigation";
 
-    let loaded = false;
+    let loaded = $state(false);
 
     onMount(() => {
         if (!$showLogin){

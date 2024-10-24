@@ -6,23 +6,24 @@
     import { GetData } from "$lib/fetcher";
     import { goto } from "$app/navigation";
 
-	let usernameLabel = "AIUB ID";
-	let passwordLabel = "Password";
-	let username: HTMLInputElement;
-	let password: HTMLInputElement;
-	let agree: HTMLInputElement;
+	let usernameLabel = $state("AIUB ID");
+	let passwordLabel = $state("Password");
+	let username: HTMLInputElement = $state() as HTMLInputElement;
+	let password: HTMLInputElement = $state() as HTMLInputElement;
+	let agree: HTMLInputElement = $state() as HTMLInputElement;
 
-	let agreeChecked = false;
+	let agreeChecked = $state(false);
 
-	let uncheckedError = "";
+	let uncheckedError = $state("");
 	
 
-	let submitting = false;
+	let submitting = $state(false);
 
-	let showPassword = false;
+	let showPassword = $state(false);
 
-	function handleForm(){
+	function handleForm(e: Event) {
 		//console.log("Reading form");
+		e.preventDefault();
 
 		if (username.value == "") {
 			//console.log("Username is empty");
@@ -67,7 +68,7 @@
 		});
 	}
 
-	let loaded = false;
+	let loaded = $state(false);
 
 	onMount(() => {
 		loaded = true;
@@ -77,20 +78,20 @@
 
 {#if loaded}
 <div class="formWrapper">
-	<form on:submit|preventDefault={handleForm} class="form" in:fly={{y: 20, delay: 200}}>
+	<form onsubmit={handleForm} class="form" in:fly={{y: 20, delay: 200}}>
 		<div class="title" in:fly|global={{x: -10, delay: 200}}>
 			<Logo />
 			Login with your AIUB ID
 		</div>
 		{#if !submitting}
 		<div class="formfield" in:fly|global={{y: 10, delay: 250}}>
-			<input on:input={()=> {usernameLabel = 'AIUB ID'}}  placeholder="dd" type="text" bind:this={username} id="userid" name="UserName" />
+			<input oninput={()=> {usernameLabel = 'AIUB ID'}}  placeholder="dd" type="text" bind:this={username} id="userid" name="UserName" />
 			<label for="UserName">{@html usernameLabel}</label>
 		</div>
 		<div class="formfield mb-5" in:fly|global={{y: 10, delay: 300}}>
-			<input on:input={() => {passwordLabel = 'Password'}} placeholder="99" type="{showPassword ? "text" : "password"}" bind:this={password} id="password" name="Password" />
+			<input oninput={() => {passwordLabel = 'Password'}} placeholder="99" type="{showPassword ? "text" : "password"}" bind:this={password} id="password" name="Password" />
 			<label for="Password">{@html passwordLabel}</label>
-			<button in:fade|global={{delay: 500}} class="eye" type="button" on:click={()=> {showPassword = !showPassword}}>
+			<button aria-label="show" in:fade|global={{delay: 500}} class="eye" type="button" onclick={()=> {showPassword = !showPassword}}>
 				<i class="fa-solid {showPassword ? "fa-eye-slash" : "fa-eye"}"></i>
 			</button>
 		</div>
@@ -123,7 +124,6 @@
 	</form>
 </div>
 {/if}
-
 
 <style lang="scss">
 

@@ -5,11 +5,11 @@
     import { flip } from 'svelte/animate';
     import { fade, fly } from 'svelte/transition';
 
-    let loaded = false;
+    let loaded = $state(false);
 
-    $: creditsCompleted = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
+    let creditsCompleted = $derived(Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0));
 
-    $: {
+    $effect(() => {
         Object.keys($unlockedCourses).forEach((courseId) => {
             if (creditsPrerequisitesObj[courseId]) {
                 if ((creditsPrerequisitesObj[courseId] > creditsCompleted)){
@@ -17,41 +17,38 @@
                 }
             }
         });
-    }
+    });
 
 
     const filterOptions: string[] = ['All', 'Registered', 'Unregistered'];
 
-    let selectedGroup = "All";
+    let selectedGroup = $state("All");
 
-    $: observeables = Object.entries($unlockedCourses);
-
-    $: filteredCourses = observeables;
-
-    let filterValue = '';
-
-    $: {
+    let observeables = $derived.by(() => {
         if (selectedGroup) {
             if (selectedGroup === 'Registered') {
-                observeables = Object.entries($unlockedCourses).filter(([courseId, _]) => $preregisteredCourses[courseId]);
+                return Object.entries($unlockedCourses).filter(([courseId, _]) => $preregisteredCourses[courseId]);
             } else if (selectedGroup === 'Unregistered') {
-                observeables = Object.entries($unlockedCourses).filter(([courseId, _]) => !$preregisteredCourses[courseId]);
+                return Object.entries($unlockedCourses).filter(([courseId, _]) => !$preregisteredCourses[courseId]);
             } else {
-                observeables = Object.entries($unlockedCourses);
+                return Object.entries($unlockedCourses);
             }
+        } else {
+            return Object.entries($unlockedCourses);
         }
-    }
+    });
 
-
-    $: {
+    let filteredCourses = $derived.by(() => {
         if (filterValue) {
-            filteredCourses = observeables.filter(([_, courseInfo]) => {
+            return observeables.filter(([_, courseInfo]) => {
                 return courseInfo.course_name.toLowerCase().includes(filterValue.toLowerCase());
             });
         } else {
-            filteredCourses = observeables;
+            return observeables;
         }
-    }
+    })
+    
+    let filterValue = $state('');
 
     onMount(() => {
         if ($showLogin){
@@ -80,7 +77,7 @@
     <div class="search" in:fly|global={{x: 10}}>
         <i class="fa-solid fa-magnifying-glass"></i>
         <input type="text" autocomplete="off" placeholder="Search courses..." bind:value={filterValue} />
-        <button class="clear" on:click={() => filterValue = ''}>
+        <button aria-label="close" class="clear" onclick={() => filterValue = ''}>
             <i class="fa-solid fa-times"></i>
         </button>
     </div>

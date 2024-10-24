@@ -5,23 +5,22 @@
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
 
-    let loaded = false;
+    let loaded = $state(false);
 
-    $: creditsCompleted = Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0);
+    let creditsCompleted = $derived(Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0));
 
-    let filteredCourses = Object.entries($completedCourses);
-
-    let filterValue = '';
-
-    $: {
+    
+    let filterValue = $state('');
+    
+    let filteredCourses = $derived.by(() => {
         if (filterValue) {
-            filteredCourses = Object.entries($completedCourses).filter(([courseId, courseInfo]) => {
+            return Object.entries($completedCourses).filter(([courseId, courseInfo]) => {
                 return courseInfo.course_name.toLowerCase().includes(filterValue.toLowerCase());
             });
         } else {
-            filteredCourses = Object.entries($completedCourses);
+            return Object.entries($completedCourses);
         }
-    }
+    })
 
     onMount(() => {
         if ($showLogin){
@@ -40,7 +39,7 @@
     <div class="search" in:fly|global={{x: 10}}>
         <i class="fa-solid fa-magnifying-glass"></i>
         <input type="text" autocomplete="off" placeholder="Search courses..." bind:value={filterValue}/>
-        <button class="clear" on:click={() => filterValue = ''}>
+        <button class="clear" aria-label="clear" onclick={() => filterValue = ''}>
             <i class="fa-solid fa-times"></i>
         </button>
     </div>

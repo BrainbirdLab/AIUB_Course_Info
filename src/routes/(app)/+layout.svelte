@@ -16,6 +16,8 @@
     import PopupModal from "$lib/components/popupModal.svelte";
     import { goto, onNavigate, pushState } from "$app/navigation";
     import NavigationIndicator from "$lib/components/NavigationIndicator.svelte";
+    import CalenderUpdateLog from "$lib/components/calenderUpdateLog.svelte";
+    import FacultiesUpdateLog from "$lib/components/facultiesUpdateLog.svelte";
 
     onNavigate(() => {
         $currentPage = (window.location.pathname.at(-1) === '/' && window.location.pathname != '/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
@@ -240,7 +242,7 @@
 
 </script>
 
-<svelte:body on:contextmenu|preventDefault />
+<svelte:body oncontextmenu={(e) => e.preventDefault()}  />
 
 {#if !$pageLoaded}
 	<div class="preload" in:fade out:fly={{ y: 10 }}>
@@ -254,7 +256,7 @@
         <PopupModal />
 
         <div class="user" in:fade>
-            <i class="fa-solid fa-user"></i> Hello, {$User}! <button class="option" on:click={showOptions}>
+            <i class="fa-solid fa-user"></i> Hello, {$User}! <button class="option" aria-label="Options" onclick={showOptions}>
                 <i class="fa-solid fa-gear"></i>
             </button>
         </div>
@@ -262,6 +264,9 @@
         <Navbar />
 
         <DataUpdateLog />
+        <CalenderUpdateLog />
+        <FacultiesUpdateLog />
+        
         {/if}
         <slot></slot>
     </div>

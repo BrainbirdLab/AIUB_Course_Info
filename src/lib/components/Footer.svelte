@@ -1,6 +1,12 @@
 <script lang="ts">
     const version = __VERSION__;
-    export let padding: string = "0px";
+	
+	interface Props {
+		padding?: string
+	}
+
+    let {padding = "0px"} : Props = $props();
+
 </script>
 
 <footer class="footer" style:padding={padding}>

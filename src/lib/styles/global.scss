@@ -338,14 +338,20 @@ table {
     }
 }
 
-.mid {
-    font-size: 0.7rem;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--accent);
-    margin: 0 0 10px 0;
+.update-log {
+    .mid {
+        font-size: 0.7rem;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent);
+        padding: 10px;
+    }
+    i {
+        font-size: inherit;
+        color: inherit;
+    }
 }
 
 .filter{

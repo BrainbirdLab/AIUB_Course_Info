@@ -4,11 +4,11 @@
     import { onMount } from "svelte";
     import { fly, slide } from "svelte/transition";
 
-    let loaded = false;
+    let loaded = $state(false);
 
-    let titleText: string = "";
+    let titleText: string = $state("");
 
-    let tbl: HTMLTableElement;
+    let tbl: HTMLTableElement = $state() as HTMLTableElement;
 
     onMount(() => {
 
@@ -26,13 +26,6 @@
 </script>
 
 {#if loaded}
-    {#if $calenderFetching}
-        <div class="content" transition:slide={{ axis: "y" }}>
-            <div class="mid">
-                Getting data...
-            </div>
-        </div>
-    {/if}
     {#if !$calendarData.table}
         <div class="empty">
             No data avaliable

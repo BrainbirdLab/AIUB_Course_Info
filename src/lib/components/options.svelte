@@ -103,7 +103,7 @@
 							id="showGrade"
 							bind:checked={$showGrade}
 						/>
-						<span class="toggleButton" />
+						<span class="toggleButton"></span>
 					</label>
 				</div>
 			</div>
