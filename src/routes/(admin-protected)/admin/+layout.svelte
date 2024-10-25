@@ -7,6 +7,8 @@
 	import { fade, fly } from "svelte/transition";
 	import Logo from "$lib/components/Logo.svelte";
 
+	let { children } = $props();
+
     onMount(() => {
         pageLoaded.value = true;
     });
@@ -21,7 +23,7 @@
 	</div>
 {:else}
     <div class="container">
-        <slot></slot>
+		{@render children()}
     </div>
 {/if}
 
