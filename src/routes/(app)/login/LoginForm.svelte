@@ -212,10 +212,6 @@
 		height: 100%;
 		transition: 150ms ease-in-out;
 
-		&:has(.submitting){
-			height: 200px;
-		}
-
 		.title{
 			display: flex;
 			flex-direction: column;

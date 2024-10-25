@@ -18,6 +18,8 @@
     import CalenderUpdateLog from "$lib/components/calenderUpdateLog.svelte";
     import FacultiesUpdateLog from "$lib/components/facultiesUpdateLog.svelte";
 
+    let { children } = $props();
+
     onNavigate(() => {
         currentPage.value = (window.location.pathname.at(-1) === '/' && window.location.pathname != '/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
     });
@@ -258,7 +260,9 @@
         <FacultiesUpdateLog />
         
         {/if}
-        <slot></slot>
+        
+        {@render children()}
+
     </div>
 {/if}
 

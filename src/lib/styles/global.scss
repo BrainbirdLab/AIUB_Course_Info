@@ -12,7 +12,6 @@
     box-sizing: border-box;
     scrollbar-width: 0;
     user-select: none;
-    scrollbar-width: none;
 	-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 	-webkit-tap-highlight-color: transparent;
 	-webkit-user-select: none;
@@ -336,6 +335,10 @@ table {
         border-collapse: collapse;
         text-align: center;
     }
+}
+
+.form:has(.submitting){
+    height: 200px !important;
 }
 
 .update-log {
