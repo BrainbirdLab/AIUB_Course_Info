@@ -13,7 +13,7 @@
 
 </script>
 
-<svelte:body on:contextmenu|preventDefault />
+<svelte:body oncontextmenu={(e) => e.preventDefault()} />
 
 {#if !pageLoaded.value}
 	<div class="preload" in:fade out:fly={{ y: 10 }}>

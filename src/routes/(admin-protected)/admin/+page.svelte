@@ -4,21 +4,21 @@
 
     let controller: AbortController | null = null; 
 
-    let titleLabel = "Title";
-    let messageLabel = "Message";
-    let actLabel = "Act";
-    let authLabel = "Auth Key";
+    let titleLabel = $state("Title");
+    let messageLabel = $state("Message");
+    let actLabel = $state("Act");
+    let authLabel = $state("Auth Key");
 
     let title: HTMLInputElement;
     let message: HTMLInputElement;
     let act: HTMLInputElement;
     let auth: HTMLInputElement;
 
-    let submitting = false;
-    let updateLog = "";
-    let updateStatus = "";
+    let submitting = $state(false);
+    let updateLog = $state("");
+    let updateStatus = $state("");
 
-    let showAuth = false;
+    let showAuth = $state(false);
 
     let timeout: number;
     
@@ -113,25 +113,25 @@
                 {/if}
             </div>
             <div class="formfield" in:fly|global={{y: 10, delay: 300}}>
-                <input on:input={() => {authLabel = 'Auth Key'}} placeholder="99" type="{showAuth ? "text" : "password"}" bind:this={auth} id="auth" name="auth" />
+                <input oninput={() => {authLabel = 'Auth Key'}} placeholder="99" type="{showAuth ? "text" : "password"}" bind:this={auth} id="auth" name="auth" />
                 <label for="auth">{@html authLabel}</label>
-                <button in:fade|global={{delay: 500}} class="eye" type="button" on:click={()=> {showAuth = !showAuth}}>
+                <button aria-label="show/hide" in:fade|global={{delay: 500}} class="eye" type="button" onclick={()=> {showAuth = !showAuth}}>
                     <i class="fa-solid {showAuth ? "fa-eye-slash" : "fa-eye"}"></i>
                 </button>
             </div>
             <div class="formfield" in:fly|global={{y: 10, delay: 250}}>
-                <input on:input={()=> {titleLabel = 'Title'}}  placeholder="" type="text" bind:this={title} id="title" name="title" />
+                <input oninput={()=> {titleLabel = 'Title'}}  placeholder="" type="text" bind:this={title} id="title" name="title" />
                 <label for="title">{@html titleLabel}</label>
             </div>
             <div class="formfield" in:fly|global={{y: 10, delay: 250}}>
-                <input on:input={()=> {messageLabel = 'Message'}}  placeholder="" type="text" bind:this={message} id="message" name="message" />
+                <input oninput={()=> {messageLabel = 'Message'}}  placeholder="" type="text" bind:this={message} id="message" name="message" />
                 <label for="message">{@html messageLabel}</label>
             </div>
             <div class="formfield" in:fly|global={{y: 10, delay: 250}}>
-                <input on:input={()=> {actLabel = 'Act'}}  placeholder="" type="text" bind:this={act} id="act" name="act" />
+                <input oninput={()=> {actLabel = 'Act'}}  placeholder="" type="text" bind:this={act} id="act" name="act" />
                 <label for="act">{@html actLabel}</label>
             </div>
-            <button type="submit" disabled={submitting} in:fly|global={{y: 10, delay: 350}} on:click={sendPush}>Send <i class="fa-solid fa-sign-in"></i></button>
+            <button type="submit" disabled={submitting} in:fly|global={{y: 10, delay: 350}} onclick={sendPush}>Send <i class="fa-solid fa-sign-in"></i></button>
         </div>
     </div>
 </div>
