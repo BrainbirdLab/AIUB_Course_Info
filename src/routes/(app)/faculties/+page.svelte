@@ -4,16 +4,15 @@
         type FacultyType,
         faculties,
         showLogin,
-        facultiesIsFetching,
         facultyColorsMap,
-    } from "$lib/store";
+    } from "$lib/store.svelte";
     import { onMount } from "svelte";
     //import { flip } from "svelte/animate";
     import { fly, slide } from "svelte/transition";
 
     let loaded = $state(false);
 
-    let filterOptions = $derived($faculties
+    let filterOptions = $derived(faculties.value
         .map((faculty: FacultyType) => faculty.Faculty)
         .filter((value, index, self) => self.indexOf(value) === index && value));
 
@@ -30,7 +29,7 @@
     
     $effect(() => {
 
-        let filtered = $faculties.filter((faculty: FacultyType) => {
+        let filtered = faculties.value.filter((faculty: FacultyType) => {
             if (selectedGroup === "All") {
                 return true;
             }
@@ -68,7 +67,7 @@
     }
 
     onMount(() => {
-        if ($showLogin) {
+        if (showLogin.value) {
             goto("/login");
         }
         loaded = true;
@@ -76,7 +75,7 @@
 </script>
 
 {#if loaded}
-    {#if $faculties.length > 0}
+    {#if faculties.value.length > 0}
     <div class="search" in:fly|global={{ x: 10 }}>
         <i class="fa-solid fa-magnifying-glass"></i>
         <input

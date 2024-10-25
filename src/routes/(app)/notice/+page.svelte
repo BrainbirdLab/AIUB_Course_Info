@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied, subCheckingDone, showLogin } from "$lib/store";
+    import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied, subCheckingDone, showLogin } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fly, slide } from "svelte/transition";
     import { checkSubscription, fetchNoticesFromServer, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "$lib/fetcher";
@@ -14,7 +14,7 @@
     
     onMount(() => {
         
-        if ($showLogin){
+        if (showLogin.value){
             goto("/login");
         }
 
@@ -24,7 +24,7 @@
             return;
         }
 
-        subPermissionDenied.set(window.Notification.permission === "denied");
+        subPermissionDenied.value = window.Notification.permission === "denied";
         try {
             // check subscription status
             checkSubscription(navigator.serviceWorker.controller);
@@ -50,7 +50,7 @@
     }
 
     async function subStatus() {
-        if ($isSubscribed) {
+        if (isSubscribed.value) {
             await unsubscribeFromNotice(navigator.serviceWorker.controller);
         } else {
             if (!window.Notification) {
@@ -69,22 +69,22 @@
 {#if loaded}
 <div class="container" in:fly|global={{x: 10}}>
     <div class="btn">
-        <button in:fly|global={{y: 5, delay: 100}} class="permission button {$isSubscribed && !$subPermissionDenied ? "unsubscribe" : ""}" disabled={$isOffline || $isSubUnsubRunning || $subPermissionDenied || !$subCheckingDone || !window.Notification} onclick={subStatus}>
-            {#if $subPermissionDenied}
+        <button in:fly|global={{y: 5, delay: 100}} class="permission button {isSubscribed.value && !subPermissionDenied.value ? "unsubscribe" : ""}" disabled={isOffline.value || isSubUnsubRunning.value || subPermissionDenied.value || !subCheckingDone.value || !window.Notification} onclick={subStatus}>
+            {#if subPermissionDenied.value}
                 <i class="fa-solid fa-bell-slash"></i> Denied
             {:else}
                 {#if window.Notification}
-                {#if window.Notification.permission === "granted" && $isSubscribed}
-                    <i class="fa-solid fa-bell-slash"></i> {#if $isSubUnsubRunning} Unsubscribing... {:else} Unsubscribe {/if}
+                {#if window.Notification.permission === "granted" && isSubscribed.value}
+                    <i class="fa-solid fa-bell-slash"></i> {#if isSubUnsubRunning.value} Unsubscribing... {:else} Unsubscribe {/if}
                 {:else}
-                    <i class="fa-solid fa-bell"></i> {#if $isSubUnsubRunning} Subscribing... {:else} Subscribe {/if}
+                    <i class="fa-solid fa-bell"></i> {#if isSubUnsubRunning.value} Subscribing... {:else} Subscribe {/if}
                 {/if}
                 {:else}
                     <i class="fa-solid fa-bell-slash"></i> Not Supported
                 {/if}
             {/if}
         </button>
-        <button in:fly|global={{y: 5, delay: 150}} class="refresh button" disabled={$isOffline || fetching} onclick={getNotices}>
+        <button in:fly|global={{y: 5, delay: 150}} class="refresh button" disabled={isOffline.value || fetching} onclick={getNotices}>
             <i class="fa-solid fa-retweet"></i> Refresh
         </button>
         <button in:fly|global={{y: 5, delay: 200}} class="clear button" onclick={() => {
@@ -93,7 +93,7 @@
         }}>
             <i class="fa-solid fa-trash"></i> Clear
         </button>
-        <a in:fly|global={{y: 5, delay: 250}} href="https://www.aiub.edu" target="_blank" class="button" class:disabled={$isOffline}>
+        <a in:fly|global={{y: 5, delay: 250}} href="https://www.aiub.edu" target="_blank" class="button" class:disabled={isOffline.value}>
             <i class="fa-solid fa-globe"></i>
             <div class="txt">
                 AIUB
@@ -101,7 +101,7 @@
             </div>
         </a>
     </div>
-    {#if !$isSubscribed}
+    {#if !isSubscribed.value}
         <div class="note acc" transition:slide={{axis:"y", duration: 100}}>
             <i class="fa-solid fa-info-circle"></i> Subscribe to stay updated on important notice from AIUB and us.
         </div>
@@ -110,8 +110,8 @@
         <div class="loading" transition:slide={{axis:"y", duration: 100}} class:error={loadingText == "Error fetching notices" ? true : false}>{loadingText}</div>
     {/if}
     <div class="notices">      
-        {#if $allNotices && $allNotices.length > 0}
-            {#each $allNotices as notice, i (notice.notice)}
+        {#if allNotices.value && allNotices.value.length > 0}
+            {#each allNotices.value as notice, i (notice.notice)}
                 <div class="notice" animate:flip in:fly|global={{x: 5, delay: (i+1)*100}}>
                     <div class="date">
                         {notice.date}

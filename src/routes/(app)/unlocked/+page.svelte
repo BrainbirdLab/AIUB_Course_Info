@@ -1,19 +1,19 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import { unlockedCourses, parseCourseId, creditsPrerequisitesObj, completedCourses, preregisteredCourses, getIconColor, getIcon, allCourses, showLogin } from '$lib/store';
+    import { unlockedCourses, parseCourseId, creditsPrerequisitesObj, completedCourses, preregisteredCourses, getIconColor, getIcon, allCourses, showLogin } from '$lib/store.svelte';
     import { onMount } from 'svelte';
     import { flip } from 'svelte/animate';
     import { fade, fly } from 'svelte/transition';
 
     let loaded = $state(false);
 
-    let creditsCompleted = $derived(Object.values($completedCourses).reduce((acc, course) => acc + (course.credit || 0), 0));
+    let creditsCompleted = $derived(Object.values(completedCourses.value).reduce((acc, course) => acc + (course.credit || 0), 0));
 
     $effect(() => {
-        Object.keys($unlockedCourses).forEach((courseId) => {
+        Object.keys(unlockedCourses.value).forEach((courseId) => {
             if (creditsPrerequisitesObj[courseId]) {
                 if ((creditsPrerequisitesObj[courseId] > creditsCompleted)){
-                    delete $unlockedCourses[courseId];
+                    delete unlockedCourses.value[courseId];
                 }
             }
         });
@@ -27,14 +27,14 @@
     let observeables = $derived.by(() => {
         if (selectedGroup) {
             if (selectedGroup === 'Registered') {
-                return Object.entries($unlockedCourses).filter(([courseId, _]) => $preregisteredCourses[courseId]);
+                return Object.entries(unlockedCourses.value).filter(([courseId, _]) => preregisteredCourses.value[courseId]);
             } else if (selectedGroup === 'Unregistered') {
-                return Object.entries($unlockedCourses).filter(([courseId, _]) => !$preregisteredCourses[courseId]);
+                return Object.entries(unlockedCourses.value).filter(([courseId, _]) => !preregisteredCourses.value[courseId]);
             } else {
-                return Object.entries($unlockedCourses);
+                return Object.entries(unlockedCourses.value);
             }
         } else {
-            return Object.entries($unlockedCourses);
+            return Object.entries(unlockedCourses.value);
         }
     });
 
@@ -51,7 +51,7 @@
     let filterValue = $state('');
 
     onMount(() => {
-        if ($showLogin){
+        if (showLogin.value){
             goto("/login");
         }
         loaded = true;
@@ -73,7 +73,7 @@
 </div>
 {#if observeables && observeables.length > 0} 
 <div class="container">
-    <div class="title" in:fly|global={{x: -10}}>{Object.keys($unlockedCourses).length} Courses available</div>
+    <div class="title" in:fly|global={{x: -10}}>{Object.keys(unlockedCourses.value).length} Courses available</div>
     <div class="search" in:fly|global={{x: 10}}>
         <i class="fa-solid fa-magnifying-glass"></i>
         <input type="text" autocomplete="off" placeholder="Search courses..." bind:value={filterValue} />
@@ -98,7 +98,7 @@
                     (Retake)
                 </div>
                 {/if}
-                {#if $preregisteredCourses[courseId]}
+                {#if preregisteredCourses.value[courseId]}
                     <span class="registered tag">
                         Registered <i class="fa-solid fa-circle-check"></i>
                     </span>
@@ -112,9 +112,9 @@
                 {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
                     {#each courseInfo.prerequisites as prerequisite}
                     <div class="prerequisite tag" data-prereq={prerequisite} style:background={getIconColor(parseCourseId(prerequisite))}>
-                        {#if $allCourses[prerequisite]}
+                        {#if allCourses.value[prerequisite]}
                             <div class="prerequisiteInfo">
-                                {$allCourses[prerequisite].course_name}
+                                {allCourses.value[prerequisite].course_name}
                             </div>
                         {/if}
                         {@html getIcon(parseCourseId(prerequisite))} {prerequisite}

@@ -1,8 +1,8 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { showLogin, calendarData, calenderFetching } from "$lib/store";
+    import { showLogin, calendarData } from "$lib/store.svelte";
     import { onMount } from "svelte";
-    import { fly, slide } from "svelte/transition";
+    import { fly } from "svelte/transition";
 
     let loaded = $state(false);
 
@@ -12,7 +12,7 @@
 
     onMount(() => {
 
-        if ($showLogin) {
+        if (showLogin.value) {
             goto("/login");
         }
 
@@ -20,13 +20,13 @@
 
         loaded = true;
 
-        titleText = $calendarData.title;
-        tbl.innerHTML = $calendarData.table;
+        titleText = calendarData.value.title;
+        tbl.innerHTML = calendarData.value.table;
     });
 </script>
 
 {#if loaded}
-    {#if !$calendarData.table}
+    {#if !calendarData.value.table}
         <div class="empty">
             No data avaliable
         </div>

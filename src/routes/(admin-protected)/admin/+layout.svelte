@@ -2,20 +2,20 @@
 
     import "$lib/styles/global.scss";
 
-    import { pageLoaded } from "$lib/store";
+    import { pageLoaded } from "$lib/store.svelte";
     import { onMount } from "svelte";
 	import { fade, fly } from "svelte/transition";
 	import Logo from "$lib/components/Logo.svelte";
 
     onMount(() => {
-        pageLoaded.set(true);
+        pageLoaded.value = true;
     });
 
 </script>
 
 <svelte:body on:contextmenu|preventDefault />
 
-{#if !$pageLoaded}
+{#if !pageLoaded.value}
 	<div class="preload" in:fade out:fly={{ y: 10 }}>
 		<Logo />
 	</div>

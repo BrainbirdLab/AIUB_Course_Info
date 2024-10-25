@@ -1,7 +1,7 @@
 <script lang="ts">
 
     import { fly } from "svelte/transition";
-    import { showGrade, updateStatus, isOffline, updateLog, clearData, calenderFetching, facultiesIsFetching } from "$lib/store";
+    import { showGrade, updateStatus, isOffline, updateLog, clearData, calenderFetching, facultiesIsFetching } from "$lib/store.svelte";
     import { page } from "$app/stores";
     import { getCalendarData, GetData, getFaculties } from "$lib/fetcher";
     import Footer from "./Footer.svelte";
@@ -51,8 +51,8 @@
 		const Password = localStorage.getItem("Password");
 		if (!UserName || !Password) {
 			console.log("No user name or password");
-			updateLog.set("Credentials not found. Please login again");
-			updateStatus.set("error");
+			updateLog.value = "Credentials not found. Please login again";
+			updateStatus.value = "error";
 			return;
 		}
 
@@ -60,11 +60,11 @@
 			if (error) {
 				return;
 			}
-			updateStatus.set("success");
-			updateLog.set("Data updated");
+			updateStatus.value = "success";
+			updateLog.value = "Data updated";
 			setTimeout(() => {
-				updateStatus.set("");
-				updateLog.set("");
+				updateStatus.value = "";
+				updateLog.value = "";
 			}, 1200);
 		});
 	}
@@ -91,7 +91,7 @@
 						<div class="controller">
 							<div class="textContainer">Show grades</div>
 							<div class="moreInfo">
-								{#if $showGrade}
+								{#if showGrade.value}
 								Grades will be shown in the courses
 								{:else}
 								Grades will not be shown in the courses
@@ -101,7 +101,7 @@
 						<input
 							type="checkbox"
 							id="showGrade"
-							bind:checked={$showGrade}
+							bind:checked={showGrade.value}
 						/>
 						<span class="toggleButton"></span>
 					</label>
@@ -112,17 +112,17 @@
 				in:fly|global={{ y: 10, delay: 100 }}
 			>
 				<button id="updateData"
-					disabled={$updateStatus == "loading" || $isOffline}
+					disabled={updateStatus.value == "loading" || isOffline.value}
 					>Update courses <i class="fa-solid fa-book"></i></button
 				>
 				<button id="updateCalendar"
-					disabled={$calenderFetching || $isOffline}
+					disabled={calenderFetching.value || isOffline.value}
 					>
 					Update Calendar <i class="fa-solid fa-calendar"></i>
 					</button
 				>
 				<button id="updateFaculties"
-					disabled={$facultiesIsFetching || $isOffline}
+					disabled={facultiesIsFetching.value || isOffline.value}
 				>
 					Update Faculties <i class="fa-solid fa-chalkboard-user"></i>
 				</button>

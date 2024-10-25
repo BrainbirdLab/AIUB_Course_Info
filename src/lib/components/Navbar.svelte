@@ -1,6 +1,6 @@
 <script lang="ts">
 
-    import { currentPage } from "$lib/store";
+    import { currentPage } from "$lib/store.svelte";
     import { fade } from "svelte/transition";
 
 </script>
@@ -10,7 +10,7 @@
         class="navBtn"
         id="nav-Routine"
 		href="/"
-        class:shown={$currentPage == "/"}
+        class:shown={currentPage.value == "/"}
     >
         <div class="content pointer-none">
             Routine <i class="fa-regular fa-calendar-days"></i>
@@ -20,7 +20,7 @@
         class="navBtn"
         id="nav-Completed"
 		href="/complete"
-        class:shown={$currentPage == "/complete"}
+        class:shown={currentPage.value == "/complete"}
     >
         <div class="content pointer-none" >
             Completed <i class="fa-solid fa-circle-check"></i>
@@ -30,7 +30,7 @@
         class="navBtn"
         id="nav-Unlocked"
 		href="/unlocked"
-        class:shown={$currentPage == "/unlocked"}
+        class:shown={currentPage.value == "/unlocked"}
     >
         <div class="content pointer-none">
             Unlocked <i class="fa-solid fa-unlock"></i>
@@ -40,7 +40,7 @@
 		class="navBtn"
 		id="nav-Notice"
 		href="/notice"
-		class:shown={$currentPage == "/notice"}
+		class:shown={currentPage.value == "/notice"}
 	>
 		<div class="content pointer-none">
 			Notice <i class="fa-solid fa-bell"></i>
@@ -50,7 +50,7 @@
 		class="navBtn"
 		id="nav-calendar"
 		href="/calendar"
-		class:shown={$currentPage == "/calendar"}
+		class:shown={currentPage.value == "/calendar"}
 	>
 		<div class="content pointer-none">
 			Calendar <i class="fa-solid fa-calendar"></i>
@@ -60,7 +60,7 @@
 		class="navBtn"
 		id="nav-faculties"
 		href="/faculties"
-		class:shown={$currentPage == "/faculties"}
+		class:shown={currentPage.value == "/faculties"}
 	>
 		<div class="content pointer-none">
 			Faculties <i class="fa-solid fa-chalkboard-user"></i>

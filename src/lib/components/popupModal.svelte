@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { updateStatus, updateLog } from "$lib/store";
+    import { updateStatus, updateLog } from "$lib/store.svelte";
     import { fly } from "svelte/transition";
 
     function resetError(node: HTMLElement) {
@@ -9,8 +9,8 @@
 				target.classList.contains("modalwrapper") ||
 				target.classList.contains("ok")
 			) {
-				updateStatus.set("");
-				updateLog.set("");
+				updateStatus.value = "";
+				updateLog.value = "";
 			}
 		};
 
@@ -22,11 +22,11 @@
 	}
 </script>
 
-{#if $updateStatus == "error"}
+{#if updateStatus.value == "error"}
 	<div class="modalwrapper" use:resetError>
 		<div class="errorModal" transition:fly|global={{ y: 10 }}>
 			<div class="text">
-				{$updateLog}
+				{updateLog.value}
 				<i class="fa-solid fa-triangle-exclamation"></i>
 			</div>
 			<button class="ok">Ok</button>

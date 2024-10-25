@@ -2,10 +2,9 @@
     
     import "$lib/styles/global.scss";
 
-    import { allCourses, clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, currentPage, User, type SemesterDataType, calendarData, faculties } from "$lib/store";
-    import { onDestroy, onMount } from "svelte";
+    import { allCourses, clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, currentPage, User, type SemesterDataType, calendarData, faculties } from "$lib/store.svelte";
+    import { onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
-    import type { Unsubscriber } from "svelte/store";
     import { showToastMessage } from "@itsfuad/domtoastmessage";
     import Logo from "$lib/components/Logo.svelte";
     import { checkSubscription, initNotices, parseNotices, updateNoticesLocally } from "$lib/fetcher";
@@ -20,7 +19,7 @@
     import FacultiesUpdateLog from "$lib/components/facultiesUpdateLog.svelte";
 
     onNavigate(() => {
-        $currentPage = (window.location.pathname.at(-1) === '/' && window.location.pathname != '/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
+        currentPage.value = (window.location.pathname.at(-1) === '/' && window.location.pathname != '/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
     });
 
     
@@ -48,22 +47,22 @@
         if (registration.active) {
             navigator.serviceWorker.addEventListener("message", (event: any) => {
                 if (event.data.type == "subscribed") {
-                    isSubUnsubRunning.set(false);
-                    subCheckingDone.set(true);
+                    isSubUnsubRunning.value = false;
+                    subCheckingDone.value = true;
                     if (!event.data.data) {
                         return;
                     }
                     updateNoticesLocally();
-                    isSubscribed.set(true);
+                    isSubscribed.value = true;
                     localStorage.setItem("isSubscribed", "true");
                     console.log("Subscribed to push notifications");
                 } else if (event.data.type == "unsubscribed") {
-                    isSubUnsubRunning.set(false);
-                    subCheckingDone.set(true);
+                    isSubUnsubRunning.value = false;
+                    subCheckingDone.value = true;
                     if (!event.data.data) {
                         return;
                     }
-                    isSubscribed.set(false);
+                    isSubscribed.value = false;
                     localStorage.setItem("isSubscribed", "false");
                     console.log("Unsubscribed from push notifications");
                 } else if (event.data.type == "notice-update") {
@@ -75,28 +74,24 @@
         }
     }
 
-    let unsub: Unsubscriber;
-
-    let unsubLoginState: Unsubscriber;
-
     onMount(async () => {
 
-        $currentPage = (window.location.pathname.at(-1) === '/' && window.location.pathname != '/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
+        currentPage.value = (window.location.pathname.at(-1) === '/' && window.location.pathname != '/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
 
         console.log("Mounted")
 
-        unsubLoginState = showLogin.subscribe((value) => {
-            if (value) {
+        $effect(() => {
+            if (showLogin.value) {
                 goto("/login");
             }
         });
 
         window.addEventListener("offline", () => {
-            isOffline.set(true);
+            isOffline.value = true;
         });
 
         window.addEventListener("online", () => {
-            isOffline.set(false);
+            isOffline.value = false;
             checkSubscription(navigator.serviceWorker.controller);
         });
 
@@ -108,9 +103,9 @@
             navigator.permissions.query({ name: 'notifications' }).then(function (notificationPerm) {
                 notificationPerm.onchange = function () {
                     console.log("User decided to change his seettings. New permission: " + notificationPerm.state);
-                    subPermissionDenied.set(notificationPerm.state === "denied");
-                    if ($subPermissionDenied) {
-                        isSubscribed.set(false);
+                    subPermissionDenied.value = notificationPerm.state === "denied";
+                    if (subPermissionDenied.value) {
+                        isSubscribed.value = false;
                         localStorage.setItem("isSubscribed", "false");
                     }
                 };
@@ -123,16 +118,16 @@
 
             if (!window.Notification) {
                 console.log("Notification not supported");
-                isSubscribed.set(false);
+                isSubscribed.value = false;
                 localStorage.setItem("isSubscribed", "false");
-                pageLoaded.set(true);
+                pageLoaded.value = true;
                 return;
             }
 
             const permAllowed = window.Notification.permission === "granted";
             const sub = localStorage.getItem("isSubscribed") === "true";
-            isSubscribed.set(permAllowed && sub);
-            localStorage.setItem("isSubscribed", $isSubscribed ? "true" : "false");
+            isSubscribed.value = permAllowed && sub;
+            localStorage.setItem("isSubscribed", isSubscribed.value ? "true" : "false");
             checkSubscription(navigator.serviceWorker.controller);
             try {
                 initNotices();
@@ -145,13 +140,8 @@
             console.error(error);
         }
 
-        pageLoaded.set(true);
+        pageLoaded.value = true;
     })
-
-    onDestroy(() => {
-        unsub?.();
-        unsubLoginState?.();
-    });
 
     function validateUser() {
         try {
@@ -159,16 +149,16 @@
 
 			if (raw == null || raw == undefined || raw == "" || raw == "{}") {
 				console.log("No data");
-                showLogin.set(true);
+                showLogin.value = true;
                 clearData();
 				return;
 			}
 
 			const sem = localStorage.getItem("semester") as string;
 
-			semesterName.set(sem);
+			semesterName.value = sem;
 
-			User.set(localStorage.getItem("user") || "");
+			User.value = localStorage.getItem("user") || "";
 
 			const data = JSON.parse(raw);
 
@@ -207,35 +197,35 @@
                 
             const parsedFaculties = JSON.parse(rawFaculties || "[]");
                 
-            completedCourses.set(parsedCompletedCourses);
-            preregisteredCourses.set(parsedPreregisteredCourses);
-            unlockedCourses.set(parsedUnlockedCourses);
-            allCourses.set(parsedAllCourses);
-            calendarData.set(parsedCalendar);
-            faculties.set(parsedFaculties);
+            completedCourses.value = parsedCompletedCourses;
+            preregisteredCourses.value = parsedPreregisteredCourses;
+            unlockedCourses.value = parsedUnlockedCourses;
+            allCourses.value = parsedAllCourses;
+            calendarData.value = parsedCalendar;
+            faculties.value = parsedFaculties;
 
 			const gradeshow = localStorage.getItem("showGrade") as string;
 			if (gradeshow == "true") {
-				showGrade.set(true);
+				showGrade.value = true;
 			} else {
-				showGrade.set(false);
+				showGrade.value = false;
 			}
 
 			if (data satisfies SemesterDataType) {
 				//console.log("Data loaded from local storage");
-				semesterClassRoutine.set(data);
+				semesterClassRoutine.value = data;
 				//console.log("Semester set");
-				showLogin.set(false);
+				showLogin.value = false;
 				//console.log("Login shown");
 			} else {
 				console.log("Invalid data");
-                showLogin.set(true);
+                showLogin.value = true;
 				clearData();
 			}
 			//console.log("Loaded set to true");
 		} catch (e) {
 			console.log("Error loading data");
-            showLogin.set(true);
+            showLogin.value = true;
 			clearData();
 		}
     }
@@ -244,19 +234,19 @@
 
 <svelte:body oncontextmenu={(e) => e.preventDefault()}  />
 
-{#if !$pageLoaded}
+{#if !pageLoaded.value}
 	<div class="preload" in:fade out:fly={{ y: 10 }}>
 		<Logo />
 	</div>
 {:else}
     <NavigationIndicator />
     <div class="container">
-        {#if !$showLogin}
+        {#if !showLogin.value}
         <Options />
         <PopupModal />
 
         <div class="user" in:fade>
-            <i class="fa-solid fa-user"></i> Hello, {$User}! <button class="option" aria-label="Options" onclick={showOptions}>
+            <i class="fa-solid fa-user"></i> Hello, {User.value}! <button class="option" aria-label="Options" onclick={showOptions}>
                 <i class="fa-solid fa-gear"></i>
             </button>
         </div>

@@ -1,30 +1,30 @@
 import { PUBLIC_API_SERVER_URL } from "$env/static/public";
 import { readFromDB, writeToDB } from "$lib/db";
 
-import { allCourses, allNotices, calendarData, calenderFetching, completedCourses, faculties, facultiesIsFetching, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store";
+import { allCourses, allNotices, calendarData, calenderFetching, completedCourses, faculties, facultiesIsFetching, isSubUnsubRunning, preregisteredCourses, semesterClassRoutine, semesterName, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, updateLog, updateStatus, User } from "$lib/store.svelte";
 import { showToastMessage } from "@itsfuad/domtoastmessage";
 
 export async function subscribeToNotice(worker: ServiceWorker | null) {
-    isSubUnsubRunning.set(true);
+    isSubUnsubRunning.value = true;
     if (!navigator.onLine) {
         console.log("You are offline");
-        updateStatus.set("error");
-        updateLog.set("You are offline");
-        isSubUnsubRunning.set(false);
+        updateStatus.value = "error";
+        updateLog.value = "You are offline";
+        isSubUnsubRunning.value = false;
         showToastMessage("You are offline");
         return;
     }
     if (!worker) {
         console.log("Service worker not found");
         showToastMessage("Service worker not found");
-        isSubUnsubRunning.set(false);
+        isSubUnsubRunning.value = false;
         return;
     }
 
     if (!window.Notification) {
         console.log("Notifications not supported");
         showToastMessage("Notifications not supported");
-        isSubUnsubRunning.set(false);
+        isSubUnsubRunning.value = false;
         return;
     }
 
@@ -32,25 +32,25 @@ export async function subscribeToNotice(worker: ServiceWorker | null) {
     const permission = await window.Notification.requestPermission();
     if (permission === "granted") {
         console.log("Notification permission granted");
-        subPermissionDenied.set(false);
+        subPermissionDenied.value = false;
         worker?.postMessage({ type: "SUBSCRIBE", api: PUBLIC_API_SERVER_URL });
     } else if (permission === "denied") {
         console.log("Notification permission denied");
-        subPermissionDenied.set(true);
-        isSubUnsubRunning.set(false);
+        subPermissionDenied.value = true;
+        isSubUnsubRunning.value = false;
     } else {
         console.log("Notification permission dismissed");
-        subPermissionDenied.set(false);
-        isSubUnsubRunning.set(false);
+        subPermissionDenied.value = false;
+        isSubUnsubRunning.value = false;
     }
 }
 
 export async function unsubscribeFromNotice(worker: ServiceWorker | null) {
-    isSubUnsubRunning.set(true);
+    isSubUnsubRunning.value = true;
     if (!worker) {
         console.log("Service worker not found");
         showToastMessage("Service worker not found");
-        isSubUnsubRunning.set(false);
+        isSubUnsubRunning.value = false;
         return;
     }
     console.log("Unsubscribing from notifications");
@@ -58,11 +58,11 @@ export async function unsubscribeFromNotice(worker: ServiceWorker | null) {
 }
 
 export async function checkSubscription(worker: ServiceWorker | null) {
-    subCheckingDone.set(false);
+    subCheckingDone.value = false;
     if (!worker) {
         console.log("Service worker not found");
         showToastMessage("Service worker not found");
-        isSubUnsubRunning.set(false);
+        isSubUnsubRunning.value = false;
         return;
     }
     worker?.postMessage({ type: "CHECK_SUBSCRIPTION", api: PUBLIC_API_SERVER_URL });
@@ -70,12 +70,13 @@ export async function checkSubscription(worker: ServiceWorker | null) {
 
 export function parseNotices(notices: string[] | null) {
     if (notices !== null && notices instanceof Array) {
-        allNotices.set([]);
+        allNotices.value = [];
         notices.forEach((notice) => {
             const parts = notice.split("::");
             const date = parts[0];
             const noticeText = parts[1];
             const link = parts[2];
+            /*
             allNotices.update((notices) => {
                 notices.push({ date, notice: noticeText, link });
                 if (notices.length > 10) {
@@ -83,6 +84,11 @@ export function parseNotices(notices: string[] | null) {
                 }
                 return notices;
             });
+            */
+            allNotices.value.push({ date, notice: noticeText, link });
+            if (allNotices.value.length > 10) {
+                allNotices.value.pop(); // remove the first element. first means oldest
+            }
         });
     }
 }
@@ -105,7 +111,7 @@ export async function getCalendarData() {
 
     try {
 
-        calenderFetching.set(true);
+        calenderFetching.value = true;
 
         const res = await fetch("/api/calendar")
         const text = await res.text();
@@ -120,7 +126,7 @@ export async function getCalendarData() {
         const h2 = doc.querySelector("article h2");
 
         if (!title || !h2 || !table) {
-            calenderFetching.set(false);
+            calenderFetching.value = false;
             return;
         }
 
@@ -129,33 +135,33 @@ export async function getCalendarData() {
         localStorage.setItem("calendar", JSON.stringify({ title: titleText, table: table.innerHTML }));
 
         //update store
-        calendarData.set({ title: titleText, table: table.innerHTML });
+        calendarData.value = { title: titleText, table: table.innerHTML };
 
-        calenderFetching.set(false);
+        calenderFetching.value = false;
 
     } catch (e) {
         if (window.navigator?.onLine === false) {
             throw new Error("offline");
         }
-        calenderFetching.set(false);
+        calenderFetching.value = false;
         throw e;
     }
 }
 
 export async function getFaculties() {
     try {
-        facultiesIsFetching.set(true);
+        facultiesIsFetching.value = true;
         const response = await fetch('/api/faculties');
         const json = await response.json() as {"EmployeeProfileLightList": any[]};
         console.log(json);
         const list = json?.EmployeeProfileLightList || [];
-        faculties.set(list);
+        faculties.value = list;
         //write to local storage
         localStorage.setItem("faculties", JSON.stringify(list));
     } catch (err) {
         console.error(err);
     } finally {
-        facultiesIsFetching.set(false);
+        facultiesIsFetching.value = false;
     }
 }
 
@@ -179,14 +185,14 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
     try {
         		//if offline
 		if (!navigator.onLine) {
-			updateLog.set("You are offline");
-			updateStatus.set("error");
+			updateLog.value = "You are offline";
+			updateStatus.value = "error";
             done(true);
 			return null;
 		}
 
-        updateLog.set("Accessing portal...");
-		updateStatus.set("loading");
+        updateLog.value = "Accessing portal...";
+		updateStatus.value = "loading";
 
         //https://course-visualizer-proxy.onrender.com
         const source = new EventSource(`${PUBLIC_API_SERVER_URL}/login?username=${encodeURIComponent(UserName)}&password=${encodeURIComponent(Password)}`, { withCredentials: true });
@@ -197,15 +203,15 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
                 initNotices();
                 getCalendarData();
                 getFaculties();
-                updateLog.set('');
-                updateStatus.set('');
-                User.set(data.result.user);
-                semesterClassRoutine.set(data.result.semesterClassRoutine);
-                unlockedCourses.set(data.result.unlockedCourses);
-                preregisteredCourses.set(data.result.preregisteredCourses);
-                completedCourses.set(data.result.completedCourses);
-                semesterName.set(data.result.currentSemester);
-                allCourses.set(data.result.curriculumncourses);
+                updateLog.value = '';
+                updateStatus.value = '';
+                User.value = data.result.user;
+                semesterClassRoutine.value = data.result.semesterClassRoutine;
+                unlockedCourses.value = data.result.unlockedCourses;
+                preregisteredCourses.value = data.result.preregisteredCourses;
+                completedCourses.value = data.result.completedCourses;
+                semesterName.value = data.result.currentSemester;
+                allCourses.value = data.result.curriculumncourses;
                 localStorage.setItem('user', data.result.user);
                 localStorage.setItem('semesterClassRoutine', JSON.stringify(data.result.semesterClassRoutine));
                 localStorage.setItem('unlockedCourses', JSON.stringify(data.result.unlockedCourses));
@@ -216,14 +222,14 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
                 localStorage.setItem('Password', Password);
                 localStorage.setItem('allCourses', JSON.stringify(data.result.curriculumncourses));
                 source.close();
-                showLogin.set(false);
+                showLogin.value = false;
                 done(false);
             } else if (data.status == "running") {
-                updateLog.set(data.message);
-                updateStatus.set('loading');
+                updateLog.value = data.message;
+                updateStatus.value = 'loading';
             } else if (data.status === "error") {
-                updateLog.set(data.message);
-                updateStatus.set('error');
+                updateLog.value = data.message;
+                updateStatus.value = 'error';
                 source.close();
                 done(true);
             }
@@ -231,8 +237,8 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
 
         source.onerror = (evt) => {
             source.close();
-            updateLog.set('Something went wrong.');
-            updateStatus.set('error');
+            updateLog.value = 'Something went wrong.';
+            updateStatus.value = 'error';
             done(true);
         }
 
@@ -240,8 +246,8 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
         return source;
     } catch (err) {
         console.log(err);
-        updateLog.set('Something went wrong.');
-        updateStatus.set('error');
+        updateLog.value = 'Something went wrong.';
+        updateStatus.value = 'error';
         done(true);
         return null;
     }

@@ -1,33 +1,17 @@
-import { writable, type Writable } from 'svelte/store';
 import { unsubscribeFromNotice } from './fetcher';
 import { clearDB } from './db';
 
-const data = [
-    {
-        "IsShowProfileDetails": true,
-        "CvPersonal": {
-            "ID": 7256,
-            "UserId": 60989,
-            "Name": "MD. ANWARUL KABIR",
-            "Email": "kabir@aiub.edu"
-        },
-        "Faculty": "FACULTY OF SCIENCE & TECHNOLOGY",
-        "Designation": "Faculty",
-        "Position": "ASSOCIATE PROFESSOR",
-        "PositionID": 137,
-        "HrDepartment": "DEPARTMENT OF COMPUTER SCIENCE",
-        "PersonalOtherInfo": {
-            "ID": 0,
-            "UserId": 0,
-            "AcademicInterests": "",
-            "ResearchInterests": "",
-            "RoomNo": "",
-            "BuildingNo": "",
-            "SecondProfilePhoto": "/Files/Uploads/public-employee-profiles/profile-pictures/60989.jpg"
-        }
+function ref<T>(init: T) {
+  let value = $state(init);
+  return {
+    get value() {
+      return value;
     },
-];
-
+    set value(newValue: T) {
+      value = newValue;
+    },
+  };
+}
 
 export type FacultyType = {
   "IsShowProfileDetails": boolean;
@@ -92,24 +76,24 @@ export type CompletedCoursesType = CourseType & {
 export type TABS = 'Completed' | 'Unlocked' | 'Routine' | 'Notice';
 
 
-export const User = writable('');
-export const semesterName = writable('');
-export const semesterClassRoutine: Writable<SemesterDataType> = writable({});
-export const completedCourses: Writable<CompletedCoursesType> = writable({});
-export const unlockedCourses: Writable<UnlockedCoursesType> = writable({});
-export const preregisteredCourses: Writable<UnlockedCoursesType> = writable({});
-export const allCourses: Writable<CourseType> = writable({});
-export const calendarData = writable({title: "", table: ""});
-export const faculties = writable<FacultyType[]>([]);
+export const User = ref('');
+export const semesterName = ref('');
+export const semesterClassRoutine = ref<SemesterDataType>({});
+export const completedCourses = ref<CompletedCoursesType>({});
+export const unlockedCourses = ref<UnlockedCoursesType>({});
+export const preregisteredCourses = ref<UnlockedCoursesType>({});
+export const allCourses = ref<CourseType>({});
+export const calendarData = ref({title: "", table: ""});
+export const faculties = ref<FacultyType[]>([]);
 
-export const showLogin = writable(false);
-export const showGrade = writable(false);
+export const showLogin = ref(false);
+export const showGrade = ref(false);
 
-export const turnOnNotification = writable(false);
-export const isSubscribed = writable(false);
-export const isSubUnsubRunning = writable(false);
-export const subCheckingDone = writable(false);
-export const subPermissionDenied = writable(false);
+export const turnOnNotification = ref(false);
+export const isSubscribed = ref(false);
+export const isSubUnsubRunning = ref(false);
+export const subCheckingDone = ref(false);
+export const subPermissionDenied = ref(false);
 
 export type NoticeOBJECT = {
   date: string;
@@ -117,16 +101,16 @@ export type NoticeOBJECT = {
   link?: string;
 }
 
-export const pageLoaded = writable(false);
+export const pageLoaded = ref(false);
 
-export const allNotices: Writable<NoticeOBJECT[]> = writable([]);
+export const allNotices = ref<NoticeOBJECT[]>([]);
 
-export const isOffline = writable(false);
+export const isOffline = ref(false);
 
-export const updateLog = writable('');
-export const updateStatus: Writable<"loading"|"error"|"success"|""> = writable('');
-export const calenderFetching = writable(false);
-export const facultiesIsFetching = writable(false);
+export const updateLog = ref('');
+export const updateStatus = ref<"loading"|"error"|"success"|"">('');
+export const calenderFetching = ref(false);
+export const facultiesIsFetching = ref(false);
 
 const AvailableColors =  [
   "#405b91",
@@ -268,14 +252,14 @@ export function parseCourseId(courseId: string) {
 
 export function clearData(){
   console.log("Clearing Data");
-  showLogin.set(true);
+  showLogin.value = true;
   localStorage.clear();
-  completedCourses.set({});
-  unlockedCourses.set({});
-  semesterClassRoutine.set({});
-  semesterName.set('');
-  allNotices.set([]);
-  User.set('');
+  completedCourses.value = {};
+  unlockedCourses.value = {};
+  semesterClassRoutine.value = {};
+  semesterName.value = '';
+  allNotices.value = [];
+  User.value = '';
   clearDB("notices");
   unsubscribeFromNotice(navigator.serviceWorker.controller);
 }
@@ -288,4 +272,4 @@ export function titleCase(str: string) {
   return temp.join(' ');
 }
 
-export const currentPage = writable('/');
+export const currentPage = ref('/');

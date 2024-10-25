@@ -2,7 +2,7 @@
 	import { onMount } from "svelte";
     import Logo from "$lib/components/Logo.svelte";
     import { fade, fly } from "svelte/transition";
-	import { updateLog, updateStatus } from "$lib/store";
+	import { updateLog, updateStatus } from "$lib/store.svelte";
     import { GetData } from "$lib/fetcher";
     import { goto } from "$app/navigation";
 
@@ -113,10 +113,10 @@
 		</label>
 		<button type="submit" in:fly|global={{y: 10, delay: 380}}>Login <i class="fa-solid fa-sign-in"></i></button>
 		{/if}
-		{#if $updateLog}
-		<div class="log" class:submitting={submitting} class:error={$updateStatus === "error"}>
-			{$updateLog}
-			{#if $updateStatus === "error"}
+		{#if updateLog.value}
+		<div class="log" class:submitting={submitting} class:error={updateStatus.value === "error"}>
+			{updateLog.value}
+			{#if updateStatus.value === "error"}
 			<i class="fa-solid fa-triangle-exclamation"></i>
 			{/if}
 		</div>

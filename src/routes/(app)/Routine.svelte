@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { semesterClassRoutine, semesterName, getColors } from "$lib/store";
+    import { semesterClassRoutine, semesterName, getColors } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
 
@@ -16,7 +16,7 @@
         }
     }
 
-    let classData: ClassData = $derived($semesterClassRoutine[$semesterName]);
+    let classData: ClassData = $derived(semesterClassRoutine.value[semesterName.value]);
 
     
     //Day name today. Eg: Saturday
@@ -108,7 +108,7 @@
             //reset the available colors
             AvailableColors = getColors();
             ColorsMap = new Map<string, string>();
-            semesterName.set(node.value);
+            semesterName.value = node.value;
         }
     }
 
@@ -120,17 +120,17 @@
     {#if classData}
     <div class="title" in:fly|global={{y: -10, duration: 200, delay: 100}}>Your class routine</div>
     <div class="dropdownlist" in:fly|global={{y: 10, duration: 200, delay: 150}}>
-        <select use:handleSelect value={$semesterName}>
+        <select use:handleSelect value={semesterName.value}>
             <option value="" selected disabled>Select Semester</option>
-            {#if $semesterClassRoutine}
-                {#each Object.keys($semesterClassRoutine) as sem, i (sem)}
+            {#if semesterClassRoutine.value}
+                {#each Object.keys(semesterClassRoutine.value) as sem, i (sem)}
                     <option value={sem}>Semester: {i+1} - {sem}</option>
                 {/each}
             {/if}
         </select>
     </div>
     <div class="classRoutine" out:fade={{duration: 50, delay: 0}}>
-        {#key $semesterName}
+        {#key semesterName.value}
         <div class="timeline">
             {#each range as i (i)}
             <div class="time">
