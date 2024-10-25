@@ -8,6 +8,7 @@
 
 	let usernameLabel = $state("AIUB ID");
 	let passwordLabel = $state("Password");
+
 	let username: HTMLInputElement = $state() as HTMLInputElement;
 	let password: HTMLInputElement = $state() as HTMLInputElement;
 	let agree: HTMLInputElement = $state() as HTMLInputElement;
@@ -15,7 +16,7 @@
 	let agreeChecked = $state(false);
 
 	let uncheckedError = $state("");
-	
+
 
 	let submitting = $state(false);
 

@@ -9,10 +9,10 @@
     let actLabel = $state("Act");
     let authLabel = $state("Auth Key");
 
-    let title: HTMLInputElement;
-    let message: HTMLInputElement;
-    let act: HTMLInputElement;
-    let auth: HTMLInputElement;
+    let title: HTMLInputElement = $state() as HTMLInputElement;
+    let message: HTMLInputElement = $state() as HTMLInputElement;
+    let act: HTMLInputElement = $state() as HTMLInputElement;
+    let auth: HTMLInputElement = $state() as HTMLInputElement;
 
     let submitting = $state(false);
     let updateLog = $state("");
