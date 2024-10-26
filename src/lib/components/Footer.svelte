@@ -11,7 +11,7 @@
 
 <footer class="footer" style:padding={padding}>
 	<div class="discord">
-		<a href="https://discord.gg/7CFzy28y"
+		<a href="https://discord.gg/yQKcHhKzyn"
 			>Join our Discord <i class="fa-brands fa-discord"></i></a
 		>
 	</div>
