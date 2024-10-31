@@ -169,7 +169,7 @@
             }
         }}>Prev</button> 
             <div class="number">
-                {currentPage} of {totalPage} 
+                Page {currentPage} of {totalPage} 
             </div>
         <button class="pagination-button" onclick={() => {
             if (currentPage < totalPage) {
