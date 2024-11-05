@@ -1,3 +1,6 @@
+<script>
+    import "$lib/styles/global.scss";
+</script>
 <div class="content">
     <h1>Terms and Conditions & Privacy Policy</h1>
 
