@@ -76,15 +76,6 @@ export function parseNotices(notices: string[] | null) {
             const date = parts[0];
             const noticeText = parts[1];
             const link = parts[2];
-            /*
-            allNotices.update((notices) => {
-                notices.push({ date, notice: noticeText, link });
-                if (notices.length > 10) {
-                    notices.pop(); // remove the first element. first means oldest
-                }
-                return notices;
-            });
-            */
             allNotices.value.push({ date, notice: noticeText, link });
             if (allNotices.value.length > 10) {
                 allNotices.value.pop(); // remove the first element. first means oldest
@@ -113,7 +104,7 @@ export async function getCalendarData() {
 
         calenderFetching.value = true;
 
-        const res = await fetch("/api/calendar")
+        const res = await fetch("/api/calendar", { cache: "no-cache" });
         const text = await res.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(text, "text/html");
@@ -151,7 +142,7 @@ export async function getCalendarData() {
 export async function getFaculties() {
     try {
         facultiesIsFetching.value = true;
-        const response = await fetch('/api/faculties');
+        const response = await fetch('/api/faculties', { cache: "no-cache" });
         const json = await response.json() as {"EmployeeProfileLightList": any[]};
         console.log(json);
         const list = json?.EmployeeProfileLightList || [];
