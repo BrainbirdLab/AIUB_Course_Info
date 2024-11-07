@@ -56,7 +56,7 @@
 			return;
 		}
 
-		src = GetData(UserName, Password, (error: boolean) => {
+		src = GetData(UserName, Password, true, (error: boolean) => {
 			if (error) {
 				return;
 			}

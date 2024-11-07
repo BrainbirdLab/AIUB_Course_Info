@@ -1,6 +1,6 @@
 {
 	"name": "aiub-course-info",
-	"version": "13.1.21",
+	"version": "13.1.22",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",

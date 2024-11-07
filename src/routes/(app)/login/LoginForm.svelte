@@ -60,7 +60,7 @@
 
 		submitting = true;
 
-		GetData(UserName, Password, (err) => {
+		GetData(UserName, Password, false, (err) => {
 			submitting = false;
 			if (!err) {
 				loaded = false;

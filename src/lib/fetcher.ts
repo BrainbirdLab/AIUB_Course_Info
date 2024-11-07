@@ -172,7 +172,7 @@ export async function fetchNoticesFromServer() {
     }   
 }
 
-export function GetData(UserName: string, Password: string, done: (error: boolean) => void) {
+export function GetData(UserName: string, Password: string, update: boolean, done: (error: boolean) => void) {
     try {
         		//if offline
 		if (!navigator.onLine) {
@@ -191,9 +191,11 @@ export function GetData(UserName: string, Password: string, done: (error: boolea
         source.onmessage = (evt) => {
             const data = JSON.parse(evt.data);
             if (data.status === "complete") {
-                initNotices();
-                getCalendarData();
-                getFaculties();
+                if (!update) {
+                    initNotices();
+                    getCalendarData();
+                    getFaculties();
+                }
                 updateLog.value = '';
                 updateStatus.value = '';
                 User.value = data.result.user;
