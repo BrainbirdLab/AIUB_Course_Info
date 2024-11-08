@@ -198,7 +198,8 @@
         padding: 10px;
         align-items: center;
         .number {
-            width: 75px;
+            min-width: 75px;
+            width: 100%;
             text-align: center;
         }
         button {
