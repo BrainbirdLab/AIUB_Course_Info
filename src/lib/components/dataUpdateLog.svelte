@@ -8,8 +8,5 @@
 		<div class="mid">
 			{updateLog.value}
 		</div>
-		{#if updateStatus.value == "success"}
-			<i class="fa-solid fa-check"></i>
-		{/if}
 	</div>
 {/if}
