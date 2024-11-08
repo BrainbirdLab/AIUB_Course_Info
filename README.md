@@ -14,6 +14,7 @@ This application shows AIUB student their class routines, course progress and pr
 - View pre registration available courses
 - View notices from university + push notification (if enabled)
 - View Academic Calendar
+- View Faculty Information
 ### Technical Features
 - Offline support. User only needs to login once to fetch data. And then can use the app offline. In case of no data, user can open the app with internet connection to fetch data again.
 - Get realtime notices via fcm push notification
