@@ -106,7 +106,7 @@ self.addEventListener('notificationclick', (e) => {
     e.notification.close();  // Close the notification
     
 	// open the app itself
-	let urlToOpen = ""
+	let urlToOpen = "";
 
 	if (data && data.link && data.link.startsWith('http')) {
 		urlToOpen = data.link as string;
@@ -114,6 +114,7 @@ self.addEventListener('notificationclick', (e) => {
 		e.waitUntil(self.clients.openWindow(urlToOpen));
 	} else {
 		//if no link is provided, open the app
+		urlToOpen = new URL(self.location.origin).href;
 		//focus the app if it is already open
 		e.waitUntil(self.clients.matchAll({ type: 'window' }).then(clients => {
 			for (const client of clients) {
