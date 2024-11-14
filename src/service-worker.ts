@@ -73,6 +73,7 @@ self.addEventListener('push', async (e) => {
 		await writeToDB('notices', type, { title, body });
 		self.registration.showNotification(title, {
 			body: body,
+			data: { date: new Date().toISOString(), notice: body, link: null },
 			icon: './favicon.png',
 			badge: './badge-icon-mini.png',
 		});
@@ -91,6 +92,7 @@ self.addEventListener('push', async (e) => {
     
     self.registration.showNotification(title, {
 		body: data,
+		data: { date: parts[0], notice: data, link: parts[2] },
         icon: './aiub.png',
 		badge: './badge-icon-mini.png',
     });
@@ -100,26 +102,18 @@ self.addEventListener('push', async (e) => {
 });
 
 self.addEventListener('notificationclick', (e) => {
+	const data = e.notification.data;
     e.notification.close();  // Close the notification
-    // open the app itself
-	const urlToOpen = new URL(self.location.origin).href;
+    
+	// open the app itself
+	let urlToOpen = ""
 
-    // Open the URL in a new window or focus if it is already open
-    e.waitUntil(
-		self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
-            // If the page is already open, focus it
-            for (const element of clientList) {
-				const client = element;
-                if (client.url === urlToOpen && 'focus' in client) {
-                    return client.focus();
-                }
-            }
-            // Otherwise, open a new window
-            if (self.clients.openWindow) {
-            	return self.clients.openWindow(urlToOpen);
-            }
-        })
-    );
+	if (data && data.link && data.link.startsWith('http')) {
+		urlToOpen = data.link as string;
+	}
+
+	//open link in a new tab
+	e.waitUntil(self.clients.openWindow(urlToOpen));
 });
 
 //Call Fetch Event
