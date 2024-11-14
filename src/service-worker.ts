@@ -110,10 +110,22 @@ self.addEventListener('notificationclick', (e) => {
 
 	if (data && data.link && data.link.startsWith('http')) {
 		urlToOpen = data.link as string;
+		//open link in a new tab
+		e.waitUntil(self.clients.openWindow(urlToOpen));
+	} else {
+		//if no link is provided, open the app
+		//focus the app if it is already open
+		e.waitUntil(self.clients.matchAll({ type: 'window' }).then(clients => {
+			for (const client of clients) {
+				if ('focus' in client) {
+					return client.focus();
+				}
+			}
+			//if the app is not open, open it
+			return self.clients.openWindow(urlToOpen);
+		}));
 	}
 
-	//open link in a new tab
-	e.waitUntil(self.clients.openWindow(urlToOpen));
 });
 
 //Call Fetch Event
