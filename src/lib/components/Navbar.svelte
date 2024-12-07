@@ -113,6 +113,7 @@
 				flex-direction: row;
 				align-items: flex-end;
 				justify-content: center;
+				white-space: nowrap;
 				gap: 5px;
 				&.pointer-none{
 					pointer-events: none;
