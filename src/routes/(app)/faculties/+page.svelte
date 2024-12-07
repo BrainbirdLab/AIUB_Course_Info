@@ -8,7 +8,7 @@
     } from "$lib/store.svelte";
     import { onMount } from "svelte";
     //import { flip } from "svelte/animate";
-    import { fly, slide } from "svelte/transition";
+    import { fly } from "svelte/transition";
     import Search from "../Search.svelte";
 
     let loaded = $state(false);
