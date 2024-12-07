@@ -1,9 +1,11 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import { unlockedCourses, parseCourseId, creditsPrerequisitesObj, completedCourses, preregisteredCourses, getIconColor, getIcon, allCourses, showLogin } from '$lib/store.svelte';
+    import { unlockedCourses, creditsPrerequisitesObj, completedCourses, preregisteredCourses, showLogin } from '$lib/store.svelte';
     import { onMount } from 'svelte';
     import { flip } from 'svelte/animate';
     import { fade, fly } from 'svelte/transition';
+    import CourseCard from '../CourseCard.svelte';
+    import Search from '../Search.svelte';
 
     let loaded = $state(false);
 
@@ -74,13 +76,7 @@
 {#if observeables && observeables.length > 0} 
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>{Object.keys(unlockedCourses.value).length} Courses available</div>
-    <div class="search" in:fly|global={{x: 10}}>
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" autocomplete="off" placeholder="Search courses..." bind:value={filterValue} />
-        <button aria-label="close" class="clear" onclick={() => filterValue = ''}>
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div>
+    <Search bind:filterValue={filterValue}/>
     <div class="note" in:fade|global>Note: You may have to complete certain credits to take some courses</div>
     <div class="courses">
         {#if filteredCourses.length == 0}
@@ -88,42 +84,7 @@
         {:else}
         {#each filteredCourses as [courseId, courseInfo], i (courseId)}
         <div animate:flip={{duration: 300}} class="course" in:fly|global={{y: 10, delay: 50*(i+1)}}>
-            <div class="courseid tag bookmark" style:background={getIconColor(parseCourseId(courseId))}>
-                {@html getIcon(parseCourseId(courseId))} {courseId}
-            </div>
-            <div class="name">
-                {courseInfo.course_name} 
-                {#if courseInfo.retake}
-                <div class="retake">
-                    (Retake)
-                </div>
-                {/if}
-                {#if preregisteredCourses.value[courseId]}
-                    <span class="registered tag">
-                        Registered <i class="fa-solid fa-circle-check"></i>
-                    </span>
-                {/if}
-            </div>
-            <div class="credit" title="{courseInfo.credit || '-'} credit{courseInfo.credit > 1 ? "s" : ""}">
-                {courseInfo.credit || '-'}
-            </div>
-            <span class="prerequisites">
-                Prerequisites
-                {#if courseInfo.prerequisites && courseInfo.prerequisites.length > 0}
-                    {#each courseInfo.prerequisites as prerequisite}
-                    <div class="prerequisite tag" data-prereq={prerequisite} style:background={getIconColor(parseCourseId(prerequisite))}>
-                        {#if allCourses.value[prerequisite]}
-                            <div class="prerequisiteInfo">
-                                {allCourses.value[prerequisite].course_name}
-                            </div>
-                        {/if}
-                        {@html getIcon(parseCourseId(prerequisite))} {prerequisite}
-                    </div>
-                    {/each}
-                {:else}
-                    <div class="prerequisite tag" style:background={"#398982"}>None</div>
-                {/if}
-            </span>
+            <CourseCard courseId={courseId} courseInfo={courseInfo} cType="unlocked"/>
         </div>
         {/each}
         {/if}
@@ -135,10 +96,6 @@
 {/if}
 
 <style lang="scss">
-
-    .registered{
-        background: #09bc65;
-    }
   
     .container{
         display: flex;

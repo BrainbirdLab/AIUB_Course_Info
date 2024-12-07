@@ -9,6 +9,7 @@
     import { onMount } from "svelte";
     //import { flip } from "svelte/animate";
     import { fly, slide } from "svelte/transition";
+    import Search from "../Search.svelte";
 
     let loaded = $state(false);
 
@@ -76,18 +77,7 @@
 
 {#if loaded}
     {#if faculties.value.length > 0}
-    <div class="search" in:fly|global={{ x: 10 }}>
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input
-            type="text"
-            autocomplete="off"
-            placeholder="Search..."
-            bind:value={filterValue}
-        />
-        <button class="clear" aria-label="clear" onclick={() => (filterValue = "")}>
-            <i class="fa-solid fa-times"></i>
-        </button>
-    </div>
+    <Search bind:filterValue={filterValue} />
     <div class="filter">
         <!-- radio button -->
         <div class="form-field">

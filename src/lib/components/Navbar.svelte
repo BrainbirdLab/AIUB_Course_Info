@@ -16,6 +16,16 @@
             Routine <i class="fa-regular fa-calendar-days"></i>
         </div>
     </a>
+	<a
+		class="navBtn"
+		id="nav-AllCourses"
+		href="/all-courses"
+		class:shown={currentPage.value == "/all-courses"}
+	>
+		<div class="content pointer-none">
+			All Courses <i class="fa-solid fa-book"></i>
+		</div>
+	</a>
     <a
         class="navBtn"
         id="nav-Completed"
