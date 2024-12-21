@@ -77,7 +77,7 @@
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>{Object.keys(unlockedCourses.value).length} Courses available</div>
     <Search bind:filterValue={filterValue}/>
-    <div class="note" in:fade|global>Note: You may have to complete certain credits to take some courses</div>
+    <div class="note" in:fade|global>Note: Courses shown below are based on course prerequisite criteria only</div>
     <div class="courses">
         {#if filteredCourses.length == 0}
             <div class="empty">No courses found</div>

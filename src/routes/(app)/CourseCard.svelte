@@ -41,6 +41,7 @@
     <div class="grade">Grade: {showGrade.value ? courseInfo.grade : '🙈'}</div>
 {/if}
 <span class="prerequisites">
+    Prerequisites: 
     {#if allCourses.value[courseId].prerequisites && allCourses.value[courseId].prerequisites.length > 0}
         {#each allCourses.value[courseId].prerequisites as prerequisite}
         <div class="prerequisite tag" data-prereq={prerequisite} style:background={getIconColor(parseCourseId(prerequisite))}>
