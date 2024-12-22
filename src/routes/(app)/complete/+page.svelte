@@ -44,7 +44,7 @@
         {:else}
         {#each filteredCourses as [courseId, courseInfo], i (courseId)}
             <div class="course" animate:flip={{duration: 300}} in:fly|global={{y: 10, delay: 50 * (i+1)}}>
-                <CourseCard courseId={courseId} courseInfo={courseInfo} cType="completed"/>
+                <CourseCard courseId={courseId} cType="completed" grade={courseInfo.grade}/>
             </div>
         {/each}
         {/if}

@@ -1,20 +1,17 @@
 <script lang="ts">
 
-    import { parseCourseId, getIconColor, getIcon, allCourses, preregisteredCourses, showGrade, type CompletedCoursesType } from '$lib/store.svelte';
+    import { parseCourseId, getIconColor, getIcon, allCourses, preregisteredCourses, showGrade, type CompletedCoursesType, type CourseType } from '$lib/store.svelte';
 
     interface Props {
         courseId: string;
-        courseInfo: {
-            course_name: string;
-            credit: number;
-            prerequisites: string[];
-            retake?: boolean;
-            grade?: string;
-        };
         cType: 'unlocked' | 'completed' | 'all';
+        grade?: string;
+        retake?: boolean;
     }
 
-    let { courseId, courseInfo, cType }: Props = $props();
+    let { courseId, cType, grade, retake }: Props = $props();
+
+    let course = $derived(allCourses.value[courseId]);
 
 </script>
 
@@ -22,8 +19,8 @@
     {@html getIcon(parseCourseId(courseId))} {courseId}
 </div>
 <div class="name">
-    {courseInfo.course_name} 
-    {#if cType == 'unlocked' && courseInfo.retake}
+    {course.course_name} 
+    {#if retake}
     <div class="retake">
         (Retake)
     </div>
@@ -34,16 +31,16 @@
         </span>
     {/if}
 </div>
-<div class="credit" title="{courseInfo.credit || '-'} credit{courseInfo.credit > 1 ? "s" : ""}">
-    {courseInfo.credit || '-'}
+<div class="credit" title="{course.credit || '-'} credit{course.credit > 1 ? "s" : ""}">
+    {course.credit || '-'}
 </div>
 {#if cType == 'completed'}
-    <div class="grade">Grade: {showGrade.value ? courseInfo.grade : '🙈'}</div>
+    <div class="grade">Grade: {showGrade.value ? grade : '🙈'}</div>
 {/if}
 <span class="prerequisites">
-    Prerequisites: 
-    {#if allCourses.value[courseId].prerequisites && allCourses.value[courseId].prerequisites.length > 0}
-        {#each allCourses.value[courseId].prerequisites as prerequisite}
+    Prerequisites:
+    {#if course.prerequisites && course.prerequisites.length > 0}
+        {#each course.prerequisites as prerequisite}
         <div class="prerequisite tag" data-prereq={prerequisite} style:background={getIconColor(parseCourseId(prerequisite))}>
             {#if allCourses.value[prerequisite]}
                 <div class="prerequisiteInfo">

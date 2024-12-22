@@ -98,7 +98,8 @@
         });
 
         window.addEventListener("storage", (e) => {
-            //clearData();
+            showToastMessage("You are logged out for deleting data", 2000);
+            clearData();
         });
 
         if ('permissions' in navigator) {
