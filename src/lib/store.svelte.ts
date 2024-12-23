@@ -228,11 +228,11 @@ const CourseIconColors = {
 }
 
 export function getIconColor(courseId: string){
-  return CourseIconColors[parseCourseId(courseId)].COLOR || '#121a2b';
+  return CourseIconColors[parseCourseId(courseId)]?.COLOR || '#121a2b';
 }
 
 export function getIcon(courseId: string){
-  return CourseIconColors[parseCourseId(courseId)].ICON || '<i class="fa-solid fa-book"></i>';
+  return CourseIconColors[parseCourseId(courseId)]?.ICON || '<i class="fa-solid fa-book"></i>';
 }
 
 export const creditsPrerequisitesObj: {[key:string]: number} = {
@@ -247,7 +247,7 @@ export const facultyColorsMap: {[key:string]: string} = {
 }
 
 export function parseCourseId(courseId: string) {
-  return RegExp(/[A-Z]+/).exec(courseId)![0] as keyof typeof CourseIconColors;
+  return RegExp(/[A-Za-z]+/).exec(courseId)![0] as keyof typeof CourseIconColors;
 }
 
 export function clearData(){
