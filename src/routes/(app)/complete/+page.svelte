@@ -34,9 +34,9 @@
 {#if loaded}
 {#if completedCourses.value && Object.keys(completedCourses.value).length > 0}
 <div class="container">
-    <div class="title" in:fly|global={{x: -10}}>{Object.keys(completedCourses.value).length} Courses {
-        creditsCompleted > 0 && `(${creditsCompleted} Credits)`
-    } </div>
+    <div class="title" in:fly|global={{x: -10}}>Completed Course{Object.keys(completedCourses.value).length > 1 ? "s" : ""}: {Object.keys(completedCourses.value).length}
+        ({creditsCompleted} Credit{creditsCompleted > 1 ? "s" : ""})
+    </div>
     <Search bind:filterValue={filterValue}/>
     <div class="courses">
         {#if filteredCourses.length == 0}

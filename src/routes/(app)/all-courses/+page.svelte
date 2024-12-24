@@ -28,12 +28,16 @@
         loaded = true;
     });
 
+    let totalCredits = $derived(Object.values(allCourses.value).reduce((acc, course) => acc + (course.credit || 0), 0));
+
 </script>
 
 {#if loaded}
 {#if Object.keys(allCourses.value).length > 0}
 <div class="container">
-    <div class="title" in:fly|global={{x: -10}}>{Object.keys(allCourses.value).length} Courses</div>
+    <div class="title" in:fly|global={{x: -10}}>
+        Curriculum  Course{Object.keys(allCourses.value).length > 1 ? "s" : ""}: {Object.keys(allCourses.value).length} ({totalCredits} Credit{totalCredits > 1 ? "s" : ""})
+    </div>
     <Search bind:filterValue={filterValue}/>
     <div class="note" in:fade|global>Note: Courses shown below are based on course prerequisite criteria only</div>
     <div class="courses">

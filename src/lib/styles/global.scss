@@ -33,6 +33,7 @@
     --accent-dim: #1031545e;
     --label-color: #708192;
     --button-color: #35a9f7;
+    --title-color: #bfd1de;
 }
 
 body{
@@ -77,6 +78,7 @@ select:-webkit-autofill:focus {
     margin: 1.2rem;
     text-align: center;
     font-size: 1.3rem;
+    color: var(--title-color);
 }
 
 .note{
@@ -217,6 +219,7 @@ select:-webkit-autofill:focus {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    color: var(--title-color);
     z-index: 2;
 }
 

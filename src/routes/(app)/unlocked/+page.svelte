@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import { unlockedCourses, creditsPrerequisitesObj, completedCourses, preregisteredCourses, showLogin } from '$lib/store.svelte';
+    import { unlockedCourses, creditsPrerequisitesObj, completedCourses, preregisteredCourses, showLogin, allCourses } from '$lib/store.svelte';
     import { onMount } from 'svelte';
     import { flip } from 'svelte/animate';
     import { fade, fly } from 'svelte/transition';
@@ -59,6 +59,14 @@
         loaded = true;
     });
 
+    let registeredCourses = $derived(Object.entries(unlockedCourses.value).filter(([courseId, _]) => preregisteredCourses.value[courseId]));
+
+    let registeredCoursesCount = $derived(Object.keys(registeredCourses).length);
+
+    let registeredCoursesCredits = $derived(Object.values(registeredCourses).reduce((acc, [courseId, _]) => acc + (allCourses.value[courseId]?.credit || 0), 0));
+
+    let totalCredits = $derived(Object.values(unlockedCourses.value).reduce((acc, course) => acc + (course.credit || 0), 0));
+
 </script>
 
 {#if loaded}
@@ -75,7 +83,16 @@
 </div>
 {#if observeables && observeables.length > 0} 
 <div class="container">
-    <div class="title" in:fly|global={{x: -10}}>{Object.keys(unlockedCourses.value).length} Courses available</div>
+    <div class="title" in:fly|global={{x: -10}}>
+        Total: {Object.keys(unlockedCourses.value).length} Course{Object.keys(unlockedCourses.value).length > 1 ? 's' : ''} ({totalCredits} Credit{totalCredits > 1 ? 's' : ''})
+    </div>
+    <div class="extra" in:fly|global={{y: 3, delay: 100, duration: 500}}>
+        {#if Object.keys(registeredCourses).length > 0}
+            Registered: {Object.keys(registeredCourses).length} course{registeredCoursesCount > 1 ? 's' : ''} ({registeredCoursesCredits} credit{registeredCoursesCredits > 1 ? 's' : ''})
+            <br>
+            Remaining: {Object.keys(unlockedCourses.value).length - registeredCoursesCount} course{Object.keys(unlockedCourses.value).length - registeredCoursesCount > 1 ? 's' : ''} ({totalCredits - registeredCoursesCredits} credit{totalCredits - registeredCoursesCredits > 1 ? 's' : ''})
+        {/if}
+    </div>
     <Search bind:filterValue={filterValue}/>
     <div class="note" in:fade|global>Note: Courses shown below are based on course prerequisite criteria only</div>
     <div class="courses">
@@ -96,6 +113,14 @@
 {/if}
 
 <style lang="scss">
+
+    .extra {
+        margin-top: -20px;
+        padding: 0 10px 10px;
+        text-align: center;
+        font-size: 0.8rem;
+        color: var(--label-color);
+    }
   
     .container{
         display: flex;
