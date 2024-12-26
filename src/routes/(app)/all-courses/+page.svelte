@@ -36,7 +36,7 @@
 {#if Object.keys(allCourses.value).length > 0}
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>
-        Curriculum  Course{Object.keys(allCourses.value).length > 1 ? "s" : ""}: {Object.keys(allCourses.value).length} ({totalCredits} Credit{totalCredits > 1 ? "s" : ""})
+        {Object.keys(allCourses.value).length} course{Object.keys(allCourses.value).length > 1 ? "s" : ""} ({totalCredits} Credit{totalCredits > 1 ? "s" : ""})
     </div>
     <Search bind:filterValue={filterValue}/>
     <div class="note" in:fade|global>Note: Courses shown below are based on course prerequisite criteria only</div>
@@ -44,7 +44,7 @@
         {#if filteredCourses.length == 0}
             <div class="empty">No courses found</div>
         {:else}
-        {#each filteredCourses as [courseId, courseInfo], i (courseId)}
+        {#each filteredCourses as [courseId, _], i (courseId)}
         <div animate:flip={{duration: 300}} class="course" in:fly|global={{y: 10, delay: 50*(i+1)}}>
             <CourseCard courseId={courseId} cType="unlocked"/>
         </div>

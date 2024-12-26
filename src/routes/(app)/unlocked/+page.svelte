@@ -84,7 +84,7 @@
 {#if observeables && observeables.length > 0} 
 <div class="container">
     <div class="title" in:fly|global={{x: -10}}>
-        Unlocked: {Object.keys(unlockedCourses.value).length} Course{Object.keys(unlockedCourses.value).length > 1 ? 's' : ''} ({totalCredits} Credit{totalCredits > 1 ? 's' : ''})
+        {Object.keys(unlockedCourses.value).length} Course{Object.keys(unlockedCourses.value).length > 1 ? 's' : ''} ({totalCredits} Credit{totalCredits > 1 ? 's' : ''})
     </div>
     <div class="extra" in:fly|global={{y: 3, delay: 100, duration: 500}}>
         {#if Object.keys(registeredCourses).length > 0}
