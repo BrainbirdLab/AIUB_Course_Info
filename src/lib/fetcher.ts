@@ -144,7 +144,6 @@ export async function getFaculties() {
         facultiesIsFetching.value = true;
         const response = await fetch('/api/faculties', { cache: "no-cache" });
         const json = await response.json() as {"EmployeeProfileLightList": any[]};
-        console.log(json);
         const list = json?.EmployeeProfileLightList || [];
         faculties.value = list;
         //write to local storage
