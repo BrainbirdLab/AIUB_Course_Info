@@ -118,8 +118,7 @@
 {#if mounted}
 <div class="wrapper" in:fade>
     {#if classData}
-    <div class="title" in:fly|global={{y: -10, duration: 200, delay: 100}}>Your class routine</div>
-    <div class="dropdownlist" in:fly|global={{y: 10, duration: 200, delay: 150}}>
+    <div class="dropdownlist" in:fly|global={{y: 10, duration: 200, delay: 100}}>
         <select use:handleSelect value={semesterName.value}>
             <option value="" selected disabled>Select Semester</option>
             {#if semesterClassRoutine.value}
