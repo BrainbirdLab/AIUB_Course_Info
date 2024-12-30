@@ -81,6 +81,19 @@
         loaded = true;
     });
 
+    function getAllCourseString(dept: string): string {
+
+        if (dept !== selectedDepartment) {
+            return dept;
+        }
+
+        if (dept === 'All') {
+            return `All Courses (${deptCreditAndCountMap.get('All')?.count} courses, ${deptCreditAndCountMap.get('All')?.credits} Credits)`;
+        } else {
+            return `${dept} (${deptCreditAndCountMap.get(dept)?.count} courses, ${deptCreditAndCountMap.get(dept)?.credits} Credits)`;
+        }
+    }
+
 </script>
 {#if loaded}
 <div class="filter">
@@ -89,8 +102,7 @@
         <div class="form-field" in:fly|global={{y: 5, delay: (i+1) * 50}}>
             <input type="radio" name="filter" id="{dept}" value="{dept}" bind:group={selectedDepartment} />
             <label for="{dept}" class="tag">
-                {dept} 
-                ({deptCreditAndCountMap.get(dept)?.count} course{deptCreditAndCountMap.get(dept)?.count || 0 > 1 ? "s" : ""}, {deptCreditAndCountMap.get(dept)?.credits || 0} Credit{deptCreditAndCountMap.get(dept)?.credits || 0 > 1 ? "s" : ""})
+                {getAllCourseString(dept)}
             </label>
         </div>
     {/each}

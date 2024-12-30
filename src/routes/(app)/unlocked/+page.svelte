@@ -67,6 +67,22 @@
 
     let totalCredits = $derived(Object.values(unlockedCourses.value).reduce((acc, course) => acc + (course.credit || 0), 0));
 
+    function getAllCourseString(option: string): string {
+
+        //if current option is not active, then show only the option not the count and credits
+        if (option !== selectedGroup) {
+            return option;
+        }
+
+        if (option === 'Registered') {
+            return `${option} (${registeredCoursesCount} course${registeredCoursesCount > 1 ? 's' : ''}, ${registeredCoursesCredits} credit${registeredCoursesCredits > 1 ? 's' : ''})`;
+        } else if (option === 'Unregistered') {
+            return `${option} (${Object.keys(unlockedCourses.value).length - registeredCoursesCount} course${Object.keys(unlockedCourses.value).length - registeredCoursesCount > 1 ? 's' : ''}, ${totalCredits - registeredCoursesCredits} credit${totalCredits - registeredCoursesCredits > 1 ? 's' : ''})`;
+        } else {
+            return `${option} (${Object.keys(unlockedCourses.value).length} course${Object.keys(unlockedCourses.value).length > 1 ? 's' : ''}, ${totalCredits} credit${totalCredits > 1 ? 's' : ''})`;
+        }
+    }
+
 </script>
 
 {#if loaded}
@@ -76,8 +92,7 @@
         <div class="form-field" in:fly|global={{y: 5, delay: (i+1) * 50}}>
             <input type="radio" name="filter" id="{option}" value="{option}" bind:group={selectedGroup} />
             <label for="{option}" class="tag">
-                {option}
-                ({option === 'Registered' ? registeredCoursesCount : option === 'Unregistered' ? Object.keys(unlockedCourses.value).length - registeredCoursesCount : Object.keys(unlockedCourses.value).length} course{option === 'Registered' ? registeredCoursesCount > 1 ? 's' : '' : option === 'Unregistered' ? Object.keys(unlockedCourses.value).length - registeredCoursesCount > 1 ? 's' : '' : Object.keys(unlockedCourses.value).length > 1 ? 's' : ''}, {option === 'Registered' ? registeredCoursesCredits : option === 'Unregistered' ? totalCredits - registeredCoursesCredits : totalCredits} credit{option === 'Registered' ? registeredCoursesCredits > 1 ? 's' : '' : option === 'Unregistered' ? totalCredits - registeredCoursesCredits > 1 ? 's' : '' : totalCredits > 1 ? 's' : ''})
+                {getAllCourseString(option)}
             </label>
         </div>
     {/each}
