@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { completedCourses, showLogin } from '$lib/store.svelte';
+    import { completedCourses, parseCourseId, showLogin } from '$lib/store.svelte';
     import { fly } from 'svelte/transition';
     import { flip } from 'svelte/animate';
     import { goto } from '$app/navigation';
@@ -12,16 +12,67 @@
     let creditsCompleted = $derived(Object.values(completedCourses.value).reduce((acc, course) => acc + (course.credit || 0), 0));
     
     let filterValue = $state('');
-    
-    let filteredCourses = $derived.by(() => {
-        if (filterValue) {
-            return Object.entries(completedCourses.value).filter(([courseId, courseInfo]) => {
-                return courseInfo.course_name.toLowerCase().includes(filterValue.toLowerCase());
-            });
+
+    let selectedDepartment = $state("All");
+
+    let observeables = $derived.by(() => {
+        if (selectedDepartment) {
+            if (selectedDepartment === 'All') {
+                return Object.entries(completedCourses.value);
+            } else {
+                return Object.entries(completedCourses.value).filter(([courseId, _]) => parseCourseId(courseId) === selectedDepartment);
+            }
         } else {
             return Object.entries(completedCourses.value);
         }
+    });
+    
+    let filteredCourses = $derived.by(() => {
+        if (filterValue) {
+            return observeables.filter(([_, courseInfo]) => {
+                return courseInfo.course_name.toLowerCase().includes(filterValue.toLowerCase());
+            });
+        } else {
+            return observeables;
+        }
     })
+
+    let departments = $derived(["All", ...Object.keys(completedCourses.value).reduce((acc, courseId) => {
+        let parsedDepartment = parseCourseId(courseId);
+
+        if (!acc.includes(parsedDepartment)) {
+            acc.push(parsedDepartment);
+        }
+
+        return acc;
+
+    }, Array<string>())]);
+
+    let deptCreditAndCountMap = $derived(departments.reduce((acc, dept) => {
+        // let deptCourses = Object.entries(allCourses.value).filter(([courseId, _]) => parseCourseId(courseId) === dept);
+        // let deptCredits = deptCourses.reduce((acc, [_, course]) => acc + (course.credit || 0), 0);
+        // return [dept, {count: deptCourses.length, credits: deptCredits}];
+
+        if (dept === 'All') {
+            //add all courses
+            return new Map<string, {count: number, credits: number}> ([
+                ['All', {count: Object.keys(completedCourses.value).length, credits: creditsCompleted}]
+            ]);
+        }
+
+        let deptCourses = Object.entries(completedCourses.value).filter(([courseId, _]) => parseCourseId(courseId) === dept);
+        let deptCredits = deptCourses.reduce((acc, [_, course]) => acc + (course.credit || 0), 0);
+        
+
+        if (!acc) {
+            acc = new Map<string, {count: number, credits: number}>();
+        }
+
+        acc.set(dept, {count: deptCourses.length, credits: deptCredits});
+
+        return acc;
+
+    }, new Map<string, {count: number, credits: number}>()));
 
     onMount(() => {
         if (showLogin.value){
@@ -32,11 +83,20 @@
 
 </script>
 {#if loaded}
-{#if completedCourses.value && Object.keys(completedCourses.value).length > 0}
+<div class="filter">
+    <!-- radio button -->
+    {#each departments as dept, i}
+        <div class="form-field" in:fly|global={{y: 5, delay: (i+1) * 50}}>
+            <input type="radio" name="filter" id="{dept}" value="{dept}" bind:group={selectedDepartment} />
+            <label for="{dept}" class="tag">
+                {dept} 
+                ({deptCreditAndCountMap.get(dept)?.count} course{deptCreditAndCountMap.get(dept)?.count || 0 > 1 ? "s" : ""}, {deptCreditAndCountMap.get(dept)?.credits || 0} Credit{deptCreditAndCountMap.get(dept)?.credits || 0 > 1 ? "s" : ""})
+            </label>
+        </div>
+    {/each}
+</div>
+{#if observeables && observeables.length > 0}
 <div class="container">
-    <div class="title" in:fly|global={{x: -10}}>{Object.keys(completedCourses.value).length} course{Object.keys(completedCourses.value).length > 1 ? "s" : ""}
-        ({creditsCompleted} Credit{creditsCompleted > 1 ? "s" : ""})
-    </div>
     <Search bind:filterValue={filterValue}/>
     <div class="courses">
         {#if filteredCourses.length == 0}

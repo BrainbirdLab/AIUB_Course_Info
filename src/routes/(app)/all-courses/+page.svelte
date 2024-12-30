@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import { unlockedCourses, preregisteredCourses, showLogin, allCourses } from '$lib/store.svelte';
+    import { unlockedCourses, preregisteredCourses, showLogin, allCourses, parseCourseId } from '$lib/store.svelte';
     import { onMount } from 'svelte';
     import { flip } from 'svelte/animate';
     import { fade, fly } from 'svelte/transition';
@@ -9,15 +9,29 @@
 
     let loaded = $state(false);
 
-    let filteredCourses = $derived.by(() => {
-        if (filterValue) {
-            return Object.entries(allCourses.value).filter(([courseId, courseInfo]) => {
-                return courseInfo.course_name.toLowerCase().includes(filterValue.toLowerCase());
-            });
+    let selectedDepartment = $state("All");
+
+    let observeables = $derived.by(() => {
+        if (selectedDepartment) {
+            if (selectedDepartment === 'All') {
+                return Object.entries(allCourses.value);
+            } else {
+                return Object.entries(allCourses.value).filter(([courseId, _]) => parseCourseId(courseId) === selectedDepartment);
+            }
         } else {
             return Object.entries(allCourses.value);
         }
-    })
+    });
+
+    let filteredCourses = $derived.by(() => {
+        if (filterValue) {
+            return observeables.filter(([_, courseInfo]) => {
+                return courseInfo.course_name.toLowerCase().includes(filterValue.toLowerCase());
+            });
+        } else {
+            return observeables;
+        }
+    });
     
     let filterValue = $state('');
 
@@ -29,15 +43,61 @@
     });
 
     let totalCredits = $derived(Object.values(allCourses.value).reduce((acc, course) => acc + (course.credit || 0), 0));
+    
+    let departments = $derived(["All", ...Object.keys(allCourses.value).reduce((acc, courseId) => {
+        let parsedDepartment = parseCourseId(courseId);
+
+        if (!acc.includes(parsedDepartment)) {
+            acc.push(parsedDepartment);
+        }
+
+        return acc;
+
+    }, Array<string>())]);
+
+    let deptCreditAndCountMap = $derived(departments.reduce((acc, dept) => {
+        // let deptCourses = Object.entries(allCourses.value).filter(([courseId, _]) => parseCourseId(courseId) === dept);
+        // let deptCredits = deptCourses.reduce((acc, [_, course]) => acc + (course.credit || 0), 0);
+        // return [dept, {count: deptCourses.length, credits: deptCredits}];
+
+        if (dept === 'All') {
+            //add all courses
+            return new Map<string, {count: number, credits: number}> ([
+                ['All', {count: Object.keys(allCourses.value).length, credits: totalCredits}]
+            ]);
+        }
+
+        let deptCourses = Object.entries(allCourses.value).filter(([courseId, _]) => parseCourseId(courseId) === dept);
+        let deptCredits = deptCourses.reduce((acc, [_, course]) => acc + (course.credit || 0), 0);
+        
+
+        if (!acc) {
+            acc = new Map<string, {count: number, credits: number}>();
+        }
+
+        acc.set(dept, {count: deptCourses.length, credits: deptCredits});
+
+        return acc;
+
+    }, new Map<string, {count: number, credits: number}>()));
 
 </script>
 
 {#if loaded}
-{#if Object.keys(allCourses.value).length > 0}
+<div class="filter">
+    <!-- radio button -->
+    {#each departments as dept, i}
+        <div class="form-field" in:fly|global={{y: 5, delay: (i+1) * 50}}>
+            <input type="radio" name="filter" id="{dept}" value="{dept}" bind:group={selectedDepartment} />
+            <label for="{dept}" class="tag">
+                {dept} 
+                ({deptCreditAndCountMap.get(dept)?.count} course{deptCreditAndCountMap.get(dept)?.count || 0 > 1 ? "s" : ""}, {deptCreditAndCountMap.get(dept)?.credits || 0} Credit{deptCreditAndCountMap.get(dept)?.credits || 0 > 1 ? "s" : ""})
+            </label>
+        </div>
+    {/each}
+</div>
+{#if observeables && observeables.length > 0}
 <div class="container">
-    <div class="title" in:fly|global={{x: -10}}>
-        {Object.keys(allCourses.value).length} course{Object.keys(allCourses.value).length > 1 ? "s" : ""} ({totalCredits} Credit{totalCredits > 1 ? "s" : ""})
-    </div>
     <Search bind:filterValue={filterValue}/>
     <div class="note" in:fade|global>Note: Courses shown below are based on course prerequisite criteria only</div>
     <div class="courses">

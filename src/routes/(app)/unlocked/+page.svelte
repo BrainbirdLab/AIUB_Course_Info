@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from '$app/navigation';
-    import { unlockedCourses, creditsPrerequisitesObj, completedCourses, preregisteredCourses, showLogin, allCourses } from '$lib/store.svelte';
+    import { unlockedCourses, creditsPrerequisitesObj, completedCourses, preregisteredCourses, showLogin, allCourses, parseCourseId } from '$lib/store.svelte';
     import { onMount } from 'svelte';
     import { flip } from 'svelte/animate';
     import { fade, fly } from 'svelte/transition';
@@ -77,22 +77,13 @@
             <input type="radio" name="filter" id="{option}" value="{option}" bind:group={selectedGroup} />
             <label for="{option}" class="tag">
                 {option}
+                ({option === 'Registered' ? registeredCoursesCount : option === 'Unregistered' ? Object.keys(unlockedCourses.value).length - registeredCoursesCount : Object.keys(unlockedCourses.value).length} course{option === 'Registered' ? registeredCoursesCount > 1 ? 's' : '' : option === 'Unregistered' ? Object.keys(unlockedCourses.value).length - registeredCoursesCount > 1 ? 's' : '' : Object.keys(unlockedCourses.value).length > 1 ? 's' : ''}, {option === 'Registered' ? registeredCoursesCredits : option === 'Unregistered' ? totalCredits - registeredCoursesCredits : totalCredits} credit{option === 'Registered' ? registeredCoursesCredits > 1 ? 's' : '' : option === 'Unregistered' ? totalCredits - registeredCoursesCredits > 1 ? 's' : '' : totalCredits > 1 ? 's' : ''})
             </label>
         </div>
     {/each}
 </div>
 {#if observeables && observeables.length > 0} 
 <div class="container">
-    <div class="title" in:fly|global={{x: -10}}>
-        {Object.keys(unlockedCourses.value).length} Course{Object.keys(unlockedCourses.value).length > 1 ? 's' : ''} ({totalCredits} Credit{totalCredits > 1 ? 's' : ''})
-    </div>
-    <div class="extra" in:fly|global={{y: 3, delay: 100, duration: 500}}>
-        {#if Object.keys(registeredCourses).length > 0}
-            Registered: {Object.keys(registeredCourses).length} course{registeredCoursesCount > 1 ? 's' : ''} ({registeredCoursesCredits} credit{registeredCoursesCredits > 1 ? 's' : ''})
-            <br>
-            Remaining: {Object.keys(unlockedCourses.value).length - registeredCoursesCount} course{Object.keys(unlockedCourses.value).length - registeredCoursesCount > 1 ? 's' : ''} ({totalCredits - registeredCoursesCredits} credit{totalCredits - registeredCoursesCredits > 1 ? 's' : ''})
-        {/if}
-    </div>
     <Search bind:filterValue={filterValue}/>
     <div class="note" in:fade|global>Note: Courses shown below are based on course prerequisite criteria only</div>
     <div class="courses">
@@ -113,14 +104,6 @@
 {/if}
 
 <style lang="scss">
-
-    .extra {
-        margin-top: -20px;
-        padding: 0 10px 10px;
-        text-align: center;
-        font-size: 0.8rem;
-        color: var(--label-color);
-    }
   
     .container{
         display: flex;
