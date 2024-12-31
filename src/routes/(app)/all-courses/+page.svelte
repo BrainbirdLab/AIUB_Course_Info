@@ -3,7 +3,7 @@
     import { unlockedCourses, preregisteredCourses, showLogin, allCourses, parseCourseId } from '$lib/store.svelte';
     import { onMount } from 'svelte';
     import { flip } from 'svelte/animate';
-    import { fade, fly } from 'svelte/transition';
+    import { fade, fly, slide } from 'svelte/transition';
     import CourseCard from '../CourseCard.svelte';
     import Search from '../Search.svelte';
 
@@ -84,14 +84,10 @@
 
     function getAllCourseString(dept: string): string {
 
-        if (dept !== selectedDepartment) {
-            return dept;
-        }
-        
         if (dept === 'All') {
-            return `All Courses (${deptCreditAndCountMap.get('All')?.count} courses, ${deptCreditAndCountMap.get('All')?.credits} Credits)`;
+            return `(${deptCreditAndCountMap.get('All')?.count} courses, ${deptCreditAndCountMap.get('All')?.credits} Credits)`;
         } else {
-            return `${dept} (${deptCreditAndCountMap.get(dept)?.count} courses, ${deptCreditAndCountMap.get(dept)?.credits} Credits)`;
+            return `(${deptCreditAndCountMap.get(dept)?.count} courses, ${deptCreditAndCountMap.get(dept)?.credits} Credits)`;
         }
     }
 
@@ -104,7 +100,10 @@
         <div class="form-field" in:fly|global={{y: 5, delay: (i+1) * 50}}>
             <input type="radio" name="filter" id="{dept}" value="{dept}" bind:group={selectedDepartment} />
             <label for="{dept}" class="tag">
-                {getAllCourseString(dept)}
+                <div class="dept">{dept}</div>
+                {#if dept == selectedDepartment}
+                <div class="tag-detail" transition:slide={{axis: "x"}}>{getAllCourseString(dept)}</div>
+                {/if}
             </label>
         </div>
     {/each}

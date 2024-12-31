@@ -3,7 +3,7 @@
     import { unlockedCourses, creditsPrerequisitesObj, completedCourses, preregisteredCourses, showLogin, allCourses, parseCourseId } from '$lib/store.svelte';
     import { onMount } from 'svelte';
     import { flip } from 'svelte/animate';
-    import { fade, fly } from 'svelte/transition';
+    import { fade, fly, slide } from 'svelte/transition';
     import CourseCard from '../CourseCard.svelte';
     import Search from '../Search.svelte';
 
@@ -68,18 +68,12 @@
     let totalCredits = $derived(Object.values(unlockedCourses.value).reduce((acc, course) => acc + (course.credit || 0), 0));
 
     function getAllCourseString(option: string): string {
-
-        //if current option is not active, then show only the option not the count and credits
-        if (option !== selectedGroup) {
-            return option;
-        }
-
         if (option === 'Registered') {
-            return `${option} (${registeredCoursesCount} course${registeredCoursesCount > 1 ? 's' : ''}, ${registeredCoursesCredits} credit${registeredCoursesCredits > 1 ? 's' : ''})`;
+            return `(${registeredCoursesCount} course${registeredCoursesCount > 1 ? 's' : ''}, ${registeredCoursesCredits} credit${registeredCoursesCredits > 1 ? 's' : ''})`;
         } else if (option === 'Unregistered') {
-            return `${option} (${Object.keys(unlockedCourses.value).length - registeredCoursesCount} course${Object.keys(unlockedCourses.value).length - registeredCoursesCount > 1 ? 's' : ''}, ${totalCredits - registeredCoursesCredits} credit${totalCredits - registeredCoursesCredits > 1 ? 's' : ''})`;
+            return `(${Object.keys(unlockedCourses.value).length - registeredCoursesCount} course${Object.keys(unlockedCourses.value).length - registeredCoursesCount > 1 ? 's' : ''}, ${totalCredits - registeredCoursesCredits} credit${totalCredits - registeredCoursesCredits > 1 ? 's' : ''})`;
         } else {
-            return `${option} (${Object.keys(unlockedCourses.value).length} course${Object.keys(unlockedCourses.value).length > 1 ? 's' : ''}, ${totalCredits} credit${totalCredits > 1 ? 's' : ''})`;
+            return `(${Object.keys(unlockedCourses.value).length} course${Object.keys(unlockedCourses.value).length > 1 ? 's' : ''}, ${totalCredits} credit${totalCredits > 1 ? 's' : ''})`;
         }
     }
 
@@ -92,7 +86,10 @@
         <div class="form-field" in:fly|global={{y: 5, delay: (i+1) * 50}}>
             <input type="radio" name="filter" id="{option}" value="{option}" bind:group={selectedGroup} />
             <label for="{option}" class="tag">
-                {getAllCourseString(option)}
+                <div class="option">{option}</div>
+                {#if option == selectedGroup}
+                <div class="tag-detail" transition:slide={{axis: "x"}}>{getAllCourseString(option)}</div>
+                {/if}
             </label>
         </div>
     {/each}
