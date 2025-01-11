@@ -323,9 +323,7 @@
     </div>
 </div>
 {:else}
-<div class="container">
-    <h1>No data available (Update course data)</h1>
-</div>
+    <div class="info no-course">No data available</div>
 {/if}
 {/if}
 
