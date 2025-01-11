@@ -252,14 +252,14 @@
                     <i class="fa-solid fa-gear"></i>
                 </button>
             </div>
-            <div class="logs">
-                <DataUpdateLog />
-                <CalenderUpdateLog />
-                <FacultiesUpdateLog />
-            </div>
+            
+            <Navbar />
+
+            <DataUpdateLog />
+            <CalenderUpdateLog />
+            <FacultiesUpdateLog />
         </div>
         {/if}
-        <Navbar />
         {@render children()}
     </div>
 {/if}
@@ -288,14 +288,6 @@
 			color: inherit;
 		}
 	}
-
-    .logs {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 2px;
-    }
 
 	.preload {
 		position: fixed;
