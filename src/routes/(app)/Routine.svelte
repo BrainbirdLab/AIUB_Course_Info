@@ -1,101 +1,18 @@
 <script lang="ts">
-    import { semesterClassRoutine, semesterName, getColors } from "$lib/store.svelte";
+    import { semesterClassRoutine, semesterName } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
+    import { chooseColor, getDayNumber, getLongestTime, resetColors, shorten, timeParser, type ClassData } from "./classData.svelte";
 
     let mounted = $state(false);
 
-    interface ClassData {
-        [day: string]: {
-            [timeslot: string]: {
-                class_id: string,
-                course_name: string,
-                section: string,
-                room: string
-            }
-        }
-    }
-
     let classData: ClassData = $derived(semesterClassRoutine.value[semesterName.value]);
 
-    
     //Day name today. Eg: Saturday
     const today = new Date().toLocaleString('en-us', {  weekday: 'long' });
     
     let longestTimeEnd = $derived(getLongestTime(classData));
     let range: number[] = $derived(Array.from(Array(getLongestTime(classData)).keys()))
-
-    function getLongestTime(classData: ClassData) {
-        if (!classData) {
-            return 0;
-        }
-        let longestTime = 0;
-        for (const day in classData) {
-            for (const time in classData[day]) {
-                const timeEnd = timeParser(time)[1];
-                if (timeEnd > longestTime) {
-                    longestTime = timeEnd;
-                }
-            }
-        }
-        longestTime = Math.ceil((longestTime - 480) / 90) + 1;
-        return longestTime;
-    }
-
-    function getDayNumber(day: string) {
-		const daysOfWeek = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
-		return daysOfWeek.indexOf(day);
-	}
-
-    function timeParser(timeRange: string): [number, number] {
-        const times = timeRange.split("-").map((time) => time.trim());
-        const startTime = parseTime(times[0]);
-        const endTime = parseTime(times[1]);
-        const startMinutes = startTime[0] * 60 + startTime[1];
-        const endMinutes = endTime[0] * 60 + endTime[1];
-        return [startMinutes, endMinutes];
-    }
-
-    function parseTime(timeStr: string): [number, number] {
-        const match = timeStr.match(/(\d+):(\d+)\s+(AM|PM)/i);
-        if (!match) {
-            throw new Error("Invalid time format");
-        }
-        let hours = parseInt(match[1]);
-        const minutes = parseInt(match[2]);
-        const period = match[3].toUpperCase();
-        if (hours === 12) {
-            hours = period === "AM" ? 0 : 12;
-        } else {
-            hours += period === "PM" ? 12 : 0;
-        }
-        return [hours, minutes];
-    }
-
-    let AvailableColors = getColors();
-
-    let ColorsMap = new Map<string, string>();
-
-    function chooseColor(classId: string) {
-        if (ColorsMap.has(classId)) {
-            return ColorsMap.get(classId);
-        } else {
-            const color = AvailableColors[Math.floor(Math.random() * AvailableColors.length)];
-            ColorsMap.set(classId, color);
-            //remove the color from the available colors
-            AvailableColors.splice(AvailableColors.indexOf(color), 1);
-            return color;
-        }
-    }
-
-    function shorten(str: string){
-        if (str.length > 15) {
-            //ignore words inside brackets like [lab] [Fst/Fe] [FASS] 
-            str = str.replace(/\[.*?\]/g, '');
-            return str.split(' ').map((word) => word.toLowerCase() != 'lab' ? word.toLowerCase().replace('to', '')[0] : ` ${word}`).join('').toUpperCase();
-        }
-        return str;
-    }
 
     onMount(() => {
         mounted = true;
@@ -105,9 +22,7 @@
     function handleSelect(node: HTMLSelectElement){
         node.onchange = () => {
             localStorage.setItem('semester', node.value);
-            //reset the available colors
-            AvailableColors = getColors();
-            ColorsMap = new Map<string, string>();
+            resetColors();
             semesterName.value = node.value;
         }
     }
@@ -128,6 +43,7 @@
             {/if}
         </select>
     </div>
+
     <div class="classRoutine" out:fade={{duration: 50, delay: 0}}>
         {#key semesterName.value}
         <div class="timeline">
@@ -146,7 +62,8 @@
                 <div class="day" style="height: {(longestTimeEnd * 90) - 90}px;" class:focused={day == today} in:fly|global={{y: 10, delay: 50*(i+1)}}>
                     <div class="dayname">{day}</div>
                     {#each Object.entries(classInfo) as [time, Class], i}
-                    <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(timeParser(time)[1] - timeParser(time)[0] - 1)}px; top: {timeParser(time)[0] - 479}px;">
+                    {@const parsedTime = timeParser(time)}
+                    <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(parsedTime[1] - parsedTime[0] - 1)}px; top: {parsedTime[0] - 479}px;">
                         <div class="toolTip">
                             {Class.course_name}
                         </div>

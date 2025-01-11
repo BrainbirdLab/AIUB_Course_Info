@@ -112,21 +112,26 @@ export const updateStatus = ref<"loading"|"error"|"success"|"">('');
 export const calenderFetching = ref(false);
 export const facultiesIsFetching = ref(false);
 
-const AvailableColors =  [
-  "#405b91",
-  "#1d8ad3",
-  "#123472",
-  "#d3251d",
-  "#009169",
-  "#008a91",
-  "#064491",
-  "#7d12df",
-  "#4caf50",
-  "#4d6a59",
-  "#622e8e",
-  "#36a61e",
-  "#df9f12",
+const AvailableColors = [
+  "#D32F2F",  // Red
+  "#1926C2",  // Blue
+  "#0288D1",  // Light Blue
+  "#388E3C",  // Green
+  "#7B1FA2",  // Purple
+  "#F57C00",  // Orange
+  "#613737",
+  "#8E74AA",  // Pink
+  "#C2185B",  // Deep Pink
+  "#673AB7",  // Deep Purple
+  "#00BCD4",  // Turquoise
+  "#FFC107",  // Amber
+  "#FF5722",  // Deep Orange
+  "#3F51B5",  // Indigo
+  "#43A047",  // Green
 ];
+
+
+
 
 export function getColors(){
   return new Array(...AvailableColors);
