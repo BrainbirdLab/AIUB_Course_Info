@@ -24,6 +24,8 @@
         ['F', 0.00]
     ]);
 
+    const titleColor = "#bfd1de";
+
     type Performance = {
         Stats: {
             [key: string]: {
@@ -183,21 +185,23 @@
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     fill: true,
-                    tension: 0.4
+                    tension: 0.3
                 }]
             },
             options: {
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Semester-wise GPA Progression'
+                        text: 'Semester-wise GPA Progression',
+                        color: titleColor,
                     }
                 },
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 4
-                    }
+                        max: 4.5,
+                        position: 'left',
+                    },
                 }
             }
         });
@@ -226,7 +230,8 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'CGPA Gauge'
+                        text: 'CGPA Gauge',
+                        color: titleColor,
                     }
                 },
                 cutout: '35%'
@@ -249,7 +254,8 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Departmental Performance'
+                        text: 'Departmental Performance',
+                        color: titleColor,
                     }
                 },
                 scales: {
@@ -281,7 +287,8 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Grade Heatmap'
+                        text: 'Grade Heatmap',
+                        color: titleColor,
                     }
                 }
             }
@@ -293,13 +300,12 @@
 {#if loaded}
 {#if Object.keys(performance.Stats).length > 0}
 <div class="container">
-    <h1>Academic performance</h1>
     <div class="charts">
         <div class="wrapper">
-            <canvas id="performanceLineChart"></canvas>
+            <canvas id="gpaGaugeChart"></canvas>
         </div>
         <div class="wrapper">
-            <canvas id="gpaGaugeChart"></canvas>
+            <canvas id="performanceLineChart"></canvas>
         </div>
         <div class="wrapper">
             <canvas id="gradeHeatmapChart"></canvas>
@@ -315,12 +321,6 @@
 {/if}
 
 <style lang="scss">
-
-h1 {
-    text-align: center;
-    font-size: 1rem;
-    color: var(--title-color);
-}
 
 .charts {
     display: flex;
