@@ -1,14 +1,13 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { completedCourses, parseCourseId, showLogin } from "$lib/store.svelte";
+    import { completedCourses, parseCourseId, showLogin, type CompletedCoursesType } from "$lib/store.svelte";
     import { onMount } from "svelte";
-    import { Chart, LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, PieController, ArcElement, DoughnutController, BarController, BarElement } from 'chart.js';
+    import { Chart, LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement } from 'chart.js';
 
-    Chart.register(LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, PieController, ArcElement, DoughnutController, BarController, BarElement);
+    Chart.register(LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement);
 
     let loaded = false;
     let lineChart: Chart | null = null;
-    let pieChart: Chart | null = null;
     let doughnutChart: Chart | null = null;
     let heatmapChart: Chart | null = null;
     let barChart: Chart | null = null;
@@ -53,11 +52,25 @@
         gradeDistribution: {},
     };
 
-    function calculatePerformance() {
+    onMount(() => {
+        if (showLogin.value) {
+            goto("/login");
+            return;
+        }
+
+        loaded = true;
+        createData(completedCourses.value);
+
+        completedCourses.onChange((courses) => {
+            createData(courses);
+        });
+    });
+
+    function createData(courses: CompletedCoursesType) {
         let totalCredits = 0;
         let totalGradePoints = 0;
 
-        Object.entries(completedCourses.value).forEach(([courseId, course]) => {
+        Object.entries(courses).forEach(([courseId, course]) => {
 
             if (!course.semester) {
                 return;
@@ -112,37 +125,35 @@
         Object.entries(performance.Stats).forEach(([department, stats]) => {
             stats.averageGrade = stats.totalGradePoints / stats.totalCredits;
         });
+
+        setTimeout(() => {
+            createCharts();
+        }, 100);
     }
 
     function createCharts() {
         const lineElem = document.getElementById('performanceLineChart') as HTMLCanvasElement;
-        const pieElem = document.getElementById('gradeDistributionChart') as HTMLCanvasElement;
         const doughnutElem = document.getElementById('gpaGaugeChart') as HTMLCanvasElement;
         const heatmapElem = document.getElementById('gradeHeatmapChart') as HTMLCanvasElement;
         const barElem = document.getElementById('departmentalPerformanceChart') as HTMLCanvasElement;
 
-        if (!lineElem || !pieElem || !doughnutElem || !heatmapElem || !barElem) {
+        if (!lineElem || !doughnutElem || !heatmapElem || !barElem) {
             console.log('Canvas elements not found');
             return;
         }
 
         const lineCtx = lineElem.getContext('2d');
-        const pieCtx = pieElem.getContext('2d');
         const doughnutCtx = doughnutElem.getContext('2d');
         const heatmapCtx = heatmapElem.getContext('2d');
         const barCtx = barElem.getContext('2d');
 
-        if (!lineCtx || !pieCtx || !doughnutCtx || !heatmapCtx || !barCtx) {
+        if (!lineCtx || !doughnutCtx || !heatmapCtx || !barCtx) {
             console.log('Canvas contexts not found');
             return;
         }
 
         if (lineChart) {
             lineChart.destroy();
-        }
-
-        if (pieChart) {
-            pieChart.destroy();
         }
 
         if (doughnutChart) {
@@ -181,44 +192,6 @@
                     y: {
                         beginAtZero: true,
                         max: 4
-                    }
-                }
-            }
-        });
-
-        pieChart = new Chart(pieCtx, {
-            type: 'pie',
-            data: {
-                labels: Object.keys(performance.gradeDistribution),
-                datasets: [
-                    {
-                        label: 'Grade Distribution',
-                        data: Object.values(performance.gradeDistribution).map(arr => arr.length),
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1
-                    }
-                ]
-            },
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'Grade Distribution'
                     }
                 }
             }
@@ -282,22 +255,34 @@
                 }
             }
         });
+
+        heatmapChart = new Chart(heatmapCtx, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(performance.gradeDistribution),
+                datasets: [{
+                    data: Object.values(performance.gradeDistribution).map(arr => arr.length),
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.6)',
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(255, 206, 86, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)',
+                        'rgba(255, 159, 64, 0.6)'
+                    ],
+                }]
+            },
+            options: {
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Grade Heatmap'
+                    }
+                }
+            }
+        });
     }
 
-    onMount(() => {
-        if (showLogin.value) {
-            goto("/login");
-            return;
-        }
-
-        loaded = true;
-
-        calculatePerformance();
-
-        setTimeout(() => {
-            createCharts();
-        }, 100);
-    });
 </script>
 
 {#if loaded}
@@ -309,16 +294,13 @@
             <canvas id="performanceLineChart"></canvas>
         </div>
         <div class="wrapper">
-            <canvas id="gradeDistributionChart"></canvas>
-        </div>
-        <div class="wrapper">
             <canvas id="gpaGaugeChart"></canvas>
         </div>
         <div class="wrapper">
-            <canvas id="departmentalPerformanceChart"></canvas>
+            <canvas id="gradeHeatmapChart"></canvas>
         </div>
         <div class="wrapper">
-            <canvas id="gradeHeatmapChart"></canvas>
+            <canvas id="departmentalPerformanceChart"></canvas>
         </div>
     </div>
 </div>

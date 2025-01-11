@@ -10,6 +10,11 @@ function ref<T>(init: T) {
     set value(newValue: T) {
       value = newValue;
     },
+    onChange(callback: (value: T) => void) {
+      $effect.root(() => {
+        $effect(() => callback(value));
+      });
+    }
   };
 }
 
