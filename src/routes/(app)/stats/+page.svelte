@@ -24,6 +24,42 @@
         ['F', 0.00]
     ]);
 
+    const gradeColorMap = new Map<string, { bg: string; border: string }>([
+        ['A+', { bg: 'rgba(76, 175, 80, 0.4)', border: 'rgba(76, 175, 80, 1)' }], // Green shades
+        ['A', { bg: 'rgba(102, 187, 106, 0.4)', border: 'rgba(102, 187, 106, 1)' }], // Lighter green
+        ['B+', { bg: 'rgba(255, 167, 38, 0.4)', border: 'rgba(255, 167, 38, 1)' }], // Orange shades
+        ['B', { bg: 'rgba(255, 183, 77, 0.4)', border: 'rgba(255, 183, 77, 1)' }], // Lighter orange
+        ['C+', { bg: 'rgba(255, 235, 59, 0.4)', border: 'rgba(255, 235, 59, 1)' }], // Yellow shades
+        ['C', { bg: 'rgba(255, 241, 118, 0.4)', border: 'rgba(255, 241, 118, 1)' }], // Lighter yellow
+        ['D+', { bg: 'rgba(244, 67, 54, 0.4)', border: 'rgba(244, 67, 54, 1)' }], // Red shades
+        ['D', { bg: 'rgba(239, 83, 80, 0.4)', border: 'rgba(239, 83, 80, 1)' }], // Lighter red
+        ['F', { bg: 'rgba(176, 190, 197, 0.4)', border: 'rgba(176, 190, 197, 1)' }] // Grey shades
+    ]);
+
+
+    function pointToGrade(point: number): string {
+        switch (true) {
+            case point >= 4.00:
+                return 'A+';
+            case point >= 3.75:
+                return 'A';
+            case point >= 3.50:
+                return 'B+';
+            case point >= 3.25:
+                return 'B';
+            case point >= 3.00:
+                return 'C+';
+            case point >= 2.75:
+                return 'C';
+            case point >= 2.50:
+                return 'D+';
+            case point >= 2.25:
+                return 'D';
+            default:
+                return 'F';
+        }
+    }
+
     const titleColor = "#bfd1de";
 
     type Performance = {
@@ -127,12 +163,6 @@
         const sems = sortSemesters(Object.keys(performance.SemesterStats));
         
         performance.CGPA = totalGradePoints / totalCredits;
-
-        // Compute semester GPAs and incrementally compute CGPA
-        // Object.entries(performance.SemesterStats).forEach(([semester, stats]) => {
-        //     stats.GPA = stats.totalGradePoints / stats.totalCredits;
-
-        // });
 
         let totalCreditsSoFar = 0;
         let totalGradePointsSoFar = 0;
@@ -264,15 +294,10 @@
                     {
                         label: 'CGPA Gauge',
                         data: [performance.CGPA, 4 - performance.CGPA],
-                        backgroundColor: [
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(255, 99, 132, 0.2)',
-                        ],
-                        borderColor: [
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(255, 99, 132, 1)'
-                        ],
-                        borderWidth: 1
+                        // remaining color is teal, the cg will be the color of the grade
+                        backgroundColor: [gradeColorMap.get(pointToGrade(performance.CGPA))?.bg || 'rgba(255, 99, 132, 0.6)', 'rgba(0, 150, 136, 0.6)'],
+                        borderColor: [gradeColorMap.get(pointToGrade(performance.CGPA))?.border || 'rgba(255, 99, 132, 1)', 'rgba(0, 150, 136, 1)'],
+                        borderWidth: 2
                     }
                 ]
             },
@@ -295,9 +320,15 @@
                 datasets: [{
                     label: 'Average Grade',
                     data: Object.values(performance.Stats).map(dept => dept.averageGrade),
-                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
+                    backgroundColor: Object.values(performance.Stats).map(dept => {
+                        let grade = pointToGrade(dept.averageGrade);
+                        return gradeColorMap.get(grade)?.bg || 'rgba(255, 99, 132, 0.6)';
+                    }),
+                    borderColor: Object.values(performance.Stats).map(dept => {
+                        let grade = pointToGrade(dept.averageGrade);
+                        return gradeColorMap.get(grade)?.border || 'rgba(255, 99, 132, 1)';
+                    }),
+                    borderWidth: 2
                 }]
             },
             options: {
@@ -323,14 +354,9 @@
                 labels: Object.keys(performance.gradeDistribution),
                 datasets: [{
                     data: Object.values(performance.gradeDistribution).map(count => count),
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.6)',
-                        'rgba(54, 162, 235, 0.6)',
-                        'rgba(255, 206, 86, 0.6)',
-                        'rgba(75, 192, 192, 0.6)',
-                        'rgba(153, 102, 255, 0.6)',
-                        'rgba(255, 159, 64, 0.6)'
-                    ],
+                    backgroundColor: Object.keys(performance.gradeDistribution).map(grade => gradeColorMap.get(grade)?.bg || 'rgba(255, 99, 132, 0.6)'),
+                    borderColor: Object.keys(performance.gradeDistribution).map(grade => gradeColorMap.get(grade)?.border || 'rgba(255, 99, 132, 1)'),
+                    borderWidth: 2
                 }]
             },
             options: {
