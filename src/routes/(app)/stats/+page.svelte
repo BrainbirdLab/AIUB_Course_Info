@@ -1,6 +1,6 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { completedCourses, parseCourseId, showLogin, type CompletedCoursesType } from "$lib/store.svelte";
+    import { completedCourses, parseCourseId, semesterClassRoutine, showLogin, type CompletedCoursesType } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { Chart, LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement } from 'chart.js';
 
@@ -138,6 +138,13 @@
         }, 100);
     }
 
+    //sort semesters
+    function sortSemesters(semesters: string[]): string[] {
+        const sems = Object.keys(semesterClassRoutine.value);
+        //sort based on the sems array order
+        return semesters.sort((a, b) => sems.indexOf(a) - sems.indexOf(b));
+    }
+
     function createCharts() {
         const lineElem = document.getElementById('performanceLineChart') as HTMLCanvasElement;
         const doughnutElem = document.getElementById('gpaGaugeChart') as HTMLCanvasElement;
@@ -175,13 +182,15 @@
             barChart.destroy();
         }
 
+        const sortedSemesters = sortSemesters(Object.keys(performance.SemesterStats));
+
         lineChart = new Chart(lineCtx, {
             type: 'line',
             data: {
-                labels: Object.keys(performance.SemesterStats),
+                labels: sortedSemesters,
                 datasets: [{
                     label: 'GPA',
-                    data: Object.values(performance.SemesterStats).map(sem => sem.CGPA),
+                    data: sortedSemesters.map(semester => performance.SemesterStats[semester].CGPA),
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     fill: true,
