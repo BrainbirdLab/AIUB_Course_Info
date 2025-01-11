@@ -70,6 +70,7 @@ export type UnlockedCoursesType = CourseType & {
 export type CompletedCoursesType = CourseType & {
   [courseId: string]: {
     grade: string;
+    semester: string;
   };
 };
 
