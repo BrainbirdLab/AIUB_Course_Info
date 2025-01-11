@@ -40,6 +40,7 @@
                 totalCourses: number;
                 totalCredits: number;
                 totalGradePoints: number;
+                GPA: number;
                 CGPA: number;
             }
         },
@@ -101,6 +102,7 @@
                     totalCourses: 0,
                     totalCredits: 0,
                     totalGradePoints: 0,
+                    GPA: 0,
                     CGPA: 0
                 };
             }
@@ -121,11 +123,25 @@
             performance.gradeDistribution[course.grade]++;
         });
 
+        //sort semesters
+        const sems = sortSemesters(Object.keys(performance.SemesterStats));
+        
         performance.CGPA = totalGradePoints / totalCredits;
 
-        // Compute semester CGPA
-        Object.entries(performance.SemesterStats).forEach(([semester, stats]) => {
-            stats.CGPA = stats.totalGradePoints / stats.totalCredits;
+        // Compute semester GPAs and incrementally compute CGPA
+        // Object.entries(performance.SemesterStats).forEach(([semester, stats]) => {
+        //     stats.GPA = stats.totalGradePoints / stats.totalCredits;
+
+        // });
+
+        let totalCreditsSoFar = 0;
+        let totalGradePointsSoFar = 0;
+        sems.forEach((semesterName) => {
+            const stats = performance.SemesterStats[semesterName];
+            stats.GPA = stats.totalGradePoints / stats.totalCredits;
+            totalCreditsSoFar += stats.totalCredits;
+            totalGradePointsSoFar += stats.totalGradePoints;
+            stats.CGPA = totalGradePointsSoFar / totalCreditsSoFar;
         });
 
         // Compute department average grades
@@ -182,15 +198,22 @@
             barChart.destroy();
         }
 
-        const sortedSemesters = sortSemesters(Object.keys(performance.SemesterStats));
+        const semesters = sortSemesters(Object.keys(performance.SemesterStats));
 
         lineChart = new Chart(lineCtx, {
             type: 'line',
             data: {
-                labels: sortedSemesters,
+                labels: semesters,
                 datasets: [{
                     label: 'GPA',
-                    data: sortedSemesters.map(semester => performance.SemesterStats[semester].CGPA),
+                    data: semesters.map(semester => performance.SemesterStats[semester].GPA),
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: true,
+                    tension: 0.3
+                }, {
+                    label: 'CGPA',
+                    data: semesters.map(semester => performance.SemesterStats[semester].CGPA),
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     fill: true,
@@ -201,8 +224,14 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Semester-wise GPA Progression',
+                        text: 'Semester-wise CGPA Progression',
                         color: titleColor,
+                    },
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: titleColor
+                        }
                     }
                 },
                 scales: {
@@ -211,7 +240,19 @@
                         max: 4.5,
                         position: 'left',
                     },
-                }
+                },
+                transitions: {
+                    show: {
+                        animations: {
+                            x: {
+                                from: 'label',
+                            },
+                            y: {
+                                from: 'bottom',
+                            }
+                        }
+                    }
+                },
             }
         });
 
