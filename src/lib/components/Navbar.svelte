@@ -48,6 +48,16 @@
     </a>
 	<a
 		class="navBtn"
+		id="nav-stats"
+		href="/stats"
+		class:shown={currentPage.value == "/stats"}
+	>
+		<div class="content pointer-none">
+			Stats <i class="fa-solid fa-chart-bar"></i>
+		</div>
+	</a>
+	<a
+		class="navBtn"
 		id="nav-Notice"
 		href="/notice"
 		class:shown={currentPage.value == "/notice"}

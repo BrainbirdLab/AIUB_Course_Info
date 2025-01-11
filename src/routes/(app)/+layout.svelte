@@ -29,7 +29,6 @@
 		pushState("", { options: true });
 	}
 
-
     async function detectSWUpdate(){
 
         const registration = await navigator.serviceWorker.ready;
@@ -247,23 +246,21 @@
         {#if !showLogin.value}
         <Options />
         <PopupModal />
-
-        <div class="user" in:fade>
-            <i class="fa-solid fa-user"></i> Hello, {User.value}! <button class="option" aria-label="Options" onclick={showOptions}>
-                <i class="fa-solid fa-gear"></i>
-            </button>
+        <div class="top">
+            <div class="user" in:fade>
+                <i class="fa-solid fa-user"></i> Hello, {User.value}! <button class="option" aria-label="Options" onclick={showOptions}>
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+            <div class="logs">
+                <DataUpdateLog />
+                <CalenderUpdateLog />
+                <FacultiesUpdateLog />
+            </div>
         </div>
-
-        <Navbar />
-
-        <DataUpdateLog />
-        <CalenderUpdateLog />
-        <FacultiesUpdateLog />
-        
         {/if}
-        
+        <Navbar />
         {@render children()}
-
     </div>
 {/if}
 
@@ -291,6 +288,14 @@
 			color: inherit;
 		}
 	}
+
+    .logs {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+    }
 
 	.preload {
 		position: fixed;
