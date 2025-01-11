@@ -315,9 +315,6 @@
 {/if}
 
 <style lang="scss">
-.container {
-    padding: 20px;
-}
 
 h1 {
     text-align: center;

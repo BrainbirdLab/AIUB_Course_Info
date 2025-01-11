@@ -252,7 +252,7 @@
                     <i class="fa-solid fa-gear"></i>
                 </button>
             </div>
-            
+
             <Navbar />
 
             <DataUpdateLog />
@@ -312,4 +312,9 @@
 		width: 100%;
 		min-height: 100%;
 	}
+
+    .top {
+        width: 100%;
+    }
+    
 </style>
