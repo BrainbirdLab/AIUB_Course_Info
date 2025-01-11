@@ -320,7 +320,6 @@ h1 {
     text-align: center;
     font-size: 1rem;
     color: var(--title-color);
-    margin-bottom: 20px;
 }
 
 .charts {
