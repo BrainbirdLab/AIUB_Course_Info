@@ -42,7 +42,7 @@
             }
         },
         CGPA: number,
-        gradeDistribution: { [key: string]: string[] },
+        gradeDistribution: { [key: string]: number },
     };
 
     let performance: Performance = {
@@ -69,6 +69,14 @@
     function createData(courses: CompletedCoursesType) {
         let totalCredits = 0;
         let totalGradePoints = 0;
+
+        //reset performance data
+        performance = {
+            Stats: {},
+            SemesterStats: {},
+            CGPA: 0,
+            gradeDistribution: {},
+        };
 
         Object.entries(courses).forEach(([courseId, course]) => {
 
@@ -105,13 +113,10 @@
             performance.SemesterStats[course.semester].totalCourses++;
             performance.SemesterStats[course.semester].totalCredits += course.credit || 0;
             performance.SemesterStats[course.semester].totalGradePoints += gp;
-
             if (!performance.gradeDistribution[course.grade]) {
-                performance.gradeDistribution[course.grade] = [course.course_name];
-            } else {
-                performance.gradeDistribution[course.grade].push(course.course_name);
+                performance.gradeDistribution[course.grade] = 0;
             }
-
+            performance.gradeDistribution[course.grade]++;
         });
 
         performance.CGPA = totalGradePoints / totalCredits;
@@ -261,7 +266,7 @@
             data: {
                 labels: Object.keys(performance.gradeDistribution),
                 datasets: [{
-                    data: Object.values(performance.gradeDistribution).map(arr => arr.length),
+                    data: Object.values(performance.gradeDistribution).map(count => count),
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.6)',
                         'rgba(54, 162, 235, 0.6)',
