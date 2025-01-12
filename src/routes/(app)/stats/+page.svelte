@@ -228,27 +228,39 @@
             barChart.destroy();
         }
 
+        function minScale(): number {
+            let min = 4;
+            //minimum of both GPA and CGPA
+            Object.values(performance.SemesterStats).forEach(stats => {
+                min = Math.min(min, stats.GPA, stats.CGPA);
+            });
+            return min - 0.5;
+        }
+
         const semesters = sortSemesters(Object.keys(performance.SemesterStats));
 
         lineChart = new Chart(lineCtx, {
             type: 'line',
             data: {
                 labels: semesters,
-                datasets: [{
-                    label: 'GPA',
-                    data: semesters.map(semester => performance.SemesterStats[semester].GPA),
-                    borderColor: 'rgba(255, 99, 132, 1)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                    fill: true,
-                    tension: 0.3
-                }, {
+                datasets: [
+                {
                     label: 'CGPA',
                     data: semesters.map(semester => performance.SemesterStats[semester].CGPA),
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     fill: true,
                     tension: 0.3
-                }]
+                },
+                {
+                    label: 'GPA',
+                    data: semesters.map(semester => performance.SemesterStats[semester].GPA),
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: true,
+                    tension: 0.3
+                }, 
+            ]
             },
             options: {
                 plugins: {
@@ -268,7 +280,11 @@
                     y: {
                         beginAtZero: true,
                         max: 4.5,
+                        min: minScale(),
                         position: 'left',
+                        ticks: {
+                            stepSize: 10
+                        }
                     },
                 },
                 transitions: {
@@ -348,14 +364,27 @@
             }
         });
 
+        const ng = Object.entries(performance.gradeDistribution).sort((a, b) => {
+            return gradeMap.get(b[0])! - gradeMap.get(a[0])!;
+        }).map(([grade, count]) => {
+            return { grade, count };
+        });
+
+        console.log(ng);
+
         heatmapChart = new Chart(heatmapCtx, {
             type: 'bar',
             data: {
-                labels: Object.keys(performance.gradeDistribution),
+                labels: ng.map(ng => ng.grade),
                 datasets: [{
-                    data: Object.values(performance.gradeDistribution).map(count => count),
-                    backgroundColor: Object.keys(performance.gradeDistribution).map(grade => gradeColorMap.get(grade)?.bg || 'rgba(255, 99, 132, 0.6)'),
-                    borderColor: Object.keys(performance.gradeDistribution).map(grade => gradeColorMap.get(grade)?.border || 'rgba(255, 99, 132, 1)'),
+                    label: 'Grade Distribution',
+                    data: ng.map(ng => ng.count),
+                    backgroundColor: ng.map(ng => {
+                        return gradeColorMap.get(ng.grade)?.bg || 'rgba(255, 99, 132, 0.6)';
+                    }),
+                    borderColor: ng.map(ng => {
+                        return gradeColorMap.get(ng.grade)?.border || 'rgba(255, 99, 132, 1)';
+                    }),
                     borderWidth: 2
                 }]
             },
