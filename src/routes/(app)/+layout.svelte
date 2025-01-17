@@ -17,6 +17,7 @@
     import NavigationIndicator from "$lib/components/NavigationIndicator.svelte";
     import CalenderUpdateLog from "$lib/components/calenderUpdateLog.svelte";
     import FacultiesUpdateLog from "$lib/components/facultiesUpdateLog.svelte";
+    import { loadData } from "$lib/loader";
 
     let { children } = $props();
 
@@ -97,7 +98,7 @@
         });
 
         window.addEventListener("storage", (e) => {
-            showToastMessage("You are logged out for deleting data", 2000);
+            showToastMessage("You are logged out for modifying data", 2000);
             clearData();
         });
 
@@ -146,90 +147,13 @@
     })
 
     function validateUser() {
-        try {
-			const raw = localStorage.getItem("semesterClassRoutine");
-
-			if (raw == null || raw == undefined || raw == "" || raw == "{}") {
-				console.log("No data");
-                showLogin.value = true;
-                clearData();
-				return;
-			}
-
-			const sem = localStorage.getItem("semester") as string;
-
-			semesterName.value = sem;
-
-			User.value = localStorage.getItem("user") || "";
-
-			const data = JSON.parse(raw);
-
-			const rawCompletedCourses =
-				localStorage.getItem("completedCourses");
-			const rawPreregisteredCourses = localStorage.getItem(
-				"preregisteredCourses",
-			);
-			const rawUnlockedCourses = localStorage.getItem("unlockedCourses");
-
-            const rawAllCourses = localStorage.getItem("allCourses");
-
-            const rawCalendar = localStorage.getItem("calendar");
-
-            const rawFaculties = localStorage.getItem("faculties");
-
-			const parsedCompletedCourses = rawCompletedCourses
-				? JSON.parse(rawCompletedCourses)
-				: {};
-
-			const parsedPreregisteredCourses = rawPreregisteredCourses
-				? JSON.parse(rawPreregisteredCourses)
-				: {};
-
-			const parsedUnlockedCourses = rawUnlockedCourses
-				? JSON.parse(rawUnlockedCourses)
-				: {};
-
-            const parsedAllCourses = rawAllCourses
-                ? JSON.parse(rawAllCourses)
-                : {};
-
-            const parsedCalendar = rawCalendar
-                ? JSON.parse(rawCalendar)
-                : {title: "", table: ""};
-                
-            const parsedFaculties = JSON.parse(rawFaculties || "[]");
-                
-            completedCourses.value = parsedCompletedCourses;
-            preregisteredCourses.value = parsedPreregisteredCourses;
-            unlockedCourses.value = parsedUnlockedCourses;
-            allCourses.value = parsedAllCourses;
-            calendarData.value = parsedCalendar;
-            faculties.value = parsedFaculties;
-
-			const gradeshow = localStorage.getItem("showGrade") as string;
-			if (gradeshow == "true") {
-				showGrade.value = true;
-			} else {
-				showGrade.value = false;
-			}
-
-			if (data satisfies SemesterDataType) {
-				//console.log("Data loaded from local storage");
-				semesterClassRoutine.value = data;
-				//console.log("Semester set");
-				showLogin.value = false;
-				//console.log("Login shown");
-			} else {
-				console.log("Invalid data");
-                showLogin.value = true;
-				clearData();
-			}
-			//console.log("Loaded set to true");
-		} catch (e) {
-			console.log("Error loading data");
+        if (!loadData()) {
+            console.log("Error loading data");
             showLogin.value = true;
-			clearData();
-		}
+            clearData();
+        } else {
+            showLogin.value = false;
+        }
     }
 
 </script>

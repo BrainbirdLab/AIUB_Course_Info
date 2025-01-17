@@ -3,6 +3,7 @@
     import { completedCourses, parseCourseId, semesterClassRoutine, showLogin, type CompletedCoursesType } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { Chart, LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement } from 'chart.js';
+    import { loadData } from "$lib/loader";
 
     Chart.register(LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement);
 
@@ -96,6 +97,8 @@
             goto("/login");
             return;
         }
+
+        loadData();
 
         loaded = true;
         createData(completedCourses.value);
@@ -369,8 +372,6 @@
         }).map(([grade, count]) => {
             return { grade, count };
         });
-
-        console.log(ng);
 
         heatmapChart = new Chart(heatmapCtx, {
             type: 'bar',
