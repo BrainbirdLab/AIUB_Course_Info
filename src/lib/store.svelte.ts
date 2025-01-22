@@ -133,7 +133,7 @@ const AvailableColors = [
   "#FFC107",  // Amber
   "#FF5722",  // Deep Orange
   "#3F51B5",  // Indigo
-  "#43A047",  // Green
+  "#636f6e",
 ];
 
 
