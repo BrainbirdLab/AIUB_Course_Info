@@ -65,11 +65,12 @@
                     {@const parsedTime = timeParser(time)}
                     <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(parsedTime[1] - parsedTime[0] - 1)}px; top: {parsedTime[0] - 479}px;">
                         <div class="toolTip">
-                            <div class="room">Room: {Class.room}</div>
-                            <div class="time">{time}</div>
+                            {Class.course_name}
                         </div>
                         <div class="classContent">
-                            <div class="coursename">{Class.course_name} [{Class.section}]</div>
+                            <div class="coursename">{shorten(Class.course_name)} [{Class.section}]</div>
+                            <div class="room">Room: {Class.room}</div>
+                            <div class="time">{time}</div>
                         </div>
                     </div>
                     {/each}
@@ -95,7 +96,7 @@
     }
 
     .coursename {
-        font-size: 0.7rem;
+        font-size: 0.8rem;
     }
     
     .classRoutine{
@@ -205,7 +206,7 @@
         }
 
         .time, .room{
-            font-size: 0.8rem;
+            font-size: 0.7rem;
         }
 
         &:hover{
