@@ -59,11 +59,11 @@
             <div class="routine">
             {#each Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0])) as [day, classInfo], i (day)}
                 {#if classInfo != null}
-                <div class="day" style="height: {(longestTimeEnd * 90) - 90}px;" class:focused={day == today} in:fly|global={{y: 10, delay: 50*(i+1)}}>
+                <div class="day" style="height: {((longestTimeEnd * 90) - 90) * 1.2}px;" class:focused={day == today} in:fly|global={{y: 10, delay: 50*(i+1)}}>
                     <div class="dayname">{day}</div>
                     {#each Object.entries(classInfo) as [time, Class], i}
                     {@const parsedTime = timeParser(time)}
-                    <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(parsedTime[1] - parsedTime[0] - 1)}px; top: {parsedTime[0] - 479}px;">
+                    <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(parsedTime[1] - parsedTime[0] - 1)}px; top: {(parsedTime[0] - 479)}px;">
                         <div class="toolTip">
                             {Class.course_name}
                         </div>
@@ -96,7 +96,7 @@
     }
 
     .coursename {
-        font-size: 0.8rem;
+        font-size: 0.7rem;
     }
     
     .classRoutine{
@@ -175,6 +175,7 @@
                 color: var(--label-color);
                 background: var(--primary);
                 padding: 5px;
+                font-size: 0.7rem;
             }
         }
     }
@@ -206,7 +207,7 @@
         }
 
         .time, .room{
-            font-size: 0.7rem;
+            font-size: 0.6rem;
         }
 
         &:hover{
