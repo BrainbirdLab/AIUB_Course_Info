@@ -432,7 +432,7 @@
                         callbacks: {
                             label: function(context: { raw: { x: string, y: string, label: string } }) {
                                 const raw = context.raw;
-                                return raw.label;
+                                return `${raw.label}: ${raw.y}`;
                             }
                         }
                     }
