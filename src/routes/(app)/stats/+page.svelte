@@ -4,6 +4,7 @@
     import { onMount } from "svelte";
     import { Chart, LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement, ScatterController, type Point } from 'chart.js';
     import { loadData } from "$lib/loader";
+    import { fly } from "svelte/transition";
 
     Chart.register(LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement, ScatterController);
 
@@ -26,15 +27,15 @@
     ]);
 
     const gradeColorMap = new Map<string, { bg: string; border: string }>([
-        ['A+', { bg: 'rgba(76, 175, 80, 0.4)', border: 'rgba(76, 175, 80, 1)' }], // Green shades
-        ['A', { bg: 'rgba(102, 187, 106, 0.4)', border: 'rgba(102, 187, 106, 1)' }], // Lighter green
-        ['B+', { bg: 'rgba(255, 167, 38, 0.4)', border: 'rgba(255, 167, 38, 1)' }], // Orange shades
-        ['B', { bg: 'rgba(255, 183, 77, 0.4)', border: 'rgba(255, 183, 77, 1)' }], // Lighter orange
-        ['C+', { bg: 'rgba(255, 235, 59, 0.4)', border: 'rgba(255, 235, 59, 1)' }], // Yellow shades
-        ['C', { bg: 'rgba(255, 241, 118, 0.4)', border: 'rgba(255, 241, 118, 1)' }], // Lighter yellow
-        ['D+', { bg: 'rgba(244, 67, 54, 0.4)', border: 'rgba(244, 67, 54, 1)' }], // Red shades
-        ['D', { bg: 'rgba(239, 83, 80, 0.4)', border: 'rgba(239, 83, 80, 1)' }], // Lighter red
-        ['F', { bg: 'rgba(176, 190, 197, 0.4)', border: 'rgba(176, 190, 197, 1)' }] // Grey shades
+        ['A+', { bg: 'hsl(120, 50%, 35%)', border: 'hsl(120, 70%, 50%)' }], // Rich green
+        ['A', { bg: 'hsl(120, 45%, 40%)', border: 'hsl(120, 65%, 55%)' }],
+        ['B+', { bg: 'hsl(30, 50%, 45%)', border: 'hsl(30, 70%, 60%)' }], // Warm orange
+        ['B', { bg: 'hsl(30, 45%, 50%)', border: 'hsl(30, 65%, 65%)' }],
+        ['C+', { bg: 'hsl(60, 50%, 40%)', border: 'hsl(60, 70%, 55%)' }], // Bright yellow
+        ['C', { bg: 'hsl(60, 45%, 45%)', border: 'hsl(60, 65%, 60%)' }],
+        ['D+', { bg: 'hsl(0, 50%, 40%)', border: 'hsl(0, 70%, 55%)' }], // Deep red
+        ['D', { bg: 'hsl(0, 45%, 45%)', border: 'hsl(0, 65%, 60%)' }],
+        ['F', { bg: 'hsl(210, 30%, 40%)', border: 'hsl(210, 50%, 50%)' }]  // Cool grey-blue
     ]);
 
     function pointToGrade(point: number): string {
@@ -287,13 +288,17 @@
                         min: minScale(),
                         position: 'left',
                         ticks: {
-                            stepSize: 10
+                            stepSize: 10,
+                            color: titleColor,
                         },
                         grid: {
                             color: gridColor,
-                        }
+                        },
                     },
                     x: {
+                        ticks: {
+                            color: titleColor,
+                        },
                         grid: {
                             color: gridColor,
                         }
@@ -374,13 +379,19 @@
                         grid: {
                             color: gridColor,
                             z: -1,
-                        }
+                        },
+                        ticks: {
+                            color: titleColor,
+                        },
                     },
                     x: {
                         grid: {
                             color: gridColor,
                             z: -1,
-                        }
+                        },
+                        ticks: {
+                            color: titleColor,
+                        },
                     }
                 }
             }
@@ -421,7 +432,7 @@
                         callbacks: {
                             label: function(context: { raw: { x: string, y: string, label: string } }) {
                                 const raw = context.raw;
-                                return `${raw.label}: ${raw.y}`;
+                                return raw.label;
                             }
                         }
                     }
@@ -432,7 +443,8 @@
                         position: 'bottom',
                         title: {
                             display: true,
-                            text: 'Courses'
+                            text: 'Courses',
+                            color: titleColor,
                         },
                         labels: scatterData.map(data => data.x),
                         ticks: {
@@ -440,6 +452,7 @@
                             maxRotation: 45,
                             minRotation: 30,
                             display: false,
+                            color: titleColor,
                         },
                         grid: {
                             color: gridColor,
@@ -449,11 +462,13 @@
                         type: 'category',
                         title: {
                             display: true,
-                            text: 'Grade'
+                            text: 'Grade',
+                            color: titleColor,
                         },
                         labels: ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'F'],
                         ticks: {
-                            display: true
+                            display: true,
+                            color: titleColor,
                         },
                         grid: {
                             color: gridColor,
@@ -469,7 +484,7 @@
 {#if Object.keys(performance.Stats).length > 0}
 <div class="container">
     <div class="charts">
-        <div class="semesterWizeGradeSheet">
+        <div class="semesterWizeGradeSheet" in:fly|global={{x: 5, duration: 200, delay: 100}}>
             <table>
                 <thead>
                     <tr>
@@ -541,7 +556,7 @@
     }
 
     tr, th, td {
-        border: 1px solid var(--label-color);
+        border: 1px solid #344754;
         padding: 4px;
         font-size: 0.8rem;
     }
