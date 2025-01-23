@@ -2,15 +2,15 @@
     import { goto } from "$app/navigation";
     import { completedCourses, parseCourseId, semesterClassRoutine, showLogin, type CompletedCoursesType } from "$lib/store.svelte";
     import { onMount } from "svelte";
-    import { Chart, LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement } from 'chart.js';
+    import { Chart, LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement, ScatterController, type Point } from 'chart.js';
     import { loadData } from "$lib/loader";
 
-    Chart.register(LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement);
+    Chart.register(LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement, ScatterController);
 
     let loaded = false;
     let lineChart: Chart | null = null;
     let doughnutChart: Chart | null = null;
-    let heatmapChart: Chart | null = null;
+    let scatterChart: Chart | null = null;
     let barChart: Chart | null = null;
 
     const gradeMap = new Map<string, number>([
@@ -37,7 +37,6 @@
         ['F', { bg: 'rgba(176, 190, 197, 0.4)', border: 'rgba(176, 190, 197, 1)' }] // Grey shades
     ]);
 
-
     function pointToGrade(point: number): string {
         switch (true) {
             case point >= 4.00:
@@ -62,6 +61,7 @@
     }
 
     const titleColor = "#bfd1de";
+    const gridColor = "#344754";
 
     type Performance = {
         Stats: {
@@ -169,6 +169,7 @@
 
         let totalCreditsSoFar = 0;
         let totalGradePointsSoFar = 0;
+
         sems.forEach((semesterName) => {
             const stats = performance.SemesterStats[semesterName];
             stats.GPA = stats.totalGradePoints / stats.totalCredits;
@@ -197,20 +198,20 @@
     function createCharts() {
         const lineElem = document.getElementById('performanceLineChart') as HTMLCanvasElement;
         const doughnutElem = document.getElementById('gpaGaugeChart') as HTMLCanvasElement;
-        const heatmapElem = document.getElementById('gradeHeatmapChart') as HTMLCanvasElement;
+        const scatterElem = document.getElementById('gradeHeatmapChart') as HTMLCanvasElement;
         const barElem = document.getElementById('departmentalPerformanceChart') as HTMLCanvasElement;
 
-        if (!lineElem || !doughnutElem || !heatmapElem || !barElem) {
+        if (!lineElem || !doughnutElem || !scatterElem || !barElem) {
             console.log('Canvas elements not found');
             return;
         }
 
         const lineCtx = lineElem.getContext('2d');
         const doughnutCtx = doughnutElem.getContext('2d');
-        const heatmapCtx = heatmapElem.getContext('2d');
+        const scatterCtx = scatterElem.getContext('2d');
         const barCtx = barElem.getContext('2d');
 
-        if (!lineCtx || !doughnutCtx || !heatmapCtx || !barCtx) {
+        if (!lineCtx || !doughnutCtx || !scatterCtx || !barCtx) {
             console.log('Canvas contexts not found');
             return;
         }
@@ -223,8 +224,8 @@
             doughnutChart.destroy();
         }
 
-        if (heatmapChart) {
-            heatmapChart.destroy();
+        if (scatterChart) {
+            scatterChart.destroy();
         }
 
         if (barChart) {
@@ -253,7 +254,7 @@
                     borderColor: 'rgba(75, 192, 192, 1)',
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     fill: true,
-                    tension: 0.3
+                    tension: 0.3,
                 },
                 {
                     label: 'GPA',
@@ -287,8 +288,16 @@
                         position: 'left',
                         ticks: {
                             stepSize: 10
+                        },
+                        grid: {
+                            color: gridColor,
                         }
                     },
+                    x: {
+                        grid: {
+                            color: gridColor,
+                        }
+                    }
                 },
                 transitions: {
                     show: {
@@ -347,7 +356,7 @@
                         let grade = pointToGrade(dept.averageGrade);
                         return gradeColorMap.get(grade)?.border || 'rgba(255, 99, 132, 1)';
                     }),
-                    borderWidth: 2
+                    borderWidth: 2,
                 }]
             },
             options: {
@@ -361,57 +370,139 @@
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: 4
+                        max: 4,
+                        grid: {
+                            color: gridColor,
+                            z: -1,
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: gridColor,
+                            z: -1,
+                        }
                     }
                 }
             }
         });
 
-        const ng = Object.entries(performance.gradeDistribution).sort((a, b) => {
-            return gradeMap.get(b[0])! - gradeMap.get(a[0])!;
-        }).map(([grade, count]) => {
-            return { grade, count };
+        const scatterData = Object.entries(completedCourses.value).map(([_, course]) => {
+            return {
+                x: course.course_name,
+                y: course.grade,
+                label: course.course_name
+            };
         });
 
-        heatmapChart = new Chart(heatmapCtx, {
-            type: 'bar',
+        scatterChart = new Chart(scatterCtx, {
+            type: 'scatter',
             data: {
-                labels: ng.map(ng => ng.grade),
                 datasets: [{
-                    label: 'Grade Distribution',
-                    data: ng.map(ng => ng.count),
-                    backgroundColor: ng.map(ng => {
-                        return gradeColorMap.get(ng.grade)?.bg || 'rgba(255, 99, 132, 0.6)';
+                    label: 'Course Grades',
+                    data: scatterData,
+                    backgroundColor: scatterData.map(data => {
+                        return gradeColorMap.get(data.y)?.bg || 'rgba(255, 99, 132, 0.6)';
                     }),
-                    borderColor: ng.map(ng => {
-                        return gradeColorMap.get(ng.grade)?.border || 'rgba(255, 99, 132, 1)';
+                    borderColor: scatterData.map(data => {
+                        return gradeColorMap.get(data.y)?.border || 'rgba(255, 99, 132, 1)';
                     }),
                     borderWidth: 2
                 }]
             },
             options: {
+                responsive: true,
                 plugins: {
                     title: {
                         display: true,
-                        text: 'Grade Heatmap',
+                        text: 'Course Grades',
                         color: titleColor,
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context: { raw: { x: string, y: string, label: string } }) {
+                                const raw = context.raw;
+                                return `${raw.label}: ${raw.y}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'category',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'Courses'
+                        },
+                        labels: scatterData.map(data => data.x),
+                        ticks: {
+                            autoSkip: true,
+                            maxRotation: 45,
+                            minRotation: 30,
+                            display: false,
+                        },
+                        grid: {
+                            color: gridColor,
+                        },
+                    },
+                    y: {
+                        type: 'category',
+                        title: {
+                            display: true,
+                            text: 'Grade'
+                        },
+                        labels: ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', 'F'],
+                        ticks: {
+                            display: true
+                        },
+                        grid: {
+                            color: gridColor,
+                        }
                     }
                 }
             }
-        });
+        } as any);
     }
-
 </script>
 
 {#if loaded}
 {#if Object.keys(performance.Stats).length > 0}
 <div class="container">
     <div class="charts">
-        <div class="wrapper">
-            <canvas id="gpaGaugeChart"></canvas>
+        <div class="semesterWizeGradeSheet">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Semester</th>
+                        <th>Total Courses</th>
+                        <th>Total Credits</th>
+                        <th>Total Grade Points</th>
+                        <th>GPA</th>
+                        <th>CGPA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each Object.entries(performance.SemesterStats).sort((a, b) => a[0].localeCompare(b[0])) as [semester, stats], i (semester)}
+                    <tr>
+                        <td>{semester}</td>
+                        <td>{stats.totalCourses}</td>
+                        <td>{stats.totalCredits}</td>
+                        <td>{stats.totalGradePoints.toFixed(2)}</td>
+                        <td>{stats.GPA.toFixed(2)}</td>
+                        <td>{stats.CGPA.toFixed(2)}</td>
+                    </tr>
+                    {/each}
+                </tbody>
+                <caption>
+                    Semester-wise Grade Sheet
+                </caption>
+            </table>
         </div>
         <div class="wrapper">
             <canvas id="performanceLineChart"></canvas>
+        </div>
+        <div class="wrapper">
+            <canvas id="gpaGaugeChart"></canvas>
         </div>
         <div class="wrapper">
             <canvas id="gradeHeatmapChart"></canvas>
@@ -427,22 +518,55 @@
 {/if}
 
 <style lang="scss">
+    .charts {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        gap: 20px;
+        align-items: center;
+    }
 
-.charts {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    width: 100%;
-    gap: 20px;
-    align-items: center;
-}
+    caption {
+        font-size: 0.8rem;
+        color: var(--title-color);
+        font-weight: bold;
+        padding: 5px;
+    }
 
-.wrapper {
-    width: 100%;
-    max-width: 500px;
-}
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        padding: 10px;
+    }
 
-canvas {
-    margin: 20px;
-}
+    tr, th, td {
+        border: 1px solid var(--label-color);
+        padding: 4px;
+        font-size: 0.8rem;
+    }
+
+    th {
+        background: #2cbac04a;
+        color: var(--background-color);
+    }
+
+    td {
+        background: var(--background-color);
+        color: var(--title-color);
+    }
+
+    //last bottom right cell is the cgpa, hightlight it
+    tr:last-child td:last-child {
+        background: #2cbac04a;
+    }
+
+    .wrapper {
+        width: 100%;
+        max-width: 500px;
+    }
+
+    canvas {
+        margin: 20px;
+    }
 </style>
