@@ -2,11 +2,11 @@
     import { goto } from "$app/navigation";
     import { completedCourses, parseCourseId, semesterClassRoutine, showLogin, type CompletedCoursesType } from "$lib/store.svelte";
     import { onMount } from "svelte";
-    import { Chart, LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement, ScatterController, type Point } from 'chart.js';
+    import { Chart, LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement, ScatterController, Filler } from 'chart.js';
     import { loadData } from "$lib/loader";
     import { fly } from "svelte/transition";
 
-    Chart.register(LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement, ScatterController);
+    Chart.register(LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement, ScatterController, Filler);
 
     let loaded = false;
     let lineChart: Chart | null = null;
@@ -417,7 +417,7 @@
                     borderColor: scatterData.map(data => {
                         return gradeColorMap.get(data.y)?.border || 'rgba(255, 99, 132, 1)';
                     }),
-                    borderWidth: 2
+                    borderWidth: 2,
                 }]
             },
             options: {
