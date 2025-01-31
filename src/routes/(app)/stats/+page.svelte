@@ -1,7 +1,7 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
     import { completedCourses, parseCourseId, semesterClassRoutine, showLogin, type CompletedCoursesType } from "$lib/store.svelte";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { Chart, LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement, ScatterController, Filler } from 'chart.js';
     import { loadData } from "$lib/loader";
     import { fly } from "svelte/transition";
@@ -107,6 +107,24 @@
         completedCourses.onChange((courses) => {
             createData(courses);
         });
+    });
+
+    onDestroy(() => {
+        if (lineChart) {
+            lineChart.destroy();
+        }
+
+        if (doughnutChart) {
+            doughnutChart.destroy();
+        }
+
+        if (scatterChart) {
+            scatterChart.destroy();
+        }
+
+        if (barChart) {
+            barChart.destroy();
+        }
     });
 
     function createData(courses: CompletedCoursesType) {
