@@ -1,9 +1,9 @@
 <script lang="ts">
-    import { semesterClassRoutine, semesterName, User } from "$lib/store.svelte";
+    import { semesterClassRoutine, semesterName } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
     import html2canvas from 'html2canvas';
-    import { chooseColor, getDayNumber, getLongestTime, resetColors, shorten, timeParser, type ClassData } from "./classData.svelte";
+    import { chooseColor, getDayNumber, resetColors, shorten, type ClassData } from "./classData.svelte";
 
     let mounted = $state(false);
 
@@ -15,53 +15,201 @@
     let longestTimeEnd = $derived(getLongestTime(classData));
     let range: number[] = $derived(Array.from(Array(getLongestTime(classData)).keys()))
 
+    function getLongestTime(classData: ClassData) {
+        if (!classData) return 0;
+        let longestTime = 0;
+        for (const day in classData) {
+            for (const time in classData[day]) {
+                const timeEnd = timeParser(time)[1];
+                if (timeEnd > longestTime) longestTime = timeEnd;
+            }
+        }
+        return Math.ceil((longestTime - 480) / 90) + 1;
+    }
+
+    function timeParser(timeRange: string): [number, number] {
+        const times = timeRange.split("-").map((time) => time.trim());
+        const startTime = parseTime(times[0]);
+        const endTime = parseTime(times[1]);
+        const startMinutes = startTime[0] * 60 + startTime[1];
+        const endMinutes = endTime[0] * 60 + endTime[1];
+        return [startMinutes, endMinutes];
+    }
+
+    function parseTime(timeStr: string): [number, number] {
+        const match = RegExp(/(\d+):(\d+)\s+(AM|PM)/i).exec(timeStr);
+        if (!match) throw new Error("Invalid time format");
+        let hours = parseInt(match[1]);
+        const minutes = parseInt(match[2]);
+        const period = match[3].toUpperCase();
+        if (hours === 12) {
+            hours = period === "AM" ? 0 : 12;
+        } else {
+            hours += period === "PM" ? 12 : 0;
+        }
+        return [hours, minutes];
+    }
+
     onMount(() => {
         mounted = true;
     });
 
-    let routineElem: HTMLDivElement = $state() as HTMLDivElement;
+    const save = async () => {
+        if (!classData) return;
 
-    async function save() {
-        const padding = 20; // Increase padding for better visibility
-        const backgroundColor = "#041e2f"; // Background color
-        const scaleFactor = 0.8; // Scale down factor (adjust for clarity)
-        const resolutionFactor = 2; // Increase for higher resolution (e.g., 2x, 3x)
+        const days = Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0]));
+        const numberOfDays = days.length;
+        const topPadding = 60; // Match HTML's padding-top
+        const dayGap = 2; // 2px gap between days
+        const svgWidth = 60 + (numberOfDays * 120) + ((numberOfDays - 1) * dayGap); // Add gaps between days
+        const svgHeight = topPadding + (longestTimeEnd * 90) + 20; // Add extra space at bottom
 
-        // Capture element at high resolution
-        const canvas = await html2canvas(routineElem, {
-            backgroundColor: backgroundColor,
-            scale: resolutionFactor // Capture at a higher resolution
+        // Define padding
+        const imagePadding = 20; // 20px padding around the image
+
+        // Define scaling factor for higher resolution (e.g., 2x, 3x, 4x)
+        const scaleFactor = 4; // Increase this for higher resolution
+
+        // Create SVG
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", `0 0 ${svgWidth} ${svgHeight}`);
+        svg.style.width = '100%';
+        svg.style.height = `${svgHeight}px`;
+
+        // Font settings
+        const fontName = 'light';
+        const fontUrl = 'fonts/now-web.woff2';
+
+        // Add a style tag to embed the font in the SVG
+        const style = document.createElementNS(svgNS, 'style');
+        style.textContent = `
+            @font-face {
+                font-family: '${fontName}';
+                src: url('${fontUrl}');
+            }
+            text {
+                font-family: '${fontName}', sans-serif;
+            }
+        `;
+        svg.appendChild(style);
+
+        // Draw background
+        const background = document.createElementNS(svgNS, 'rect');
+        background.setAttribute('x', '0');
+        background.setAttribute('y', '0');
+        background.setAttribute('width', `${svgWidth}`);
+        background.setAttribute('height', `${svgHeight}`);
+        background.setAttribute('fill', '#041e2f');
+        svg.appendChild(background);
+
+        // Draw time markers and horizontal lines
+        range.forEach((i) => {
+            const y = topPadding + (i * 90);
+            const timeLabel = document.createElementNS(svgNS, 'text');
+            timeLabel.setAttribute('x', '10');
+            timeLabel.setAttribute('y', `${y - 15}`); // Adjust to match HTML positioning
+            timeLabel.setAttribute('fill', '#708192');
+            timeLabel.setAttribute('font-size', '12');
+            timeLabel.textContent = i === 0 ? '8:00 am' : i === 1 ? '9:30 am' : i === 2 ? '11:00 am' : i === 3 ? '12:30 pm' : i === 4 ? '2:00 pm' : i === 5 ? '3:30 pm' : i === 6 ? '5:00 pm' : i === 7 ? '6:30 pm' : i === 8 ? '8:00 pm' : '9:30 pm';
+            svg.appendChild(timeLabel);
+
+            const line = document.createElementNS(svgNS, 'line');
+            line.setAttribute('x1', '0');
+            line.setAttribute('y1', `${y}`);
+            line.setAttribute('x2', `${svgWidth}`);
+            line.setAttribute('y2', `${y}`);
+            line.setAttribute('stroke', '#5b72892e');
+            line.setAttribute('stroke-width', '2');
+            svg.appendChild(line);
         });
 
-        // Calculate scaled dimensions
-        const scaledWidth = (canvas.width / resolutionFactor) * scaleFactor;
-        const scaledHeight = (canvas.height / resolutionFactor) * scaleFactor;
+        // Draw day columns and classes
+        days.forEach(([day, classes], dayIndex) => {
+            const dayX = 60 + (dayIndex * 120) + (dayIndex * dayGap); // Add gap between days
 
-        // Create a new high-resolution canvas
-        const newCanvas = document.createElement("canvas");
-        newCanvas.width = (scaledWidth + padding * 2) * resolutionFactor;
-        newCanvas.height = (scaledHeight + padding * 2) * resolutionFactor;
-        const ctx = newCanvas.getContext("2d") as CanvasRenderingContext2D;
+            // Day name label - positioned above content
+            const dayName = document.createElementNS(svgNS, 'text');
+            dayName.setAttribute('x', `${dayX + 60}`);
+            dayName.setAttribute('y', `${topPadding - 28}`); // Match HTML's top:-28px
+            dayName.setAttribute('text-anchor', 'middle');
+            dayName.setAttribute('fill', '#708192');
+            dayName.setAttribute('font-size', '14');
+            dayName.setAttribute('font-weight', 'bold');
+            dayName.textContent = day;
+            svg.appendChild(dayName);
 
-        // Scale context to maintain quality
-        ctx.scale(resolutionFactor, resolutionFactor);
+            // Draw classes with text content
+            Object.entries(classes).forEach(([time, cls]) => {
+                const parsedTime = timeParser(time);
+                const startY = topPadding + (parsedTime[0] - 479); // Adjusted for padding
+                const height = parsedTime[1] - parsedTime[0] - 1;
+                const color = chooseColor(cls.class_id);
 
-        // Fill background
-        ctx.fillStyle = backgroundColor;
-        ctx.fillRect(0, 0, newCanvas.width / resolutionFactor, newCanvas.height / resolutionFactor);
+                // Class rectangle
+                const rect = document.createElementNS(svgNS, 'rect');
+                rect.setAttribute('x', `${dayX}`);
+                rect.setAttribute('y', `${startY}`);
+                rect.setAttribute('width', '120');
+                rect.setAttribute('height', `${height}`);
+                rect.setAttribute('fill', color);
+                rect.setAttribute('rx', '10');
+                rect.setAttribute('ry', '10');
+                svg.appendChild(rect);
 
-        // Draw the original image scaled down and centered
-        ctx.drawImage(canvas, padding, padding, scaledWidth, scaledHeight);
+                // Class content text (centered)
+                const addText = (yOffset: number, content: string, size = '10') => {
+                    const text = document.createElementNS(svgNS, 'text');
+                    text.setAttribute('x', `${dayX + 60}`); // Center of the box (dayX + 60)
+                    text.setAttribute('y', `${startY + yOffset}`);
+                    text.setAttribute('fill', 'white');
+                    text.setAttribute('font-size', size);
+                    text.setAttribute('text-anchor', 'middle'); // Center-align text
+                    text.setAttribute('dominant-baseline', 'middle'); // Vertically center text
+                    text.textContent = content;
+                    svg.appendChild(text);
+                };
 
-        // Convert to image and save
-        const image = newCanvas.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.download = `${User.value} - ${semesterName.value}.png`;
-        link.href = image;
-        link.click();
-    }
+                // Add text content with proper spacing
+                addText(height / 2 - 15, shorten(cls.course_name) + ` [${cls.section}]`, "12");
+                addText(height / 2, `Room: ${cls.room}`);
+                addText(height / 2 + 15, time);
+            });
+        });
 
+        // Convert SVG to canvas
+        const canvas = document.createElement('canvas');
+        canvas.width = (svgWidth + 2 * imagePadding) * scaleFactor; // Scale canvas width
+        canvas.height = (svgHeight + 2 * imagePadding) * scaleFactor; // Scale canvas height
+        const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
+        // Scale the drawing context
+        ctx.scale(scaleFactor, scaleFactor);
+
+        // Draw padding with the same background color as the SVG
+        ctx.fillStyle = '#041e2f'; // Match this with the SVG background color
+        ctx.fillRect(0, 0, canvas.width / scaleFactor, canvas.height / scaleFactor);
+
+        // Create an image from the SVG
+        const img = new Image();
+        const svgData = new XMLSerializer().serializeToString(svg);
+        img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+
+        // Wait for the image to load
+        await new Promise((resolve) => {
+            img.onload = resolve;
+        });
+
+        // Draw the SVG image onto the canvas with padding
+        ctx.drawImage(img, imagePadding, imagePadding, svgWidth, svgHeight);
+
+        // Save the canvas as an image
+        const dataUrl = canvas.toDataURL('image/png');
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = 'class-routine.png';
+        a.click();
+    };
 
     function handleSelect(node: HTMLSelectElement){
         node.onchange = () => {
@@ -91,8 +239,7 @@
         </button>
     </div>
 
-
-    <div class="classRoutine" bind:this={routineElem} out:fade={{duration: 50, delay: 0}}>
+    <div class="classRoutine" out:fade={{duration: 50, delay: 0}}>
         {#key semesterName.value}
         <div class="timeline">
             {#each range as i (i)}

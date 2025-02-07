@@ -11,44 +11,9 @@ export interface ClassData {
     }
 }
 
-export function getLongestTime(classData: ClassData) {
-    if (!classData) return 0;
-    let longestTime = 0;
-    for (const day in classData) {
-        for (const time in classData[day]) {
-            const timeEnd = timeParser(time)[1];
-            if (timeEnd > longestTime) longestTime = timeEnd;
-        }
-    }
-    return Math.ceil((longestTime - 480) / 90) + 1;
-}
-
 export function getDayNumber(day: string) {
     const daysOfWeek = ['Saturday', 'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
     return daysOfWeek.indexOf(day);
-}
-
-export function timeParser(timeRange: string): [number, number] {
-    const times = timeRange.split("-").map((time) => time.trim());
-    const startTime = parseTime(times[0]);
-    const endTime = parseTime(times[1]);
-    const startMinutes = startTime[0] * 60 + startTime[1];
-    const endMinutes = endTime[0] * 60 + endTime[1];
-    return [startMinutes, endMinutes];
-}
-
-export function parseTime(timeStr: string): [number, number] {
-    const match = RegExp(/(\d+):(\d+)\s+(AM|PM)/i).exec(timeStr);
-    if (!match) throw new Error("Invalid time format");
-    let hours = parseInt(match[1]);
-    const minutes = parseInt(match[2]);
-    const period = match[3].toUpperCase();
-    if (hours === 12) {
-        hours = period === "AM" ? 0 : 12;
-    } else {
-        hours += period === "PM" ? 12 : 0;
-    }
-    return [hours, minutes];
 }
 
 let AvailableColors = getColors();
@@ -65,10 +30,10 @@ export function getColorsMap() {
     return ColorsMap;
 }
 
-export function chooseColor(classId: string) {
+export function chooseColor(classId: string): string {
     // If color already assigned, return it
     if (ColorsMap.has(classId)) {
-        return ColorsMap.get(classId);
+        return ColorsMap.get(classId) as string;
     }
 
     // If no colors left, reset the available colors
