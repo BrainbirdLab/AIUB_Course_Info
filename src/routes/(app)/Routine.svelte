@@ -1,7 +1,8 @@
 <script lang="ts">
-    import { semesterClassRoutine, semesterName } from "$lib/store.svelte";
+    import { semesterClassRoutine, semesterName, User } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
+    import html2canvas from 'html2canvas';
     import { chooseColor, getDayNumber, getLongestTime, resetColors, shorten, timeParser, type ClassData } from "./classData.svelte";
 
     let mounted = $state(false);
@@ -17,6 +18,49 @@
     onMount(() => {
         mounted = true;
     });
+
+    let routineElem: HTMLDivElement = $state() as HTMLDivElement;
+
+    async function save() {
+        const padding = 20; // Increase padding for better visibility
+        const backgroundColor = "#041e2f"; // Background color
+        const scaleFactor = 0.8; // Scale down factor (adjust for clarity)
+        const resolutionFactor = 2; // Increase for higher resolution (e.g., 2x, 3x)
+
+        // Capture element at high resolution
+        const canvas = await html2canvas(routineElem, {
+            backgroundColor: backgroundColor,
+            scale: resolutionFactor // Capture at a higher resolution
+        });
+
+        // Calculate scaled dimensions
+        const scaledWidth = (canvas.width / resolutionFactor) * scaleFactor;
+        const scaledHeight = (canvas.height / resolutionFactor) * scaleFactor;
+
+        // Create a new high-resolution canvas
+        const newCanvas = document.createElement("canvas");
+        newCanvas.width = (scaledWidth + padding * 2) * resolutionFactor;
+        newCanvas.height = (scaledHeight + padding * 2) * resolutionFactor;
+        const ctx = newCanvas.getContext("2d") as CanvasRenderingContext2D;
+
+        // Scale context to maintain quality
+        ctx.scale(resolutionFactor, resolutionFactor);
+
+        // Fill background
+        ctx.fillStyle = backgroundColor;
+        ctx.fillRect(0, 0, newCanvas.width / resolutionFactor, newCanvas.height / resolutionFactor);
+
+        // Draw the original image scaled down and centered
+        ctx.drawImage(canvas, padding, padding, scaledWidth, scaledHeight);
+
+        // Convert to image and save
+        const image = newCanvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.download = `${User.value} - ${semesterName.value}.png`;
+        link.href = image;
+        link.click();
+    }
+
 
 
     function handleSelect(node: HTMLSelectElement){
@@ -42,9 +86,13 @@
                 {/each}
             {/if}
         </select>
+        <button class="save" onclick={save} aria-label="Save Routine">
+            <i class="fas fa-download"></i>
+        </button>
     </div>
 
-    <div class="classRoutine" out:fade={{duration: 50, delay: 0}}>
+
+    <div class="classRoutine" bind:this={routineElem} out:fade={{duration: 50, delay: 0}}>
         {#key semesterName.value}
         <div class="timeline">
             {#each range as i (i)}
@@ -85,6 +133,12 @@
 {/if}
 
 <style lang="scss">
+
+    .save {
+        color: var(--accent);
+        padding: 5px 16px;
+        border-radius: 15px;
+    }
     .wrapper{
         display: flex;
         gap: 10px;
@@ -220,14 +274,13 @@
     }
 
 	.dropdownlist{
-		background: var(--light-dark);
-		border-radius: 10px;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		width: 100%;
-        gap: 20px;
+        background: var(--light-dark);
+        border-radius: 10px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
 	}
 
 	
