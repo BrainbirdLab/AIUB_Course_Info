@@ -2,7 +2,6 @@
     import { semesterClassRoutine, semesterName } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
-    import html2canvas from 'html2canvas';
     import { chooseColor, getDayNumber, resetColors, shorten, type ClassData } from "./classData.svelte";
 
     let mounted = $state(false);
