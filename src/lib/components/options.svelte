@@ -113,7 +113,7 @@
 			>
 				<button id="updateData"
 					disabled={updateStatus.value == "loading" || isOffline.value}
-					>Update courses <i class="fa-solid fa-book"></i></button
+					>Update your data <i class="fa-solid fa-book"></i></button
 				>
 				<button id="updateCalendar"
 					disabled={calenderFetching.value || isOffline.value}
@@ -124,7 +124,7 @@
 				<button id="updateFaculties"
 					disabled={facultiesIsFetching.value || isOffline.value}
 				>
-					Update Faculties <i class="fa-solid fa-chalkboard-user"></i>
+					Update Faculty List <i class="fa-solid fa-chalkboard-user"></i>
 				</button>
 				<button id="clearData"
 					>Clear Data <i class="fa-solid fa-trash"
@@ -207,7 +207,7 @@
 		}
 	}
 	.settings-options {
-		background: #031826;
+		background: var(--primary);
 		padding: 20px;
 		border-radius: 10px;
 		margin: 10px;

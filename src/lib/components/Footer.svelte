@@ -10,6 +10,10 @@
 </script>
 
 <footer class="footer" style:padding={padding}>
+	<div class="terms">
+		<a href="/terms">Terms of Service</a>
+	</div>
+	•
 	<div class="discord">
 		<a href="https://discord.gg/yQKcHhKzyn"
 			>Join our Discord <i class="fa-brands fa-discord"></i></a

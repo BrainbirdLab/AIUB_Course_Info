@@ -2,7 +2,12 @@
     import "$lib/styles/global.scss";
 </script>
 <div class="content">
-    <h1>Terms and Conditions & Privacy Policy</h1>
+    <h1>
+        <a href="/" aria-label="Go to home">
+            <i class="fa-solid fa-arrow-left"></i>
+        </a> 
+        Terms and Conditions & Privacy Policy
+    </h1>
 
     <div>
         <h2 class="section-header">Terms and Conditions</h2>
@@ -165,6 +170,7 @@
     h3 {
         font-size: 1rem;
         margin-top: 20px;
+        color: var(--accent);
     }
 
     p {
