@@ -53,13 +53,11 @@
         mounted = true;
     });
 
-    const save = async () => {
-        if (!classData) return;
-
+    function createSVG() {
         const days = Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0]));
         const numberOfDays = days.length;
         const topPadding = 60; // Match HTML's padding-top
-        const dayGap = 2; // 2px gap between days
+        const dayGap = 5; // gap between days
         const svgWidth = 60 + (numberOfDays * 120) + ((numberOfDays - 1) * dayGap); // Add gaps between days
         const svgHeight = topPadding + (longestTimeEnd * 90) + 20; // Add extra space at bottom
 
@@ -105,13 +103,6 @@
         // Draw time markers and horizontal lines
         range.forEach((i) => {
             const y = topPadding + (i * 90);
-            const timeLabel = document.createElementNS(svgNS, 'text');
-            timeLabel.setAttribute('x', '10');
-            timeLabel.setAttribute('y', `${y - 15}`); // Adjust to match HTML positioning
-            timeLabel.setAttribute('fill', '#708192');
-            timeLabel.setAttribute('font-size', '12');
-            timeLabel.textContent = i === 0 ? '8:00 am' : i === 1 ? '9:30 am' : i === 2 ? '11:00 am' : i === 3 ? '12:30 pm' : i === 4 ? '2:00 pm' : i === 5 ? '3:30 pm' : i === 6 ? '5:00 pm' : i === 7 ? '6:30 pm' : i === 8 ? '8:00 pm' : '9:30 pm';
-            svg.appendChild(timeLabel);
 
             const line = document.createElementNS(svgNS, 'line');
             line.setAttribute('x1', '0');
@@ -119,8 +110,26 @@
             line.setAttribute('x2', `${svgWidth}`);
             line.setAttribute('y2', `${y}`);
             line.setAttribute('stroke', '#5b72892e');
-            line.setAttribute('stroke-width', '2');
+            line.setAttribute('stroke-width', '1.5');
             svg.appendChild(line);
+
+            //background for time label
+            const timeLabelBackground = document.createElementNS(svgNS, 'rect');
+            timeLabelBackground.setAttribute('x', '0');
+            timeLabelBackground.setAttribute('y', `${y-10}`); // Adjust to match HTML positioning
+            timeLabelBackground.setAttribute('width', '55');
+            timeLabelBackground.setAttribute('height', '20');
+            timeLabelBackground.setAttribute('fill', '#041e2f');
+            svg.appendChild(timeLabelBackground);
+
+            const timeLabel = document.createElementNS(svgNS, 'text');
+
+            timeLabel.setAttribute('x', '0');
+            timeLabel.setAttribute('y', `${y+3}`); // Adjust to match HTML positioning
+            timeLabel.setAttribute('fill', '#708192');
+            timeLabel.setAttribute('font-size', '10');
+            timeLabel.textContent = i === 0 ? '8:00 am' : i === 1 ? '9:30 am' : i === 2 ? '11:00 am' : i === 3 ? '12:30 pm' : i === 4 ? '2:00 pm' : i === 5 ? '3:30 pm' : i === 6 ? '5:00 pm' : i === 7 ? '6:30 pm' : i === 8 ? '8:00 pm' : '9:30 pm';
+            svg.appendChild(timeLabel);
         });
 
         // Draw day columns and classes
@@ -175,6 +184,15 @@
                 addText(height / 2 + 15, time);
             });
         });
+
+        return { svg, svgWidth, svgHeight, imagePadding, scaleFactor };
+    }
+
+    const save = async () => {
+        if (!classData) return;
+
+        // Create SVG
+        const { svg, svgWidth, svgHeight, imagePadding, scaleFactor } = createSVG();
 
         // Convert SVG to canvas
         const canvas = document.createElement('canvas');
@@ -237,7 +255,7 @@
             <i class="fas fa-download"></i>
         </button>
     </div>
-
+    {@html createSVG().svg.outerHTML}
     <div class="classRoutine" out:fade={{duration: 50, delay: 0}}>
         {#key semesterName.value}
         <div class="timeline">
