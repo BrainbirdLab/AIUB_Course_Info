@@ -255,7 +255,6 @@
             <i class="fas fa-download"></i>
         </button>
     </div>
-    {@html createSVG().svg.outerHTML}
     <div class="classRoutine" out:fade={{duration: 50, delay: 0}}>
         {#key semesterName.value}
         <div class="timeline">
