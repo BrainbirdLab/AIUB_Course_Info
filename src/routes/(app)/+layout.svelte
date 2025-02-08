@@ -2,7 +2,7 @@
     
     import "$lib/styles/global.scss";
 
-    import { allCourses, clearData, completedCourses, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, preregisteredCourses, semesterClassRoutine, semesterName, showGrade, showLogin, subCheckingDone, subPermissionDenied, unlockedCourses, currentPage, User, type SemesterDataType, calendarData, faculties } from "$lib/store.svelte";
+    import { clearData, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, showLogin, subCheckingDone, subPermissionDenied, currentPage, User } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
     import { showToastMessage } from "@itsfuad/domtoastmessage";
