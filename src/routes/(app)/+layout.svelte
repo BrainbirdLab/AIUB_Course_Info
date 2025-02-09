@@ -11,7 +11,6 @@
     import { deleteFromDB } from "$lib/db";
     import DataUpdateLog from "$lib/components/dataUpdateLog.svelte";
     import Navbar from "$lib/components/Navbar.svelte";
-    import Options from "$lib/components/options.svelte";
     import PopupModal from "$lib/components/popupModal.svelte";
     import { goto, onNavigate, pushState } from "$app/navigation";
     import NavigationIndicator from "$lib/components/NavigationIndicator.svelte";
@@ -168,13 +167,10 @@
     <NavigationIndicator />
     <div class="container">
         {#if !showLogin.value}
-        <Options />
         <PopupModal />
         <div class="top">
             <div class="user" in:fade>
-                <i class="fa-solid fa-user"></i> Hello, {User.value}! <button class="option" aria-label="Options" onclick={showOptions}>
-                    <i class="fa-solid fa-gear"></i>
-                </button>
+                <i class="fa-solid fa-user"></i> Hello, {User.value}!
             </div>
 
             <Navbar />
@@ -201,16 +197,6 @@
             pointer-events: none;
             padding-right: 10px;
         }
-	}
-
-    .option{
-		color: var(--accent);
-		width: 40px;
-    	height: 40px;
-		i {
-			font-size: 1.2rem;
-			color: inherit;
-		}
 	}
 
 	.preload {

@@ -1,91 +1,75 @@
 <script lang="ts">
 
     import { currentPage } from "$lib/store.svelte";
-    import { fade } from "svelte/transition";
+    import { fade, slide } from "svelte/transition";
+
+	const navs = [
+		{
+			"name": "Routine",
+			"icon": "fa-regular fa-calendar-days",
+			"href": "/",
+		},
+		{
+			"name": "All Courses",
+			"icon": "fa-solid fa-book",
+			"href": "/all-courses",
+		},
+		{
+			"name": "Completed",
+			"icon": "fa-solid fa-circle-check",
+			"href": "/complete",
+		},
+		{
+			"name": "Unlocked",
+			"icon": "fa-solid fa-unlock",
+			"href": "/unlocked",
+		},
+		{
+			"name": "Stats",
+			"icon": "fa-solid fa-chart-line",
+			"href": "/stats",
+		},
+		{
+			"name": "Notice",
+			"icon": "fa-solid fa-bell",
+			"href": "/notice",
+		},
+		{
+			"name": "Calendar",
+			"icon": "fa-solid fa-calendar",
+			"href": "/calendar",
+		},
+		{
+			"name": "Faculties",
+			"icon": "fa-solid fa-chalkboard-user",
+			"href": "/faculties",
+		},
+		{
+			"name": "Settings",
+			"icon": "fa-solid fa-cog",
+			"href": "/settings",
+		},
+	];
 
 </script>
 
 <div class="menu" in:fade>
-    <a
-        class="navBtn"
-        id="nav-Routine"
-		href="/"
-        class:shown={currentPage.value == "/"}
-    >
-        <div class="content pointer-none">
-            Routine <i class="fa-regular fa-calendar-days"></i>
-        </div>
-    </a>
-	<a
-		class="navBtn"
-		id="nav-AllCourses"
-		href="/all-courses"
-		class:shown={currentPage.value == "/all-courses"}
-	>
-		<div class="content pointer-none">
-			All Courses <i class="fa-solid fa-book"></i>
-		</div>
-	</a>
-    <a
-        class="navBtn"
-        id="nav-Completed"
-		href="/complete"
-        class:shown={currentPage.value == "/complete"}
-    >
-        <div class="content pointer-none" >
-            Completed <i class="fa-solid fa-circle-check"></i>
-        </div>
-    </a>
-    <a
-        class="navBtn"
-        id="nav-Unlocked"
-		href="/unlocked"
-        class:shown={currentPage.value == "/unlocked"}
-    >
-        <div class="content pointer-none">
-            Unlocked <i class="fa-solid fa-unlock"></i>
-        </div>
-    </a>
-	<a
-		class="navBtn"
-		id="nav-stats"
-		href="/stats"
-		class:shown={currentPage.value == "/stats"}
-	>
-		<div class="content pointer-none">
-			Stats <i class="fa-solid fa-chart-bar"></i>
-		</div>
-	</a>
-	<a
-		class="navBtn"
-		id="nav-Notice"
-		href="/notice"
-		class:shown={currentPage.value == "/notice"}
-	>
-		<div class="content pointer-none">
-			Notice <i class="fa-solid fa-bell"></i>
-		</div>
-	</a>
-	<a
-		class="navBtn"
-		id="nav-calendar"
-		href="/calendar"
-		class:shown={currentPage.value == "/calendar"}
-	>
-		<div class="content pointer-none">
-			Calendar <i class="fa-solid fa-calendar"></i>
-		</div>
-	</a>
-	<a
-		class="navBtn"
-		id="nav-faculties"
-		href="/faculties"
-		class:shown={currentPage.value == "/faculties"}
-	>
-		<div class="content pointer-none">
-			Faculties <i class="fa-solid fa-chalkboard-user"></i>
-		</div>
-	</a>
+	{#each navs as nav}
+		<a
+			class="navBtn"
+			id="nav-{nav.name}"
+			href="{nav.href}"
+			class:shown={currentPage.value == nav.href}
+			aria-label="{nav.name}"
+		>
+			<div class="content pointer-none">
+				{#if currentPage.value == nav.href}
+					<div class="nav-name" transition:slide={{axis: "x"}}>{nav.name}</div>
+				{/if}
+				<i class="{nav.icon}"></i>
+			</div>
+		</a>
+	{/each}
 </div>
 
 
@@ -102,7 +86,7 @@
 		padding: 5px 15px;
 		background: var(--primary);
 		justify-content: safe center;
-		align-items: center;
+		align-items: flex-end;
 		width: 100%;
 		z-index: 20;
 		overflow-x: scroll;
@@ -117,6 +101,7 @@
 			gap: 5px;
 			text-decoration: none;
 			color: inherit;
+			padding: 5px;
 
 			.content {
 				display: flex;
@@ -125,6 +110,9 @@
 				justify-content: center;
 				white-space: nowrap;
 				gap: 5px;
+				i {
+					font-size: 1rem;
+				}
 				&.pointer-none{
 					pointer-events: none;
 				}
