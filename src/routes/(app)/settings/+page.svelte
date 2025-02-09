@@ -92,9 +92,9 @@
                 onclick={updateData}
                 >
                     <div class="textContainer">
-                        Update data from the server
+                        Sync with portal
                         <div class="moreInfo">
-                            This will update your data from the server
+                            This will update your course data from the portal
                         </div>
                     </div>
                     <div class="icon">
@@ -105,9 +105,9 @@
                 onclick={getCalendarData}
                 >
                     <div class="textContainer">
-                        Update calendar data
+                        Update academic calenda
                         <div class="moreInfo">
-                            This will update the calendar data
+                            This will update latest the academic calendar
                         </div>
                     </div>
                     <div class="icon">
@@ -120,7 +120,7 @@
                     <div class="textContainer">
                         Update faculties data
                         <div class="moreInfo">
-                            This will update the faculties data
+                            This will update the faculties data from official faculty list
                         </div>
                     </div>
                     <div class="icon">
