@@ -94,7 +94,7 @@
                     <div class="textContainer">
                         Sync with portal
                         <div class="moreInfo">
-                            This will update your course data from the portal
+                            Sync with your course routine and results from the portal
                         </div>
                     </div>
                     <div class="icon">
@@ -105,9 +105,9 @@
                 onclick={getCalendarData}
                 >
                     <div class="textContainer">
-                        Update academic calenda
+                        Update Academic calendar
                         <div class="moreInfo">
-                            This will update latest the academic calendar
+                            Get the latest academic calendar from website
                         </div>
                     </div>
                     <div class="icon">
@@ -118,9 +118,9 @@
                 onclick={getFaculties}
                 >
                     <div class="textContainer">
-                        Update faculties data
+                        Update faculty data
                         <div class="moreInfo">
-                            This will update the faculties data from official faculty list
+                            Update faculty information from the faculty list
                         </div>
                     </div>
                     <div class="icon">
