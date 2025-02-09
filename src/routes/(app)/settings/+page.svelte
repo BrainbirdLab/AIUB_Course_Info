@@ -1,12 +1,24 @@
 <script lang="ts">
 
     import { fly } from "svelte/transition";
-    import { showGrade, updateStatus, isOffline, updateLog, clearData, calenderFetching, facultiesIsFetching } from "$lib/store.svelte";
+    import { showGrade, updateStatus, isOffline, updateLog, clearData, calenderFetching, facultiesIsFetching, showLogin } from "$lib/store.svelte";
     import { getCalendarData, GetData, getFaculties } from "$lib/fetcher";
     import Footer from "$lib/components/Footer.svelte";
     import { goto } from "$app/navigation";
+    import { onMount } from "svelte";
 
     let src: EventSource | null = null;
+
+    let loaded = $state(false);
+
+    const version = __VERSION__;
+
+    onMount(() => {
+        if (showLogin.value){
+            goto("/login");
+        }
+        loaded = true;
+    });
 
 	async function updateData() {
 		const UserName = localStorage.getItem("UserName");
@@ -32,7 +44,7 @@
 	}
 </script>
 
-
+{#if loaded}
 <div class="settingsWrapper">
     <div
         class="settings box-shadow back-blur"
@@ -117,7 +129,39 @@
                 </button>
             </div>
 
-            <div class="subsection danger-zone" in:fly|global={{x: 10, delay: 200}}>
+            <div class="subsection" in:fly|global={{x: 10, delay: 200}}>
+                <div class="subtitle">
+                    Support & Terms <i class="fa-solid fa-question"></i>
+                </div>
+                <a class="field-checkers hide-underline hoverShadow" href="https://discord.gg/yQKcHhKzyn">
+                    <div class="textContainer">
+                        <span>
+                            Join our Discord <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </span>
+                        <div class="moreInfo">
+                            Get support and help
+                        </div>
+                    </div>
+                    <div class="icon">
+                        <i class="fa-brands fa-discord"></i>
+                    </div>
+                </a>
+                <a class="field-checkers hide-underline hoverShadow" href="/terms">
+                    <div class="textContainer">
+                        <span>
+                            Terms & Conditions <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </span>
+                        <div class="moreInfo">
+                            Read the terms and conditions
+                        </div>
+                    </div>
+                    <div class="icon">
+                        <i class="fa-solid fa-file-alt"></i>
+                    </div>
+                </a>
+            </div>
+
+            <div class="subsection danger-zone" in:fly|global={{x: 10, delay: 250}}>
                 <div class="subtitle sectionHeadTitle red">
                     Clear & Reset <i class="fa-solid fa-skull"></i>
                 </div>
@@ -144,13 +188,44 @@
                 </div>
             </div>
             <div class="subsection">
-                <Footer />
+               <div class="footer">
+                    <a class="src" href="https://github.com/BrainbirdLab/AIUB_Course_Info">
+                        Source code <i class="fa-solid fa-code"></i>
+                    </a>
+                    <div class="attr">
+                        &copy; Brainbird Lab {new Date().getFullYear()} • v{version}
+                    </div>
+               </div>
             </div>
         </div>
     </div>
 </div>
+{/if}
 
 <style lang="scss">
+
+    .footer{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 10px;
+        gap: 5px;
+        font-size: 0.6rem;
+        position: relative;
+        margin: auto 0 0;
+        color: var(--label-color);
+
+        a {
+            text-decoration: underline;
+            color: inherit;
+        }
+
+        i {
+            font-size: inherit;
+        }
+    }
 
     .btn-red {
         display: flex;
@@ -254,6 +329,10 @@
         }
     }
 
+    .hide-underline {
+        text-decoration: none;
+    }
+
     .field-checkers {
         display: flex;
         position: relative;
@@ -348,7 +427,7 @@
             flex-direction: column;
             justify-content: flex-start;
             align-items: center;
-            gap: 30px;
+            gap: 15px;
             width: 100%;
             height: 100%;
             overflow-y: scroll;
