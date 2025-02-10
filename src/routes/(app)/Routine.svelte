@@ -49,7 +49,7 @@
         return [hours, minutes];
     }
 
-    let debug = true;
+    let debug = false;
     let svgParent = $state() as HTMLDivElement;
 
     onMount(() => {
