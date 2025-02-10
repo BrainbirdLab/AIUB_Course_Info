@@ -49,13 +49,18 @@
         return [hours, minutes];
     }
 
+    let debug = false;
+    let svgParent = $state() as HTMLDivElement;
+
     onMount(() => {
         mounted = true;
+        const { svg } = createSVG();
+        svgParent.appendChild(svg);
     });
 
 
     function createSVG() {
-        const headerMargin = 30; // extra space for header
+        const headerMargin = 50; // extra space for header
         const days = Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0]));
         const numberOfDays = days.length;
         const topPadding = 60; // original top padding remains unchanged
@@ -95,16 +100,45 @@
         background.setAttribute('height', `${svgHeight}`);
         background.setAttribute('fill', '#041e2f');
         svg.appendChild(background);
-        
-        // Header text for semester name
+
+
+        // Header text for name and id of the user and the semester name
+        //layout 
+        // semester                 user id
+        // semester                 user name
+
+        const header = document.createElementNS(svgNS, 'g');
+        header.setAttribute("transform", `translate(0, 0)`);
         const semesterText = document.createElementNS(svgNS, 'text');
-        semesterText.setAttribute('x', `${svgWidth / 2}`);
-        semesterText.setAttribute('y', `${headerMargin / 2 + 10}`); // positioned within header area
-        semesterText.setAttribute('text-anchor', 'middle');
+        semesterText.setAttribute('x', '5');
+        semesterText.setAttribute('y', '40');
         semesterText.setAttribute('fill', '#b8c4d0');
-        semesterText.setAttribute('font-size', '16');
+        semesterText.setAttribute('font-size', '12');
         semesterText.textContent = semesterName.value;
-        svg.appendChild(semesterText);
+        header.appendChild(semesterText);
+
+        const username = localStorage.getItem('UserName') || "xx-xxxxx-x";
+
+        const userText = document.createElementNS(svgNS, 'text');
+        userText.setAttribute('x', `${svgWidth - 5}`);
+        userText.setAttribute('y', '20');
+        userText.setAttribute('fill', '#708192');
+        userText.setAttribute('font-size', '10');
+        userText.setAttribute('text-anchor', 'end');
+        userText.textContent = username; // user id
+        header.appendChild(userText);
+
+        const userName = User.value || "User Name";
+        const userNameText = document.createElementNS(svgNS, 'text');
+        userNameText.setAttribute('x', `${svgWidth - 5}`);
+        userNameText.setAttribute('y', '40');
+        userNameText.setAttribute('fill', '#b8c4d0');
+        userNameText.setAttribute('font-size', '10');
+        userNameText.setAttribute('text-anchor', 'end');
+        userNameText.textContent = userName; // user name
+        header.appendChild(userNameText);
+
+        svg.appendChild(header);
 
         // Create a parent container for remaining elements
         const contentGroup = document.createElementNS(svgNS, 'g');
@@ -250,6 +284,10 @@
     }
 
 </script>
+
+{#if debug}
+    <div class="svgContainer" bind:this={svgParent} style="border: 2px solid"></div>
+{/if}
 
 {#if mounted}
 <div class="wrapper" in:fade>
