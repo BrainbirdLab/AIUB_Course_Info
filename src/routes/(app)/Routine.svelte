@@ -49,7 +49,7 @@
         return [hours, minutes];
     }
 
-    let debug = false;
+    let debug = true;
     let svgParent = $state() as HTMLDivElement;
 
     onMount(() => {
@@ -111,9 +111,9 @@
         header.setAttribute("transform", `translate(0, 0)`);
         const semesterText = document.createElementNS(svgNS, 'text');
         semesterText.setAttribute('x', '5');
-        semesterText.setAttribute('y', '40');
+        semesterText.setAttribute('y', '35');
         semesterText.setAttribute('fill', '#b8c4d0');
-        semesterText.setAttribute('font-size', '12');
+        semesterText.setAttribute('font-size', '15');
         semesterText.textContent = semesterName.value;
         header.appendChild(semesterText);
 
@@ -131,7 +131,7 @@
         const userName = User.value || "User Name";
         const userNameText = document.createElementNS(svgNS, 'text');
         userNameText.setAttribute('x', `${svgWidth - 5}`);
-        userNameText.setAttribute('y', '40');
+        userNameText.setAttribute('y', '35');
         userNameText.setAttribute('fill', '#b8c4d0');
         userNameText.setAttribute('font-size', '10');
         userNameText.setAttribute('text-anchor', 'end');
@@ -223,14 +223,14 @@
         svg.appendChild(contentGroup);
 
         //write site name on the bottom right corner
-        const siteName = document.createElementNS(svgNS, 'text');
-        siteName.setAttribute('x', `${svgWidth - 5}`);
-        siteName.setAttribute('y', `${svgHeight - 5}`);
-        siteName.setAttribute('text-anchor', 'end');
-        siteName.setAttribute('fill', '#708192');
-        siteName.setAttribute('font-size', '10');
-        siteName.textContent = 'https://aiub.brainbird.org';
-        svg.appendChild(siteName);
+        const siteURL = document.createElementNS(svgNS, 'text');
+        siteURL.setAttribute('x', `${svgWidth - 5}`);
+        siteURL.setAttribute('y', `${svgHeight - 5}`);
+        siteURL.setAttribute('text-anchor', 'end');
+        siteURL.setAttribute('fill', '#708192');
+        siteURL.setAttribute('font-size', '10');
+        siteURL.textContent = 'https://aiub.brainbird.org';
+        svg.appendChild(siteURL);
 
         return { svg, svgWidth, svgHeight, imagePadding, scaleFactor };
     }
