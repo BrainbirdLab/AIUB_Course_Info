@@ -416,7 +416,7 @@
         padding: 10px 10px 0 10px;
         gap: 10px;
         height: 100%;
-        width: 400px;
+        width: min(100%, 600px);
         max-width: 100%;
         position: relative;
         font-size: 0.7rem;
