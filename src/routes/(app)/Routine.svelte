@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { semesterClassRoutine, semesterName } from "$lib/store.svelte";
+    import { semesterClassRoutine, semesterName, User } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
     import { chooseColor, getDayNumber, resetColors, shorten, type ClassData } from "./classData.svelte";
@@ -53,21 +53,19 @@
         mounted = true;
     });
 
+
     function createSVG() {
+        const headerMargin = 30; // extra space for header
         const days = Object.entries(classData).sort((a, b) => getDayNumber(a[0]) - getDayNumber(b[0]));
         const numberOfDays = days.length;
-        const topPadding = 60; // Match HTML's padding-top
-        const dayGap = 5; // gap between days
-        const svgWidth = 60 + (numberOfDays * 120) + ((numberOfDays - 1) * dayGap); // Add gaps between days
-        const svgHeight = topPadding + (longestTimeEnd * 90) + 20; // Add extra space at bottom
+        const topPadding = 60; // original top padding remains unchanged
+        const dayGap = 5;
+        const svgWidth = 60 + (numberOfDays * 120) + ((numberOfDays - 1) * dayGap);
+        const svgHeight = topPadding + (longestTimeEnd * 90) + 20 + headerMargin; // increase overall height
 
-        // Define padding
-        const imagePadding = 20; // 20px padding around the image
+        const imagePadding = 20;
+        const scaleFactor = 4;
 
-        // Define scaling factor for higher resolution (e.g., 2x, 3x, 4x)
-        const scaleFactor = 4; // Increase this for higher resolution
-
-        // Create SVG
         const svgNS = "http://www.w3.org/2000/svg";
         const svg = document.createElementNS(svgNS, "svg");
         svg.setAttribute("viewBox", `0 0 ${svgWidth} ${svgHeight}`);
@@ -77,8 +75,6 @@
         // Font settings
         const fontName = 'light';
         const fontUrl = 'fonts/now-web.woff2';
-
-        // Add a style tag to embed the font in the SVG
         const style = document.createElementNS(svgNS, 'style');
         style.textContent = `
             @font-face {
@@ -91,7 +87,7 @@
         `;
         svg.appendChild(style);
 
-        // Draw background
+        // Draw background and header
         const background = document.createElementNS(svgNS, 'rect');
         background.setAttribute('x', '0');
         background.setAttribute('y', '0');
@@ -99,11 +95,24 @@
         background.setAttribute('height', `${svgHeight}`);
         background.setAttribute('fill', '#041e2f');
         svg.appendChild(background);
+        
+        // Header text for semester name
+        const semesterText = document.createElementNS(svgNS, 'text');
+        semesterText.setAttribute('x', `${svgWidth / 2}`);
+        semesterText.setAttribute('y', `${headerMargin / 2 + 10}`); // positioned within header area
+        semesterText.setAttribute('text-anchor', 'middle');
+        semesterText.setAttribute('fill', '#b8c4d0');
+        semesterText.setAttribute('font-size', '16');
+        semesterText.textContent = semesterName.value;
+        svg.appendChild(semesterText);
 
-        // Draw time markers and horizontal lines
+        // Create a parent container for remaining elements
+        const contentGroup = document.createElementNS(svgNS, 'g');
+        contentGroup.setAttribute("transform", `translate(0, ${headerMargin})`);
+
+        // Draw time markers and horizontal lines into contentGroup
         range.forEach((i) => {
             const y = topPadding + (i * 90);
-
             const line = document.createElementNS(svgNS, 'line');
             line.setAttribute('x1', '0');
             line.setAttribute('y1', `${y}`);
@@ -111,50 +120,44 @@
             line.setAttribute('y2', `${y}`);
             line.setAttribute('stroke', '#5b72892e');
             line.setAttribute('stroke-width', '1.5');
-            svg.appendChild(line);
+            contentGroup.appendChild(line);
 
-            //background for time label
             const timeLabelBackground = document.createElementNS(svgNS, 'rect');
             timeLabelBackground.setAttribute('x', '0');
-            timeLabelBackground.setAttribute('y', `${y-10}`); // Adjust to match HTML positioning
+            timeLabelBackground.setAttribute('y', `${y-10}`);
             timeLabelBackground.setAttribute('width', '55');
             timeLabelBackground.setAttribute('height', '20');
             timeLabelBackground.setAttribute('fill', '#041e2f');
-            svg.appendChild(timeLabelBackground);
+            contentGroup.appendChild(timeLabelBackground);
 
             const timeLabel = document.createElementNS(svgNS, 'text');
-
             timeLabel.setAttribute('x', '0');
-            timeLabel.setAttribute('y', `${y+3}`); // Adjust to match HTML positioning
+            timeLabel.setAttribute('y', `${y+3}`);
             timeLabel.setAttribute('fill', '#708192');
             timeLabel.setAttribute('font-size', '10');
             timeLabel.textContent = i === 0 ? '8:00 am' : i === 1 ? '9:30 am' : i === 2 ? '11:00 am' : i === 3 ? '12:30 pm' : i === 4 ? '2:00 pm' : i === 5 ? '3:30 pm' : i === 6 ? '5:00 pm' : i === 7 ? '6:30 pm' : i === 8 ? '8:00 pm' : '9:30 pm';
-            svg.appendChild(timeLabel);
+            contentGroup.appendChild(timeLabel);
         });
 
-        // Draw day columns and classes
+        // Draw day columns and classes into contentGroup
         days.forEach(([day, classes], dayIndex) => {
-            const dayX = 60 + (dayIndex * 120) + (dayIndex * dayGap); // Add gap between days
-
-            // Day name label - positioned above content
+            const dayX = 60 + (dayIndex * 120) + (dayIndex * dayGap);
             const dayName = document.createElementNS(svgNS, 'text');
             dayName.setAttribute('x', `${dayX + 60}`);
-            dayName.setAttribute('y', `${topPadding - 28}`); // Match HTML's top:-28px
+            dayName.setAttribute('y', `${topPadding - 28}`);
             dayName.setAttribute('text-anchor', 'middle');
             dayName.setAttribute('fill', '#708192');
             dayName.setAttribute('font-size', '14');
             dayName.setAttribute('font-weight', 'bold');
             dayName.textContent = day;
-            svg.appendChild(dayName);
+            contentGroup.appendChild(dayName);
 
-            // Draw classes with text content
             Object.entries(classes).forEach(([time, cls]) => {
                 const parsedTime = timeParser(time);
-                const startY = topPadding + (parsedTime[0] - 479); // Adjusted for padding
+                const startY = topPadding + (parsedTime[0] - 479);
                 const height = parsedTime[1] - parsedTime[0] - 1;
                 const color = chooseColor(cls.class_id);
 
-                // Class rectangle
                 const rect = document.createElementNS(svgNS, 'rect');
                 rect.setAttribute('x', `${dayX}`);
                 rect.setAttribute('y', `${startY}`);
@@ -163,27 +166,37 @@
                 rect.setAttribute('fill', color);
                 rect.setAttribute('rx', '10');
                 rect.setAttribute('ry', '10');
-                svg.appendChild(rect);
+                contentGroup.appendChild(rect);
 
-                // Class content text (centered)
                 const addText = (yOffset: number, content: string, size = '10') => {
                     const text = document.createElementNS(svgNS, 'text');
-                    text.setAttribute('x', `${dayX + 60}`); // Center of the box (dayX + 60)
+                    text.setAttribute('x', `${dayX + 60}`);
                     text.setAttribute('y', `${startY + yOffset}`);
                     text.setAttribute('fill', 'white');
                     text.setAttribute('font-size', size);
-                    text.setAttribute('text-anchor', 'middle'); // Center-align text
-                    text.setAttribute('dominant-baseline', 'middle'); // Vertically center text
+                    text.setAttribute('text-anchor', 'middle');
+                    text.setAttribute('dominant-baseline', 'middle');
                     text.textContent = content;
-                    svg.appendChild(text);
+                    contentGroup.appendChild(text);
                 };
-
-                // Add text content with proper spacing
                 addText(height / 2 - 15, shorten(cls.course_name) + ` [${cls.section}]`, "12");
                 addText(height / 2, `Room: ${cls.room}`);
                 addText(height / 2 + 15, time);
             });
         });
+
+        // Append the group container to the SVG
+        svg.appendChild(contentGroup);
+
+        //write site name on the bottom right corner
+        const siteName = document.createElementNS(svgNS, 'text');
+        siteName.setAttribute('x', `${svgWidth - 5}`);
+        siteName.setAttribute('y', `${svgHeight - 5}`);
+        siteName.setAttribute('text-anchor', 'end');
+        siteName.setAttribute('fill', '#708192');
+        siteName.setAttribute('font-size', '10');
+        siteName.textContent = 'https://aiub.brainbird.org';
+        svg.appendChild(siteName);
 
         return { svg, svgWidth, svgHeight, imagePadding, scaleFactor };
     }
@@ -224,7 +237,7 @@
         const dataUrl = canvas.toDataURL('image/png');
         const a = document.createElement('a');
         a.href = dataUrl;
-        a.download = 'class-routine.png';
+        a.download = `${User.value} ${semesterName.value}.png`;
         a.click();
     };
 
@@ -237,7 +250,6 @@
     }
 
 </script>
-
 
 {#if mounted}
 <div class="wrapper" in:fade>
