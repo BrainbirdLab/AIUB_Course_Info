@@ -1,22 +1,17 @@
 <script lang="ts">
 
-    import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied, subCheckingDone, showLogin } from "$lib/store.svelte";
+    import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied, subCheckingDone } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fly, slide } from "svelte/transition";
     import { checkSubscription, fetchNoticesFromServer, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "$lib/fetcher";
     import { flip } from "svelte/animate";
     import { deleteFromDB } from "$lib/db";
-    import { goto } from "$app/navigation";
 
     let fetching = $state(false);
     let loadingText = $state("Fetching new notices...");
     let loaded = $state(false);
     
     onMount(() => {
-        
-        if (showLogin.value){
-            goto("/login");
-        }
 
         loaded = true;
 

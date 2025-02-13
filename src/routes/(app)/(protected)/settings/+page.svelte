@@ -1,9 +1,8 @@
 <script lang="ts">
 
     import { fly } from "svelte/transition";
-    import { showGrade, updateStatus, isOffline, updateLog, clearData, calenderFetching, facultiesIsFetching, showLogin } from "$lib/store.svelte";
+    import { showGrade, updateStatus, isOffline, updateLog, clearData, calenderFetching, facultiesIsFetching } from "$lib/store.svelte";
     import { getCalendarData, GetData, getFaculties } from "$lib/fetcher";
-    import Footer from "$lib/components/Footer.svelte";
     import { goto } from "$app/navigation";
     import { onMount } from "svelte";
 
@@ -14,9 +13,6 @@
     const version = __VERSION__;
 
     onMount(() => {
-        if (showLogin.value){
-            goto("/login");
-        }
         loaded = true;
     });
 
@@ -180,7 +176,6 @@
                         if (src) {
                             src.close();
                         }
-                        goto("/login");
                     }}
                     >
                         Clear Data <i class="fa-solid fa-trash"></i>

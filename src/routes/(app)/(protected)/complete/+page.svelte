@@ -1,28 +1,31 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-    import { unlockedCourses, preregisteredCourses, showLogin, allCourses, parseCourseId } from '$lib/store.svelte';
-    import { onMount } from 'svelte';
+    import { completedCourses, parseCourseId } from '$lib/store.svelte';
+    import { fly, slide } from 'svelte/transition';
     import { flip } from 'svelte/animate';
-    import { fade, fly, slide } from 'svelte/transition';
-    import CourseCard from '../CourseCard.svelte';
-    import Search from '../Search.svelte';
+    import { onMount } from 'svelte';
+    import CourseCard from '$lib/components/CourseCard.svelte';
+    import Search from '$lib/components/Search.svelte';
 
     let loaded = $state(false);
+
+    let creditsCompleted = $derived(Object.values(completedCourses.value).reduce((acc, course) => acc + (course.credit || 0), 0));
+    
+    let filterValue = $state('');
 
     let selectedDepartment = $state("All");
 
     let observeables = $derived.by(() => {
         if (selectedDepartment) {
             if (selectedDepartment === 'All') {
-                return Object.entries(allCourses.value);
+                return Object.entries(completedCourses.value);
             } else {
-                return Object.entries(allCourses.value).filter(([courseId, _]) => parseCourseId(courseId) === selectedDepartment);
+                return Object.entries(completedCourses.value).filter(([courseId, _]) => parseCourseId(courseId) === selectedDepartment);
             }
         } else {
-            return Object.entries(allCourses.value);
+            return Object.entries(completedCourses.value);
         }
     });
-
+    
     let filteredCourses = $derived.by(() => {
         if (filterValue) {
             return observeables.filter(([_, courseInfo]) => {
@@ -31,20 +34,9 @@
         } else {
             return observeables;
         }
-    });
-    
-    let filterValue = $state('');
+    })
 
-    onMount(() => {
-        if (showLogin.value){
-            goto("/login");
-        }
-        loaded = true;
-    });
-
-    let totalCredits = $derived(Object.values(allCourses.value).reduce((acc, course) => acc + (course.credit || 0), 0));
-    
-    let departments = $derived(["All", ...Object.keys(allCourses.value).reduce((acc, courseId) => {
+    let departments = $derived(["All", ...Object.keys(completedCourses.value).reduce((acc, courseId) => {
         let parsedDepartment = parseCourseId(courseId);
 
         if (!acc.includes(parsedDepartment)) {
@@ -63,11 +55,11 @@
         if (dept === 'All') {
             //add all courses
             return new Map<string, {count: number, credits: number}> ([
-                ['All', {count: Object.keys(allCourses.value).length, credits: totalCredits}]
+                ['All', {count: Object.keys(completedCourses.value).length, credits: creditsCompleted}]
             ]);
         }
 
-        let deptCourses = Object.entries(allCourses.value).filter(([courseId, _]) => parseCourseId(courseId) === dept);
+        let deptCourses = Object.entries(completedCourses.value).filter(([courseId, _]) => parseCourseId(courseId) === dept);
         let deptCredits = deptCourses.reduce((acc, [_, course]) => acc + (course.credit || 0), 0);
         
 
@@ -81,9 +73,11 @@
 
     }, new Map<string, {count: number, credits: number}>()));
 
+    onMount(() => {
+        loaded = true;
+    });
 
     function getAllCourseString(dept: string): string {
-
         if (dept === 'All') {
             return `(${deptCreditAndCountMap.get('All')?.count} courses, ${deptCreditAndCountMap.get('All')?.credits} Credits)`;
         } else {
@@ -92,7 +86,6 @@
     }
 
 </script>
-
 {#if loaded}
 <div class="filter">
     <!-- radio button -->
@@ -111,32 +104,32 @@
 {#if observeables && observeables.length > 0}
 <div class="container">
     <Search bind:filterValue={filterValue}/>
-    <div class="note" in:fade|global>Note: Courses shown below are based on course prerequisite criteria only</div>
     <div class="courses">
         {#if filteredCourses.length == 0}
             <div class="empty">No courses found</div>
         {:else}
-        {#each filteredCourses as [courseId, _], i (courseId)}
-        <div animate:flip={{duration: 300}} class="course" in:fly|global={{y: 10, delay: 50*(i+1)}}>
-            <CourseCard courseId={courseId} cType="unlocked"/>
-        </div>
+        {#each filteredCourses as [courseId, courseInfo], i (courseId)}
+            <div class="course" animate:flip={{duration: 300}} in:fly|global={{y: 10, delay: 50 * (i+1)}}>
+                <CourseCard courseId={courseId} cType="completed" grade={courseInfo.grade}/>
+            </div>
         {/each}
         {/if}
     </div>
 </div>
 {:else}
-    <div class="info no-course">No courses available</div>
+    <div class="info no-course">No courses completed yet</div>
 {/if}
 {/if}
 
 <style lang="scss">
 
-  .container{
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      width: 100%;
-      height: 100%;
-  }
+    .container{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        height: 100%;
+        width: 100%;
+    }
+
 </style>

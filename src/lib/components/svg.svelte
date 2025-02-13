@@ -1,6 +1,6 @@
 <script lang="ts">
     import { fly } from "svelte/transition";
-    import { calculateTextPositions, chooseColor, getDayNumber, getLongestTime, shorten, timeParser, type ClassData } from "./classData.svelte";
+    import { calculateTextPositions, chooseColor, getDayNumber, getLongestTime, shorten, timeParser, type ClassData } from "../classData.svelte";
 
     interface Props {
         classData: ClassData;

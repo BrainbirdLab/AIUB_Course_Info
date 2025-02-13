@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
-    import { completedCourses, parseCourseId, semesterClassRoutine, showLogin, type CompletedCoursesType } from "$lib/store.svelte";
+    import { completedCourses, parseCourseId, semesterClassRoutine, type CompletedCoursesType } from "$lib/store.svelte";
     import { onDestroy, onMount } from "svelte";
     import { Chart, LineController, LineElement, PointElement, RadarController, RadialLinearScale, CategoryScale, LinearScale, Title, Tooltip, ArcElement, DoughnutController, BarController, BarElement, ScatterController, Filler } from 'chart.js';
     import { loadData } from "$lib/loader";
@@ -94,10 +93,6 @@
     };
 
     onMount(() => {
-        if (showLogin.value) {
-            goto("/login");
-            return;
-        }
 
         loadData();
 

@@ -1,11 +1,10 @@
 <script lang="ts">
-    import { goto } from '$app/navigation';
-    import { unlockedCourses, creditsPrerequisitesObj, completedCourses, preregisteredCourses, showLogin, allCourses, parseCourseId } from '$lib/store.svelte';
+    import { unlockedCourses, creditsPrerequisitesObj, completedCourses, preregisteredCourses, allCourses } from '$lib/store.svelte';
     import { onMount } from 'svelte';
     import { flip } from 'svelte/animate';
     import { fade, fly, slide } from 'svelte/transition';
-    import CourseCard from '../CourseCard.svelte';
-    import Search from '../Search.svelte';
+    import CourseCard from '$lib/components/CourseCard.svelte';
+    import Search from '$lib/components/Search.svelte';
 
     let loaded = $state(false);
 
@@ -53,9 +52,6 @@
     let filterValue = $state('');
 
     onMount(() => {
-        if (showLogin.value){
-            goto("/login");
-        }
         loaded = true;
     });
 

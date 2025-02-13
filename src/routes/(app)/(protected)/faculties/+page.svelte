@@ -1,15 +1,13 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
     import {
         type FacultyType,
         faculties,
-        showLogin,
         facultyColorsMap,
     } from "$lib/store.svelte";
     import { onMount } from "svelte";
     //import { flip } from "svelte/animate";
     import { fly } from "svelte/transition";
-    import Search from "../Search.svelte";
+    import Search from "$lib/components/Search.svelte";
 
     let loaded = $state(false);
 
@@ -68,9 +66,6 @@
     }
 
     onMount(() => {
-        if (showLogin.value) {
-            goto("/login");
-        }
         loaded = true;
     });
 </script>

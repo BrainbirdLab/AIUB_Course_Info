@@ -18,17 +18,26 @@
 </script>
 
 {#if loaded && showLogin.value}
-<div class="moto" in:fly|global={{ y: -10 }}>
-    AIUB Course Info
-    <div class="sub" in:fly|global={{ x: 10 }}>
-        - A simple solution for your AIUB portal
+<div class="container">
+    <div class="moto" in:fly|global={{ y: -10 }}>
+        AIUB Course Info
+        <div class="sub" in:fly|global={{ x: 10 }}>
+            - A simple solution for your AIUB portal
+        </div>
     </div>
+    <LoginForm />
+    <Footer padding={"10px"}/>
 </div>
-<LoginForm />
-<Footer padding={"10px"}/>
 {/if}
 
 <style lang="scss">
+    .container {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: safe center;
+    }
     .moto {
         display: flex;
         flex-direction: column;

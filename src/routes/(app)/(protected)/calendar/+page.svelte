@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
-    import { showLogin, calendarData } from "$lib/store.svelte";
+    import { calendarData } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fly } from "svelte/transition";
 
@@ -11,11 +10,6 @@
     let tbl: HTMLTableElement = $state() as HTMLTableElement;
 
     onMount(() => {
-
-        if (showLogin.value) {
-            goto("/login");
-        }
-
         tbl = document.createElement("table");
 
         loaded = true;

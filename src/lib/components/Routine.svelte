@@ -2,7 +2,7 @@
     import { semesterClassRoutine, semesterName, User } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fade, fly } from "svelte/transition";
-    import { chooseColor, getDayNumber, resetColors, shorten, type ClassData } from "./classData.svelte";
+    import { chooseColor, getDayNumber, resetColors, shorten, type ClassData } from "../classData.svelte";
 
     let mounted = $state(false);
 
@@ -55,7 +55,7 @@
     onMount(() => {
         mounted = true;
         const { svg } = createSVG();
-        svgParent.appendChild(svg);
+        svgParent?.appendChild(svg);
     });
 
 
