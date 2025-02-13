@@ -4,7 +4,7 @@ export function loadData(): boolean {
     try {
         const raw = localStorage.getItem("semesterClassRoutine");
 
-        if (raw == null || raw == undefined || raw == "" || raw == "{}") {
+        if (!raw || raw == "" || raw == "{}") {
             return false;
         }
 
