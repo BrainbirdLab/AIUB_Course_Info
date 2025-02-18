@@ -29,6 +29,10 @@
     <div class="verision">
         v{version}
     </div>
+	•
+	<div class="systemStatus">
+		<a href="/status">System Status</a>
+	</div>
 </footer>
 
 <style lang="scss">

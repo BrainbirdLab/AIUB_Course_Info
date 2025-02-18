@@ -157,7 +157,26 @@
                 </a>
             </div>
 
-            <div class="subsection danger-zone" in:fly|global={{x: 10, delay: 250}}>
+            <div class="subsection" in:fly|global={{x: 10, delay: 250}}>
+                <div class="subtitle">
+                    System Status <i class="fa-solid fa-server"></i>
+                </div>
+                <a class="field-checkers hide-underline hoverShadow" href="/status">
+                    <div class="textContainer">
+                        <span>
+                            Check system status <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </span>
+                        <div class="moreInfo">
+                            Check the status of the system
+                        </div>
+                    </div>
+                    <div class="icon">
+                        <i class="fa-solid fa-server"></i>
+                    </div>
+                </a>
+            </div>
+
+            <div class="subsection danger-zone" in:fly|global={{x: 10, delay: 300}}>
                 <div class="subtitle sectionHeadTitle red">
                     Clear & Reset <i class="fa-solid fa-skull"></i>
                 </div>
