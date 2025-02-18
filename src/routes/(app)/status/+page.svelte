@@ -10,7 +10,7 @@
         ready = true;
         aiubPortal = fetch("/fetch?url=https://portal.aiub.edu");
         system = fetch(`${PUBLIC_API_SERVER_URL}`);
-        noticeSystem = fetch(`${PUBLIC_API_SERVER_URL}/notice`);
+        noticeSystem = fetch(`${PUBLIC_API_SERVER_URL}/notices`);
     });
 
     let ready = $state(false);
