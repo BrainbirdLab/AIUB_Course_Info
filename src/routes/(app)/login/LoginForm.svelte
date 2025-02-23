@@ -141,6 +141,7 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: flex-start;
+		flex-wrap: wrap;
 		color: whitesmoke;
         font-size: 0.7rem;
 		width: 100%;
