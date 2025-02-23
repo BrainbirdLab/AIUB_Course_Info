@@ -33,6 +33,9 @@
 			return;
 		}
 
+		//trim spaces
+		username.value = username.value.trim();		
+
 		if (/^\d{2}-\d{5}-\d{1}$/.test(username.value) == false) {
 			//console.log("Invalid ID");
 			usernameLabel = `<span style="color: orangered;">Invalid ID</span>`
