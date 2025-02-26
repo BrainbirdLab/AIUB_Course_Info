@@ -15,7 +15,7 @@
     let range: number[] = $derived(Array.from(Array(getLongestTime(classData)).keys()));
 
     let toRamadan = $state(false);
-    const ramadanStartTime = new Date("2025-03-02");
+    const ramadanStartTime = new Date("2025-02-27");
     const ramadanEndTime = new Date("2025-03-30");
     let isRamadan = $derived(todaysDate >= ramadanStartTime && todaysDate <= ramadanEndTime);
 
