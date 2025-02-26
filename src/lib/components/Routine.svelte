@@ -1,6 +1,5 @@
 <script lang="ts">
-    import { semesterClassRoutine, semesterName, User } from "$lib/store.svelte";
-    import { onMount } from "svelte";
+    import { preregisteredCourses, semesterClassRoutine, semesterName, User } from "$lib/store.svelte";
     import { fade, fly } from "svelte/transition";
     import { chooseColor, getDayNumber, resetColors, shorten, type ClassData } from "../classData.svelte";
 
@@ -9,17 +8,77 @@
     let classData: ClassData = $derived(semesterClassRoutine.value[semesterName.value]);
 
     //Day name today. Eg: Saturday
-    const today = new Date().toLocaleString('en-us', {  weekday: 'long' });
+    let todaysDate = $state(new Date());
+    let today = $derived(todaysDate.toLocaleString('en-us', {  weekday: 'long' }));
     
     let longestTimeEnd = $derived(getLongestTime(classData));
-    let range: number[] = $derived(Array.from(Array(getLongestTime(classData)).keys()))
+    let range: number[] = $derived(Array.from(Array(getLongestTime(classData)).keys()));
+
+    let toRamadan = $state(false);
+    const ramadanStartTime = new Date("2025-03-02");
+    const ramadanEndTime = new Date("2025-03-30");
+    let isRamadan = $derived(todaysDate >= ramadanStartTime && todaysDate <= ramadanEndTime);
+
+    function convertClassTime(time: string): string {
+
+        //semester must be current semester to show ramadan time
+        const selectedSem = semesterName.value;
+        const currentSem = "2024-2025, Spring";
+
+        if (selectedSem != currentSem) return time;
+
+        if (!toRamadan) return time;
+
+        //add am pm
+        const timeMap: Record<string, string> = {
+            //Lecture (1.5 hour) Reduced to 1 Hour
+            "08:00 AM - 09:30 AM": "09:00 AM - 10:00 AM",
+            "09:40 AM - 11:10 AM": "10:00 AM - 11:00 AM",
+            "11:20 AM - 12:50 PM": "11:00 AM - 12:00 PM",
+            "01:00 PM - 02:30 PM": "12:00 PM - 01:00 PM",
+            "02:40 PM - 04:10 PM": "01:20 PM - 02:20 PM",
+            "04:20 PM - 05:50 PM": "02:20 PM - 03:20 PM",
+            //Lecture (2 hour) Reduced to 1:20Hrs
+            "08:00 AM - 10:00 AM": "09:00 AM - 10:20 AM",
+            "10:20 AM - 12:20 PM": "10:30 AM - 11:50 AM",
+            "12:40 PM - 02:40 PM": "12:00 PM - 01:20 PM",
+            "03:00 PM - 05:00 PM": "01:30 PM - 02:50 PM",
+            //Lecture (1 hour) Reduced to 40 mins
+            "08:00 AM - 09:00 AM": "09:00 AM - 09:40 AM",
+            "09:10 AM - 10:10 AM": "10:00 AM - 10:40 AM",
+            "10:20 AM - 11:20 AM": "11:00 AM - 11:40 AM",
+            "11:30 AM - 12:30 PM": "12:00 PM - 12:40 PM",
+            "12:40 PM - 01:40 PM": "01:00 PM - 01:40 PM",
+            "01:50 PM - 02:50 PM": "02:00 PM - 02:40 PM",
+            //Laboratory Class      Lab Class Reduced Timing 
+            "08:00 AM - 10:20 AM": "09:00 AM - 10:30 AM",
+            "10:20 AM - 12:40 PM": "10:30 AM - 12:00 PM",
+            "12:40 PM - 03:00 PM": "12:00 PM - 01:30 PM",
+            "03:00 PM - 05:20 PM": "01:30 PM - 03:00 PM",
+            //Architecture Studio Class     Architecture Studio Reduced Timing
+            "08:30 AM - 11:30 AM": "09:00 AM - 11:00 AM",
+            "08:30 AM - 12:30 PM": "09:00 AM - 12:00 PM",
+            "08:30 AM - 01:00 PM": "09:00 AM - 12:20 PM",
+            "08:30 AM - 02:00 PM": "09:00 AM - 01:00 PM",
+            "02:00 PM - 05:00 PM": "01:00 PM - 03:00 PM",
+            //short classes 1.10 hours reduced to 1 hour
+            "11:20 AM - 12:30 PM": "11:00 AM - 12:00 PM",
+        }
+
+        if (isRamadan) {
+            return timeMap[time] || time;
+        }
+
+        return time;
+    }
+
 
     function getLongestTime(classData: ClassData) {
         if (!classData) return 0;
         let longestTime = 0;
         for (const day in classData) {
             for (const time in classData[day]) {
-                const timeEnd = timeParser(time)[1];
+                const timeEnd = timeParser(convertClassTime(time))[1];
                 if (timeEnd > longestTime) longestTime = timeEnd;
             }
         }
@@ -52,10 +111,27 @@
     let debug = false;
     let svgParent = $state() as HTMLDivElement;
 
-    onMount(() => {
+    $effect(() => {
+
+        const rawCalMode = localStorage.getItem('calMode');
+        if (!rawCalMode) {
+            if (isRamadan) localStorage.setItem('calMode', "ramadan");
+            else localStorage.setItem('calMode', "normal");
+        }
+        const calMode = rawCalMode ? rawCalMode === "ramadan" : false;
+
+        toRamadan = calMode;
+
         mounted = true;
+
         const { svg } = createSVG();
-        svgParent?.appendChild(svg);
+        if (svgParent) {
+            //remove all children
+            while (svgParent.firstChild) {
+                svgParent.removeChild(svgParent.firstChild);
+            }
+            svgParent.appendChild(svg);
+        }
     });
 
 
@@ -187,6 +263,7 @@
             contentGroup.appendChild(dayName);
 
             Object.entries(classes).forEach(([time, cls]) => {
+                time = convertClassTime(time);
                 const parsedTime = timeParser(time);
                 const startY = topPadding + (parsedTime[0] - 479);
                 const height = parsedTime[1] - parsedTime[0] - 1;
@@ -232,14 +309,61 @@
         siteURL.textContent = 'https://aiub.brainbird.org';
         svg.appendChild(siteURL);
 
+        if (toRamadan) {
+            //add ramadan png logo on the bottom left corner
+            const ramadanLogo = document.createElementNS(svgNS, 'image');
+            ramadanLogo.setAttribute('x', '5');
+            ramadanLogo.setAttribute('y', `${svgHeight - 32}`);
+            ramadanLogo.setAttribute('width', '32');
+            ramadanLogo.setAttribute('height', '32');
+            ramadanLogo.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', '/ramadan_logo.png')
+            ramadanLogo.setAttribute('href', '/ramadan_logo.png');
+            svg.appendChild(ramadanLogo);
+            //add ramadan text on the bottom left corner
+            const ramadanText = document.createElementNS(svgNS, 'text');
+            ramadanText.setAttribute('x', '45');
+            ramadanText.setAttribute('y', `${svgHeight - 15}`);
+            ramadanText.setAttribute('fill', '#708192');
+            ramadanText.setAttribute('font-size', '10');
+            ramadanText.textContent = 'Ramadan';
+            const ramadanText2 = document.createElementNS(svgNS, 'text');
+            ramadanText2.setAttribute('x', '45');
+            ramadanText2.setAttribute('y', `${svgHeight - 5}`);
+            ramadanText2.setAttribute('fill', '#708192');
+            ramadanText2.setAttribute('font-size', '10');
+            ramadanText2.textContent = 'Karim';
+            svg.appendChild(ramadanText);
+            svg.appendChild(ramadanText2);
+        }
+
         return { svg, svgWidth, svgHeight, imagePadding, scaleFactor };
     }
+
+    const convertImageToBase64 = async (url: string): Promise<string> => {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => resolve(reader.result as string);
+            reader.readAsDataURL(blob);
+        });
+    };
 
     const save = async () => {
         if (!classData) return;
 
         // Create SVG
         const { svg, svgWidth, svgHeight, imagePadding, scaleFactor } = createSVG();
+
+        // Convert the external image to Base64
+        const imgElement = svg.querySelector('image'); // Find the <image> element inside SVG
+        if (imgElement) {
+            const imgUrl = imgElement.getAttribute('href') || imgElement.getAttribute('xlink:href');
+            if (!imgUrl) return;
+            const base64Image = await convertImageToBase64(imgUrl);
+            imgElement.setAttribute('href', base64Image); // Replace with Base64
+            imgElement.setAttribute('xlink:href', base64Image);
+        }
 
         // Convert SVG to canvas
         const canvas = document.createElement('canvas');
@@ -254,10 +378,10 @@
         ctx.fillStyle = '#041e2f'; // Match this with the SVG background color
         ctx.fillRect(0, 0, canvas.width / scaleFactor, canvas.height / scaleFactor);
 
-        // Create an image from the SVG
+        // Create an image from the updated SVG
         const img = new Image();
         const svgData = new XMLSerializer().serializeToString(svg);
-        img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+        img.src = 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svgData))); // Fix encoding issues
 
         // Wait for the image to load
         await new Promise((resolve) => {
@@ -274,6 +398,7 @@
         a.download = `${User.value} ${semesterName.value}.png`;
         a.click();
     };
+
 
     function handleSelect(node: HTMLSelectElement){
         node.onchange = () => {
@@ -304,6 +429,14 @@
         <button class="save" onclick={save} aria-label="Save Routine">
             <i class="fas fa-download"></i>
         </button>
+        {#if isRamadan}
+        <button class="toRamadan" aria-label="Ramadan Mode button" onclick={() => {
+            toRamadan = !toRamadan;
+            localStorage.setItem('calMode', toRamadan ? "ramadan" : "normal");
+        }}
+        style:color={toRamadan ? 'var(--accent)' : '#738789'}
+        ><i class="fa-solid fa-mosque"></i></button>
+        {/if}
     </div>
     <div class="classRoutine" out:fade={{duration: 50, delay: 0}}>
         {#key semesterName.value}
@@ -323,7 +456,7 @@
                 <div class="day" style="height: {((longestTimeEnd * 90) - 90)}px;" class:focused={day == today} in:fly|global={{y: 10, delay: 50*(i+1)}}>
                     <div class="dayname">{day}</div>
                     {#each Object.entries(classInfo) as [time, Class], i}
-                    {@const parsedTime = timeParser(time)}
+                    {@const parsedTime = timeParser(convertClassTime(time))}
                     <div class="class" in:fly|global={{y: 10, delay: 10*i+1}} style="background: {chooseColor(Class.class_id)}; height: {(parsedTime[1] - parsedTime[0] - 1)}px; top: {(parsedTime[0] - 479)}px;">
                         <div class="toolTip">
                             {Class.course_name}
@@ -331,7 +464,7 @@
                         <div class="classContent">
                             <div class="coursename">{shorten(Class.course_name)} [{Class.section}]</div>
                             <div class="room">Room: {Class.room}</div>
-                            <div class="time">{time}</div>
+                            <div class="time">{convertClassTime(time)}</div>
                         </div>
                     </div>
                     {/each}
@@ -346,6 +479,18 @@
 {/if}
 
 <style lang="scss">
+
+    .toRamadan {
+        height: 100%;
+        display: flex;
+        color: white;
+        padding: 5px;
+        border-radius: 7px;
+        margin-right: 3px;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
 
     .save {
         color: var(--accent);
@@ -457,7 +602,7 @@
         align-items: center;
         justify-content: center;
         gap: 5px;
-        padding: 10px;
+        padding: 7px;
         border-radius: 10px;
         width: 100%;
         font-size: 0.7rem;
