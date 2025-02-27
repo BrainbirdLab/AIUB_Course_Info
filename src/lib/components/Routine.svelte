@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { preregisteredCourses, semesterClassRoutine, semesterName, User } from "$lib/store.svelte";
+    import { completedCourses, semesterClassRoutine, semesterName, User } from "$lib/store.svelte";
     import { fade, fly } from "svelte/transition";
     import { chooseColor, getDayNumber, resetColors, shorten, type ClassData } from "../classData.svelte";
 
@@ -19,11 +19,27 @@
     const ramadanEndTime = new Date(2025, 2, 30).getTime();
     let isRamadan = $derived(todaysDate.getTime() >= ramadanStartTime && todaysDate.getTime() <= ramadanEndTime);
 
+    let completedSemesters = $derived.by(() => {
+        let completed: Map<string, boolean> = new Map();
+        for (const course in completedCourses.value) {
+            const sem = completedCourses.value[course].semester;
+            if (!completed.has(sem)){
+                completed.set(sem, true);
+            } 
+        }
+
+        return completed;
+    });
+
     function convertClassTime(time: string): string {
+
+        if (!isRamadan) return time;
 
         //semester must be current semester to show ramadan time
         const selectedSem = semesterName.value;
-        const currentSem = "2024-2025, Spring";
+        const currentSem = Object.keys(semesterClassRoutine.value).at(completedSemesters.size);
+
+        console.log(selectedSem, currentSem);
 
         if (selectedSem != currentSem) return time;
 
