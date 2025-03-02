@@ -269,6 +269,11 @@ const CourseIconColors = {
     'ICON' : '<i class="fa-solid fa-bullhorn"></i>',
     'COLOR' : '#ff5722'
   },
+  'UNKNOWN' : {
+    //add general icon and color
+    'ICON' : '<i class="fa-solid fa-book"></i>',
+    'COLOR' : '#121a2b'
+  }
 }
 
 export function getIconColor(courseId: string){
@@ -291,7 +296,13 @@ export const facultyColorsMap: {[key:string]: string} = {
 }
 
 export function parseCourseId(courseId: string) {
-  return RegExp(/[A-Za-z]+/).exec(courseId)![0] as keyof typeof CourseIconColors;
+  //handle error "TypeError: Cannot read properties of null (reading '0')"
+  //return RegExp(/[A-Za-z]+/).exec(courseId)![0] as keyof typeof CourseIconColors;
+  const res = RegExp(/[A-Za-z]+/).exec(courseId);
+  if(res && res.length > 0){
+    return res[0] as keyof typeof CourseIconColors;
+  }
+  return "UNKNOWN" as keyof typeof CourseIconColors;
 }
 
 export function clearData(){
