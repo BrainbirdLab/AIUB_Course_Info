@@ -347,7 +347,7 @@
             ramadanText2.setAttribute('y', `${svgHeight - 5}`);
             ramadanText2.setAttribute('fill', '#708192');
             ramadanText2.setAttribute('font-size', '10');
-            ramadanText2.textContent = 'Karim';
+            ramadanText2.textContent = 'Kareem';
             svg.appendChild(ramadanText);
             svg.appendChild(ramadanText2);
         }

@@ -146,6 +146,41 @@ const CourseIconColors = {
     'ICON' : '<i class="fa-solid fa-laptop-code"></i>',
     'COLOR' : '#2196F3'
   },
+  'BDS' : {
+    //data science
+    'ICON' : '<i class="fa-solid fa-chart-line"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'BSE': {
+    //software engineering
+    'ICON' : '<i class="fa-solid fa-laptop-code"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'CNE': {
+    //computer network engineering
+    'ICON' : '<i class="fa-solid fa-network-wired"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'CYS' : {
+    //cyber security
+    'ICON' : '<i class="fa-solid fa-shield-alt"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'RBT' : {
+    //robotics
+    'ICON' : '<i class="fa-solid fa-robot"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'CBI': {
+    //Business Intelligence
+    'ICON' : '<i class="fa-solid fa-chart-line"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'ITM' : {
+    //Technology Management
+    'ICON' : '<i class="fa-solid fa-cogs"></i>',
+    'COLOR' : '#2196F3'
+  },
   'MAT' : {
     'ICON' : '<i class="fa-solid fa-calculator"></i>',
     'COLOR' : '#2f4f4f'
