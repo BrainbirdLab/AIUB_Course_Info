@@ -269,11 +269,6 @@ const CourseIconColors = {
     'ICON' : '<i class="fa-solid fa-bullhorn"></i>',
     'COLOR' : '#ff5722'
   },
-  'UNKNOWN' : {
-    //add general icon and color
-    'ICON' : '<i class="fa-solid fa-book"></i>',
-    'COLOR' : '#121a2b'
-  }
 }
 
 export function getIconColor(courseId: string){
@@ -302,7 +297,7 @@ export function parseCourseId(courseId: string) {
   if(res && res.length > 0){
     return res[0] as keyof typeof CourseIconColors;
   }
-  return "UNKNOWN" as keyof typeof CourseIconColors;
+  return "" as keyof typeof CourseIconColors;
 }
 
 export function clearData(){
