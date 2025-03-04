@@ -9,7 +9,6 @@
 
     let loaded = false;
     let lineChart: Chart | null = null;
-    let doughnutChart: Chart | null = null;
     let scatterChart: Chart | null = null;
     let barChart: Chart | null = null;
 
@@ -107,10 +106,6 @@
     onDestroy(() => {
         if (lineChart) {
             lineChart.destroy();
-        }
-
-        if (doughnutChart) {
-            doughnutChart.destroy();
         }
 
         if (scatterChart) {
@@ -211,31 +206,20 @@
 
     function createCharts() {
         const lineElem = document.getElementById('performanceLineChart') as HTMLCanvasElement;
-        const doughnutElem = document.getElementById('gpaGaugeChart') as HTMLCanvasElement;
         const scatterElem = document.getElementById('gradeHeatmapChart') as HTMLCanvasElement;
         const barElem = document.getElementById('departmentalPerformanceChart') as HTMLCanvasElement;
 
-        if (!lineElem || !doughnutElem || !scatterElem || !barElem) {
-            console.log('Canvas elements not found');
-            return;
-        }
-
         const lineCtx = lineElem.getContext('2d');
-        const doughnutCtx = doughnutElem.getContext('2d');
         const scatterCtx = scatterElem.getContext('2d');
         const barCtx = barElem.getContext('2d');
 
-        if (!lineCtx || !doughnutCtx || !scatterCtx || !barCtx) {
+        if (!lineCtx || !scatterCtx || !barCtx) {
             console.log('Canvas contexts not found');
             return;
         }
 
         if (lineChart) {
             lineChart.destroy();
-        }
-
-        if (doughnutChart) {
-            doughnutChart.destroy();
         }
 
         if (scatterChart) {
@@ -329,33 +313,6 @@
                         }
                     }
                 },
-            }
-        });
-
-        doughnutChart = new Chart(doughnutCtx, {
-            type: 'doughnut',
-            data: {
-                labels: ['CGPA', 'Remaining'],
-                datasets: [
-                    {
-                        label: 'CGPA Gauge',
-                        data: [performance.CGPA, 4 - performance.CGPA],
-                        // remaining color is teal, the cg will be the color of the grade
-                        backgroundColor: [gradeColorMap.get(pointToGrade(performance.CGPA))?.bg || 'rgba(255, 99, 132, 0.6)', 'rgba(0, 150, 136, 0.6)'],
-                        borderColor: [gradeColorMap.get(pointToGrade(performance.CGPA))?.border || 'rgba(255, 99, 132, 1)', 'rgba(0, 150, 136, 1)'],
-                        borderWidth: 2
-                    }
-                ]
-            },
-            options: {
-                plugins: {
-                    title: {
-                        display: true,
-                        text: 'CGPA Gauge',
-                        color: titleColor,
-                    }
-                },
-                cutout: '35%'
             }
         });
 
@@ -528,9 +485,6 @@
         </div>
         <div class="wrapper">
             <canvas id="performanceLineChart"></canvas>
-        </div>
-        <div class="wrapper">
-            <canvas id="gpaGaugeChart"></canvas>
         </div>
         <div class="wrapper">
             <canvas id="gradeHeatmapChart"></canvas>
