@@ -39,8 +39,6 @@
         const selectedSem = semesterName.value;
         const currentSem = Object.keys(semesterClassRoutine.value).at(completedSemesters.size);
 
-        console.log(selectedSem, currentSem);
-
         if (selectedSem != currentSem) return time;
 
         if (!toRamadan) return time;

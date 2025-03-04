@@ -38,7 +38,7 @@
         if (filterValue) {
             filtered = filtered.filter(
                 (faculty: FacultyType) => {
-                    return faculty.CvPersonal.Name.split(" ").join("").toLowerCase().includes(
+                    return faculty.CvPersonal.Name != null && faculty.CvPersonal.Name.split(" ").join("").toLowerCase().includes(
                         filterValue.split(" ").join("").toLowerCase(),
                     );
                 },
