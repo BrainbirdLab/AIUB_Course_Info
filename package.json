@@ -1,5 +1,5 @@
 {
-	"name": "aiub-course-info",
+	"name": "aiub-pocket",
 	"version": "13.4.3",
 	"scripts": {
 		"dev": "vite dev",
