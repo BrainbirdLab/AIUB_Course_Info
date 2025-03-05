@@ -54,10 +54,10 @@
         </div>
     </div>
     
-    <span class="big-title center" in:fly={{ x: -10, delay: 200 }}
+    <span class="big-title center" in:fly|global={{ x: -10, delay: 200 }}
         >Daily companion for AIUBians</span
     >
-    <div class="more center" in:fade={{ delay: 250 }}>
+    <div class="more center" in:fade|global={{ delay: 250 }}>
         AIUB Pocket is an easy to use, all-in-one app for AIUB students. It provides regular class routines, course details and preregistration info. It also delivers all official notices via in app notifications and allows students to visualize their academic progress.
     </div>
     
