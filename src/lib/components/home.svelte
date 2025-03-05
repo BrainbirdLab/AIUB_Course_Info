@@ -234,6 +234,7 @@
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
+        overflow: initial;
     }
 
     .item-info{
@@ -297,6 +298,15 @@
             img {
                 transform: perspective(5in) rotate3d(-4, -9, 2, -61deg);
             }
+        }
+
+        img {
+            z-index: 1;
+            filter: blur(2px);
+        }
+
+        .item-info{
+            z-index: 2;
         }
     }
 
