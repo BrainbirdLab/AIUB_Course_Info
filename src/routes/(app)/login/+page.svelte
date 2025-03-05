@@ -20,7 +20,7 @@
 {#if loaded && showLogin.value}
 <div class="container">
     <div class="moto" in:fly|global={{ y: -10 }}>
-        AIUB Course Info
+        AIUB Pocket
         <div class="sub" in:fly|global={{ x: 10 }}>
             - A simple solution for your AIUB portal
         </div>

@@ -7,7 +7,7 @@
 		{
 			"name": "Routine",
 			"icon": "fa-regular fa-calendar-days",
-			"href": "/",
+			"href": "/routine",
 		},
 		{
 			"name": "All Courses",

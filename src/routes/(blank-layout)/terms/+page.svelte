@@ -14,7 +14,7 @@
         <div class="section-content">
             <h3>1. Introduction</h3>
             <p>
-                Welcome to AIUB Course Info. By using this service, you agree to
+                Welcome to AIUB Pocket. By using this service, you agree to
                 the following terms and conditions. Please read them carefully
                 before using the service.
             </p>
@@ -32,13 +32,13 @@
                 In order to use this service, you must provide your AIUB student
                 portal credentials. You are responsible for maintaining the
                 confidentiality of your login information. By using this
-                service, you authorize AIUB Course Info to log into the AIUB
+                service, you authorize AIUB Pocket to log into the AIUB
                 student portal on your behalf.
             </p>
 
             <h3>4. Service Description</h3>
             <p>
-                AIUB Course Info scrapes information from the AIUB student
+                AIUB Pocket scrapes information from the AIUB student
                 portal using your login credentials and displays it in a more
                 organized and student-friendly way.
             </p>
@@ -88,7 +88,7 @@
         <div class="section-content">
             <h3>1. Introduction</h3>
             <p>
-                At AIUB Course Info, we are committed to protecting your
+                At AIUB Pocket, we are committed to protecting your
                 privacy. This Privacy Policy outlines how we collect, use, and
                 protect your personal information.
             </p>
