@@ -275,6 +275,7 @@
         min-height: 350px;
         max-width: initial;
         width: 100%;
+        overflow-x: clip;
 
         .inner-content{
             display: flex;
@@ -302,7 +303,7 @@
 
         img {
             z-index: 1;
-            filter: blur(2px);
+            filter: blur(1px);
         }
 
         .item-info{
