@@ -62,9 +62,7 @@
         }
     }
 
-    onMount(async () => {
-
-        await detectSWUpdate();
+    onMount(() => {
 
         $effect(() => {
             if (showLogin.value) {
@@ -103,6 +101,8 @@
                 }
 
                 try {
+
+                    detectSWUpdate();
 
                     if (!window.Notification) {
                         console.log("Notification not supported");
