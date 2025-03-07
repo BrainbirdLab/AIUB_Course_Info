@@ -62,9 +62,9 @@
         }
     }
 
-    onMount(() => {
+    onMount(async () => {
 
-        detectSWUpdate();
+        await detectSWUpdate();
 
         $effect(() => {
             if (showLogin.value) {
