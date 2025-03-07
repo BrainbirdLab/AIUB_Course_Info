@@ -92,16 +92,34 @@
     };
 
     onMount(() => {
-
         loadData();
-
         loaded = true;
+        
+        // Clean up any existing charts first
+        destroyCharts();
+        
         createData(completedCourses.value);
 
-        completedCourses.onChange((courses) => {
-            createData(courses);
-        });
+        return () => {
+            destroyCharts();
+        };
     });
+
+    // Add this function to handle chart destruction
+    function destroyCharts() {
+        if (lineChart) {
+            lineChart.destroy();
+            lineChart = null;
+        }
+        if (scatterChart) {
+            scatterChart.destroy();
+            scatterChart = null;
+        }
+        if (barChart) {
+            barChart.destroy();
+            barChart = null;
+        }
+    }
 
     onDestroy(() => {
         if (lineChart) {
@@ -205,6 +223,8 @@
     }
 
     function createCharts() {
+        // First destroy any existing charts
+        destroyCharts();
         const lineElem = document.getElementById('performanceLineChart') as HTMLCanvasElement;
         const scatterElem = document.getElementById('gradeHeatmapChart') as HTMLCanvasElement;
         const barElem = document.getElementById('departmentalPerformanceChart') as HTMLCanvasElement;
