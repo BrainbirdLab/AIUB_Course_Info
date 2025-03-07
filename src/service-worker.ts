@@ -5,7 +5,7 @@
 import { build, files, version } from '$service-worker';
 import { showToastMessage } from '@itsfuad/domtoastmessage';
 import { readFromDB, writeToDB } from "./lib/db";
-import { fetchNoticesFromServer } from "./lib/fetcher";
+//import { fetchNoticesFromServer } from "./lib/fetcher";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -97,7 +97,7 @@ self.addEventListener('push', async (e) => {
 		badge: './badge-icon-mini.png',
     });
 
-	await fetchNoticesFromServer();
+	//await fetchNoticesFromServer();
 	await sendMessage('notice-update', null);
 });
 
@@ -242,7 +242,7 @@ function subscribe(e: ExtendableMessageEvent) {
 				}).then(res => res.json()).then( async () => {
 					console.log('Subscribed');
 					// Get the notices from server
-					await fetchNoticesFromServer();
+					//await fetchNoticesFromServer();
 					//postMessage to the client
 					sendMessage('subscribed', true);
 				}).catch(async (err) => {
