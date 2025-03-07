@@ -1,24 +1,70 @@
 <script lang="ts">
 
-    import { clearData, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, showLogin, subCheckingDone, subPermissionDenied, currentPage, User } from "$lib/store.svelte";
+    import { clearData, isOffline, isSubscribed, pageLoaded, showLogin, subPermissionDenied, currentPage, User, isSubUnsubRunning, subCheckingDone } from "$lib/store.svelte";
     import { onMount } from "svelte";
-    import { fade, fly } from "svelte/transition";
+    import { fade } from "svelte/transition";
     import { showToastMessage } from "@itsfuad/domtoastmessage";
-    import Logo from "$lib/components/Logo.svelte";
     import { checkSubscription, initNotices, parseNotices, updateNoticesLocally } from "$lib/fetcher";
     import { deleteFromDB } from "$lib/db";
     import DataUpdateLog from "$lib/components/dataUpdateLog.svelte";
     import Navbar from "$lib/components/Navbar.svelte";
     import PopupModal from "$lib/components/popupModal.svelte";
-    import { goto, onNavigate } from "$app/navigation";
+    import { goto } from "$app/navigation";
     import NavigationIndicator from "$lib/components/NavigationIndicator.svelte";
     import CalenderUpdateLog from "$lib/components/calenderUpdateLog.svelte";
     import FacultiesUpdateLog from "$lib/components/facultiesUpdateLog.svelte";
-    import { loadData } from "$lib/loader";
 
     let { children } = $props();
 
+    async function detectSWUpdate(){
+
+        const registration = await navigator.serviceWorker.ready;
+
+        registration.addEventListener("updatefound", () => {
+            const newWorker = registration.installing;
+            newWorker?.addEventListener("statechange", () => {
+                if (newWorker.state === "installed") {
+                    newWorker.postMessage({ type: "SKIP_WAITING" });
+                    console.log("New update available");
+                    showToastMessage("App Updated. Re-launch to see changes.", 1500);
+                }
+            });
+        });
+
+        // Listen for messages from the service worker
+        if (registration.active && showLogin.value == false) {
+            navigator.serviceWorker.addEventListener("message", (event: any) => {
+                if (event.data.type == "subscribed") {
+                    isSubUnsubRunning.value = false;
+                    subCheckingDone.value = true;
+                    if (!event.data.data) {
+                        return;
+                    }
+                    updateNoticesLocally();
+                    isSubscribed.value = true;
+                    localStorage.setItem("isSubscribed", "true");
+                    console.log("Subscribed to push notifications");
+                } else if (event.data.type == "unsubscribed") {
+                    isSubUnsubRunning.value = false;
+                    subCheckingDone.value = true;
+                    if (!event.data.data) {
+                        return;
+                    }
+                    isSubscribed.value = false;
+                    localStorage.setItem("isSubscribed", "false");
+                    console.log("Unsubscribed from push notifications");
+                } else if (event.data.type == "notice-update") {
+                    updateNoticesLocally();
+                }
+            });
+        } else {
+            console.log("No active service worker to listen to messages from.");
+        }
+    }
+
     onMount(() => {
+
+        detectSWUpdate();
 
         $effect(() => {
             if (showLogin.value) {
