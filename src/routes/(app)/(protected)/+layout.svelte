@@ -4,7 +4,7 @@
     import { onMount } from "svelte";
     import { fade } from "svelte/transition";
     import { showToastMessage } from "@itsfuad/domtoastmessage";
-    import { checkSubscription, initNotices, parseNotices, updateNoticesLocally } from "$lib/fetcher";
+    import { checkSubscription, fetchNoticesFromServer, initNotices, parseNotices, updateNoticesLocally } from "$lib/fetcher";
     import { deleteFromDB } from "$lib/db";
     import DataUpdateLog from "$lib/components/dataUpdateLog.svelte";
     import Navbar from "$lib/components/Navbar.svelte";
@@ -54,7 +54,9 @@
                     localStorage.setItem("isSubscribed", "false");
                     console.log("Unsubscribed from push notifications");
                 } else if (event.data.type == "notice-update") {
-                    updateNoticesLocally();
+                    fetchNoticesFromServer().finally(() => {
+                        updateNoticesLocally();
+                    });
                 }
             });
         } else {
