@@ -4,7 +4,8 @@
     import { onMount } from "svelte";
     import { fade } from "svelte/transition";
     import { showToastMessage } from "@itsfuad/domtoastmessage";
-    import { checkSubscription, fetchNoticesFromServer, initNotices, parseNotices, updateNoticesLocally } from "$lib/fetcher";
+    import { fetchNoticesFromServer } from "$lib/updater";
+    import { checkSubscription, initNotices, parseNotices, updateNoticesLocally } from "$lib/fetcher";
     import { deleteFromDB } from "$lib/db";
     import DataUpdateLog from "$lib/components/dataUpdateLog.svelte";
     import Navbar from "$lib/components/Navbar.svelte";

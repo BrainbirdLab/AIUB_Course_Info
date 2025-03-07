@@ -3,7 +3,8 @@
     import { allNotices, isOffline, isSubscribed, isSubUnsubRunning, subPermissionDenied, subCheckingDone } from "$lib/store.svelte";
     import { onMount } from "svelte";
     import { fly, slide } from "svelte/transition";
-    import { checkSubscription, fetchNoticesFromServer, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "$lib/fetcher";
+    import { checkSubscription, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "$lib/fetcher";
+    import { fetchNoticesFromServer } from "$lib/updater";
     import { flip } from "svelte/animate";
     import { deleteFromDB } from "$lib/db";
     import { showToastMessage } from "@itsfuad/domtoastmessage";
