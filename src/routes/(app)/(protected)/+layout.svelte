@@ -102,28 +102,29 @@
 
                 try {
 
-                    detectSWUpdate();
+                    detectSWUpdate().then(() => {
+                        if (!window.Notification) {
+                            console.log("Notification not supported");
+                            isSubscribed.value = false;
+                            localStorage.setItem("isSubscribed", "false");
+                            pageLoaded.value = true;
+                            return;
+                        }
+    
+                        const permAllowed = window.Notification.permission === "granted";
+                        const sub = localStorage.getItem("isSubscribed") === "true";
+                        isSubscribed.value = permAllowed && sub;
+                        localStorage.setItem("isSubscribed", isSubscribed.value ? "true" : "false");
+                        checkSubscription(navigator.serviceWorker.controller);
+                        try {
+                            initNotices();
+                        } catch (error) {
+                            console.log("Error updating notices", error);
+                            parseNotices([]);
+                            deleteFromDB("notices", "aiub");
+                        }
+                    });
 
-                    if (!window.Notification) {
-                        console.log("Notification not supported");
-                        isSubscribed.value = false;
-                        localStorage.setItem("isSubscribed", "false");
-                        pageLoaded.value = true;
-                        return;
-                    }
-
-                    const permAllowed = window.Notification.permission === "granted";
-                    const sub = localStorage.getItem("isSubscribed") === "true";
-                    isSubscribed.value = permAllowed && sub;
-                    localStorage.setItem("isSubscribed", isSubscribed.value ? "true" : "false");
-                    checkSubscription(navigator.serviceWorker.controller);
-                    try {
-                        initNotices();
-                    } catch (error) {
-                        console.log("Error updating notices", error);
-                        parseNotices([]);
-                        deleteFromDB("notices", "aiub");
-                    }
                 } catch (error) {
                     console.error(error);
                 }
