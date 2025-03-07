@@ -67,7 +67,7 @@
 			submitting = false;
 			if (!err) {
 				loaded = false;
-				goto("/");
+				goto("/routine");
 			}
 		});
 	}
@@ -84,7 +84,7 @@
 <div class="formWrapper">
 	<form onsubmit={handleForm} class="form" in:fly={{y: 20, delay: 200}}>
 		<div class="title" in:fly|global={{x: -10, delay: 200}}>
-			<Logo />
+			<a href="/"><Logo /></a>
 			Login with your AIUB ID
 		</div>
 		{#if !submitting}

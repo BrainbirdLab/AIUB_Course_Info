@@ -7,17 +7,23 @@
         cType: 'unlocked' | 'completed' | 'all';
         grade?: string;
         retake?: boolean;
+        defaultCourse?: {
+            course_name: string;
+            credit: number;
+            prerequisites: string[];
+        };
     }
 
-    let { courseId, cType, grade, retake }: Props = $props();
+    let { courseId, cType, grade, retake, defaultCourse }: Props = $props();
 
-    let course = $derived(allCourses.value[courseId]);
+    let course = $derived(defaultCourse || allCourses.value[courseId]);
 
 </script>
 
 <div class="courseid tag bookmark" style:background={getIconColor(parseCourseId(courseId))}>
     {@html getIcon(parseCourseId(courseId))} {courseId}
 </div>
+{#if course}
 <div class="name">
     {course.course_name} 
     {#if retake}
@@ -54,6 +60,7 @@
         <div class="prerequisite tag" style:background={"#398982"}>N/A</div>
     {/if}
 </span>
+{/if}
 
 <style lang="scss">
     .registered{

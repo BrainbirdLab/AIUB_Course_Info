@@ -1,20 +1,18 @@
 <script lang="ts">
 
-    import { clearData, isOffline, isSubscribed, isSubUnsubRunning, pageLoaded, showLogin, subCheckingDone, subPermissionDenied, currentPage, User } from "$lib/store.svelte";
+    import { clearData, isOffline, isSubscribed, pageLoaded, showLogin, subPermissionDenied, currentPage, User, isSubUnsubRunning, subCheckingDone } from "$lib/store.svelte";
     import { onMount } from "svelte";
-    import { fade, fly } from "svelte/transition";
+    import { fade } from "svelte/transition";
     import { showToastMessage } from "@itsfuad/domtoastmessage";
-    import Logo from "$lib/components/Logo.svelte";
     import { checkSubscription, initNotices, parseNotices, updateNoticesLocally } from "$lib/fetcher";
     import { deleteFromDB } from "$lib/db";
     import DataUpdateLog from "$lib/components/dataUpdateLog.svelte";
     import Navbar from "$lib/components/Navbar.svelte";
     import PopupModal from "$lib/components/popupModal.svelte";
-    import { goto, onNavigate } from "$app/navigation";
+    import { goto } from "$app/navigation";
     import NavigationIndicator from "$lib/components/NavigationIndicator.svelte";
     import CalenderUpdateLog from "$lib/components/calenderUpdateLog.svelte";
     import FacultiesUpdateLog from "$lib/components/facultiesUpdateLog.svelte";
-    import { loadData } from "$lib/loader";
 
     let { children } = $props();
 
@@ -64,29 +62,12 @@
         }
     }
 
-    onNavigate(() => {
-        currentPage.value = (window.location.pathname.at(-1) === '/' && window.location.pathname != '/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
-    });
-
-    function validateUser() {
-        if (!loadData()) {
-            console.log("Error loading data");
-            showLogin.value = true;
-            clearData();
-        } else {
-            showLogin.value = false;
-        }
-    }
-
     onMount(() => {
-
-        validateUser();
 
         $effect(() => {
             if (showLogin.value) {
                 goto("/login");
             } else {
-                detectSWUpdate();
 
                 currentPage.value = (window.location.pathname.at(-1) === '/' && window.location.pathname != '/') ? window.location.pathname.slice(0, -1) : window.location.pathname;
 
@@ -120,6 +101,8 @@
                 }
 
                 try {
+
+                    detectSWUpdate();
 
                     if (!window.Notification) {
                         console.log("Notification not supported");
@@ -155,11 +138,7 @@
 
 <svelte:body oncontextmenu={(e) => e.preventDefault()}  />
 
-{#if !pageLoaded.value}
-	<div class="preload" in:fade out:fly={{ y: 10 }}>
-		<Logo />
-	</div>
-{:else}
+{#if pageLoaded.value}
     <NavigationIndicator />
     <div class="container">
         {#if !showLogin.value}
@@ -193,21 +172,6 @@
             pointer-events: none;
             padding-right: 10px;
         }
-	}
-
-	.preload {
-		position: fixed;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		justify-content: center;
-		height: 100%;
-		width: 100%;
-		inset: 0;
-		font-size: 0.8rem;
-		color: var(--accent);
-		gap: 10px;
-		z-index: 100;
 	}
 
     .container {

@@ -6,6 +6,7 @@
     import { checkSubscription, fetchNoticesFromServer, parseNotices, subscribeToNotice, unsubscribeFromNotice } from "$lib/fetcher";
     import { flip } from "svelte/animate";
     import { deleteFromDB } from "$lib/db";
+    import { showToastMessage } from "@itsfuad/domtoastmessage";
 
     let fetching = $state(false);
     let loadingText = $state("Fetching new notices...");
@@ -49,6 +50,7 @@
             await unsubscribeFromNotice(navigator.serviceWorker.controller);
         } else {
             if (!window.Notification) {
+                showToastMessage("Notifications not supported in this browser", 2000);
                 return;
             }
             //ask for permission

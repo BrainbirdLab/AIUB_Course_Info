@@ -146,6 +146,41 @@ const CourseIconColors = {
     'ICON' : '<i class="fa-solid fa-laptop-code"></i>',
     'COLOR' : '#2196F3'
   },
+  'BDS' : {
+    //data science
+    'ICON' : '<i class="fa-solid fa-chart-line"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'BSE': {
+    //software engineering
+    'ICON' : '<i class="fa-solid fa-laptop-code"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'CNE': {
+    //computer network engineering
+    'ICON' : '<i class="fa-solid fa-network-wired"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'CYS' : {
+    //cyber security
+    'ICON' : '<i class="fa-solid fa-shield-alt"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'RBT' : {
+    //robotics
+    'ICON' : '<i class="fa-solid fa-robot"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'CBI': {
+    //Business Intelligence
+    'ICON' : '<i class="fa-solid fa-chart-line"></i>',
+    'COLOR' : '#2196F3'
+  },
+  'ITM' : {
+    //Technology Management
+    'ICON' : '<i class="fa-solid fa-cogs"></i>',
+    'COLOR' : '#2196F3'
+  },
   'MAT' : {
     'ICON' : '<i class="fa-solid fa-calculator"></i>',
     'COLOR' : '#2f4f4f'
@@ -256,7 +291,13 @@ export const facultyColorsMap: {[key:string]: string} = {
 }
 
 export function parseCourseId(courseId: string) {
-  return RegExp(/[A-Za-z]+/).exec(courseId)![0] as keyof typeof CourseIconColors;
+  //handle error "TypeError: Cannot read properties of null (reading '0')"
+  //return RegExp(/[A-Za-z]+/).exec(courseId)![0] as keyof typeof CourseIconColors;
+  const res = RegExp(/[A-Za-z]+/).exec(courseId);
+  if(res && res.length > 0){
+    return res[0] as keyof typeof CourseIconColors;
+  }
+  return "" as keyof typeof CourseIconColors;
 }
 
 export function clearData(){

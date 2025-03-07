@@ -1,6 +1,6 @@
 {
-  "name": "AIUB Course Info",
-  "short_name": "AIUB Course Info",
+  "name": "AIUB Pocket",
+  "short_name": "AIUB Pocket",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#111d2a",
