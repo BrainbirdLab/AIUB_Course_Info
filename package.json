@@ -11,6 +11,7 @@
 	"devDependencies": {
 		"@itsfuad/domtoastmessage": "^1.0.7",
 		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/adapter-node": "^5.2.12",
 		"@sveltejs/kit": "^2.0.0",
 		"@sveltejs/vite-plugin-svelte": "^4.0.0",
 		"chart.js": "^4.4.7",
