@@ -17,11 +17,16 @@
         loaded = true;
 
         if (!window.Notification) {
+            showToastMessage("Notifications not supported in this browser", 2000);
             return;
         }
 
         subPermissionDenied.value = window.Notification.permission === "denied";
         try {
+            console.log("Navigator: ", navigator);
+            console.log("SW: ", navigator.serviceWorker);
+            console.log("Controller: ", navigator.serviceWorker.controller);
+            console.log("SW State: ", navigator.serviceWorker.controller?.state);
             // check subscription status
             checkSubscription(navigator.serviceWorker.controller);
         } catch (error) {
