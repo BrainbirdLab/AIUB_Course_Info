@@ -113,15 +113,15 @@ export async function getCalendarData() {
         // article h2 -> article h2 [ex: Fall 2024-25]
         // table tbody tr -> each tr has 3 td [month, day, blank], [data, data, data], [data, data, data]
 
-        const title = doc.querySelector("article h1");
-        const h2 = doc.querySelector("article h2");
+        const title = "ACADEMIC CALENDAR";
+        const h2 = doc.querySelector("h2");
 
         if (!title || !h2 || !table) {
             calenderFetching.value = false;
             return;
         }
 
-        let titleText = title.textContent + ", " + h2.textContent;
+        let titleText = title + ", " + h2.textContent;
 
         localStorage.setItem("calendar", JSON.stringify({ title: titleText, table: table.innerHTML }));
 

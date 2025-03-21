@@ -1,6 +1,6 @@
 {
 	"name": "aiub-pocket",
-	"version": "13.4.4",
+	"version": "13.4.5",
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
